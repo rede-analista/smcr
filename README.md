@@ -10,7 +10,7 @@ Algumas das características são proporcionar comunicação com outro módulo E
 
 ## Recursos:
 - Recursos já disponíveis:
-  - Recursos de Rede:
+  - [Recursos de Rede](manual/rede.md):
     1. Configuração inicial em modo AP.
     2. Configuração Wifi (ssid/senha).
     3. Configuração hostname.
@@ -70,7 +70,7 @@ Desta forma, uma configuração incorreta pode causar travamentos, falhas ou ain
 
 
 # Como Utilizar (resumo)
-Após realizar a gravação do progrma no ESP32 e rebootar o módulo ele irá gerar uma rede wifi (modo AP) com o nome padrão default do módulo "esp32modularx Ponto de Acesso" a senha padrão é "senha12345678".<br>
+Após realizar a gravação do programa no ESP32 e rebootar o módulo ele irá gerar uma rede wifi (modo AP) com o nome padrão default do módulo "esp32modularx Ponto de Acesso" a senha padrão é "senha12345678".<br>
 ![image](https://github.com/rede-analista/smcr/assets/66534023/50d66af1-0918-4cfd-87c9-e04728b089dc)
 
 Conecte-se na rede e pelo navegador você deve acessar o endereço "http://192.168.4.1:8080/wifiinicio". ao abrir a página informe o nome e senha da sua rede wifi, logo após salve as informações.<br>
