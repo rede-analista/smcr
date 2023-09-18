@@ -3,8 +3,8 @@ Programação ESP32 para sistema modular de sensores e acionamentos.
 # Descrição:
 O objetivo é criar uma programação para ESP32, de forma que a definição os pinos não seja estática dentro do código fonte, proporcionando a possibilidade de alterar a definição dos pinos por interface web.
 # Resumo:
-A programação é feita de forma que a maioria das configurações esteja disponívem um interface web no ESP32 para que o usuário possa acessar o ESP32 pelo navegador e realizar as configurações desejadas salvando as informações da memória flash do ESP32.
-Proporcional comunicação com outro módulo ESP32, notificação por Telegram, comunicação com MqTT e notificação por assistentes.
+A programação é feita de forma que a maioria das configurações estejam disponíveis em uma interface web no ESP32, para que o usuário possa acessar pelo navegador e realizar as configurações desejadas, salvando as informações da memória flash do ESP32.<br>
+Algumas das características são proporcionar comunicação com outro módulo ESP32, notificação por Telegram, comunicação com MqTT e notificação por assistentes.
 
 **NOTA: Não sou programador e nem técnico em eletrônica, somente me interesso por programação e controladores, sendo assim, não espere uma programação "bonita" e/ou dentro das melhores práticas**
 
