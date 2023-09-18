@@ -28,7 +28,7 @@ Se a configuração default não foi alterada o nome da rede própria do ESP ser
       
   O módulo usa o serviço de mDNS para que o acesso por nome funcione na sua rede local.
 
-  NOTA 1: Como sugestão voce pode identificar qual é o IP que o módulo está usando na sua rede atraves do seu roteador, esta  informação pode ser usada para acessar o módulo caso a resolução de nomes não funcione corretamente.<br>
+  NOTA 1: Como sugestão voce pode identificar qual é o IP que o módulo está usando na sua rede atraves do seu roteador, esta  informação pode ser usada para acessar o módulo caso a resolução de nomes não funcione corretamente.<br><br>
   NOTA 2: Ao ativar o recurso de notificação por assistentes o serviço de mDNS não resolve o nome do módulo, sendo assim a informação de IP da "NOTA 1" deve ser usado para acessar o módulo.
 
   - Parâmetro Porta do Servidor WEB
@@ -38,5 +38,16 @@ Se a configuração default não foi alterada o nome da rede própria do ESP ser
     - É a informação de quantas vezes o módulo vai tentar para se conectar a serviços remotos durante o boot, por exemplo, conextar no wifi, contctar ano MqTT, conectar em um assistente.<br>
       Após essa quantidade de tentativas o módulo continua a carragar as configurações deixando o serviço que falhou sem utilizar.<br>
 
-    NOTA 1: Este parâmetro foi implementado para que o módulo não fique "preso" durante o boot por falta de conexão com alhuma serviço externo que impeça o funcionamento local do módulo.
+    NOTA 3: Este parâmetro foi implementado para que o módulo não fique "preso" durante o boot por falta de conexão com alhuma serviço externo que impeça o funcionamento local do módulo.
  
+## Atualização de Firmware
+- Você pode atualizar o firmware do módulo pelw rede wifi de trabalho, para isto clique na opção "Atualizar Firmware"na página inicial.<br>
+  ![image](https://github.com/rede-analista/smcr/assets/66534023/958fc6ce-0156-463d-8f22-1f67ae2545e8)
+
+- Escolha o arquivo .bin e clique em "Updade", após a atualização o módulo será reiniciado.<br>
+  ![image](https://github.com/rede-analista/smcr/assets/66534023/990fdb88-7666-4325-be8a-5b31144ade46)
+
+  NOTA 4: Nesta página você terá algumas informações relacionadas ao chip do ESP32.<br>
+  ![image](https://github.com/rede-analista/smcr/assets/66534023/508aa92c-443a-4b90-a031-908f5ac2fe66)
+
+  
