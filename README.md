@@ -65,7 +65,7 @@ Algumas das características são proporcionar comunicação com outro módulo E
   NOTA: Na pasta "build" deixarei o arquivo de fimware .bin já compilado caso queiram simplesmente realizar a gravação no ESP32 sem precisar compilar. Para gravação sem compílar pode usar qualquer ferramenta como exemplo "esptools".
 
 # !!!! IMPORTANTE !!!!
-Na programação ainda não esstá sendo feito nenhuma tratativa com as informações que são inseridas, não há tratativas para informações com acentuação e tambem não há tratativas para informações incorretas de pinagem.
+A programação atual ainda não faz nenhuma tratativa com as informações que são inseridas/configuradas, não há tratativas para informações com acentuação e tambem não há tratativas para configurações incorretas de pinagem.<br>
 Desta forma, uma configuração incorreta pode causar travamentos, falhas ou ainda danificar o módulo ESP32, tenha cuidado e muita atenção para inserir as informações.
 
 
