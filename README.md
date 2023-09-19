@@ -17,7 +17,7 @@ Algumas das características são proporcionar comunicação com outro módulo E
     4. Configuração porta tcp do servidor web.
     5. Configuração tentativas de conexões.
     6. Atualização firmware por wifi.
-  - [Recursos Pinagem](manual.pinos.md):
+  - [Recursos Pinagem](manual/pinos.md):
     1. Nomear os pinos (colocar descrição).
     2. Configuração tipo digital.
     3. Configuração modo entrada/saída.
