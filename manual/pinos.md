@@ -2,6 +2,7 @@
 
 - Você pode configurar os pinos do módulo, para isto clique na opção "Configurar Pinos"na página inicial.<br>
   ![image](https://github.com/rede-analista/smcr/assets/66534023/958fc6ce-0156-463d-8f22-1f67ae2545e8)
+[Exemplo Cadastro](excadpino.md)
 
 
 - Será aberta a página com todas as informações de todos os pinos. Nesta página tem um total de 23 posições para configurações dos pinos, o cadastro dos pinos pode ser realizada em qualquer posição.
@@ -40,6 +41,7 @@ Parâmetro TEMPO RETENÇÃO
   - Informa quantos clicos a task deixará de ler o status de um pino se a opção RETENÇÃO estiver ativada.<br>
     O tempo de retenção não é contado em milisegundos mas sim em tempo de clico do processador, para mais detalhe do tempo de retenção veja "NOTA 5"
 
+[Exemplo Cadastro](excadpino.md)
 
 # Tarefa de leitura do status dos pinos
 
