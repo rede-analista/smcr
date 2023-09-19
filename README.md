@@ -25,7 +25,7 @@ A interface web disponibiliza 23 posições de configurações de pinos, ou seja
     3. Configuração modo entrada/saída.
     4. Configuração operador XOR.
     5. Configuração retenção.
-  - Recursos Ações:
+  - [Recursos Ações](manual/acoes.md):
     1. Associar pinos e definir ações.
     2. Definir nível acionamento.
     3. Definir tempo ON/OFF conforme ação.
