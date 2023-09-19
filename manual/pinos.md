@@ -56,7 +56,7 @@ Parâmetro TEMPO RETENÇÃO
   NOTA 5: Essa task é executada continuamente aplicando apenas uma pausa pela função "vTaskDelay(9/portTICK_PERIOD_MS)" isto que dizer que o período de leitura de cada pino é feita no tempo de 9 dividido por portTICK_PERIOD_MS, isto está ligado diretamente a frequência do processador.<br>
           #define portTICK_PERIOD_MS ((TickType_t)1000 / configTICK_RATE_HZ)
 
-- São usados 2 arrays com as informações dos pinos são 2 aU8_Pinos do tipo uint8_t e o array aS8_Pinos do tipo string.<br>
+- São usados 2 arrays com as informações dos pinos o array aU8_Pinos do tipo uint8_t e o array aS8_Pinos do tipo string.<br>
 
   - aU8_Pinos[7][23] = Array de 7 linhas e 23 colunas.
     - aU8_Pinos[Propriedade][Pino]
