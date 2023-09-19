@@ -14,7 +14,7 @@
   ![image](https://github.com/rede-analista/smcr/assets/66534023/d03310b3-59b5-4cf5-beaa-2a889c3a1f59)
 
 - Depois de preencher as informações clique em "Aplicar(sem salvar)".<br>
-  Esta ação cadastra os dois pinos porém não salva as informações da flash do ESP. Se o módulo for reiniciado antes de salvar as informações serão perdidas.<br>
+  Este exemplo cadastra os dois pinos porém não salva as informações da flash do ESP. Se o módulo for reiniciado antes de salvar as informações serão perdidas.<br>
 
 - Observe na páfgina inicial que já mostra as informações dos pinos cadastrados.
   
