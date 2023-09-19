@@ -6,7 +6,7 @@ O objetivo é criar uma programação para ESP32, de forma que a definição os 
 A programação é feita de forma que a maioria das configurações estejam disponíveis em uma interface web no ESP32, para que o usuário possa acessar pelo navegador e realizar as configurações desejadas, salvando as informações da memória flash do ESP32.<br>
 Algumas das características são proporcionar comunicação com outro módulo ESP32, notificação por Telegram, comunicação com MqTT e notificação por assistentes.
 
-A interface web disponibiliza 23 posições de configurações de pinos, ou seja, voce poderá configurar até 23 pinos como entrada ou saída. Tambem pela interface poderá configurar até 3 ações para cada pino, estas ações serão executadas quando por exemplo um sensor for acionado.
+A interface web disponibiliza 23 posições de configurações de pinos, ou seja, voce poderá configurar até 23 pinos como entrada ou saída. Tambem pela interface poderá configurar até 3 ações para cada pino, estas ações serão executadas quando por exemplo um sensor for acionado. Na configuração de ações é possível realizar uma configuração em cascata quando por exemplo o pino 2 aciona o pino 4, o pino 4 aciona o pino 5 e assim por diante, há várias formas de realizar a configuração de ações espero que seja suficiente para atender uma boa parte das necessidades.
 
 **NOTA: Não sou programador e nem técnico em eletrônica, somente me interesso por programação e controladores, sendo assim, não espere uma programação "bonita" e/ou dentro das melhores práticas, mas fique a vontade para trocar informações ou sugerir alguma melhoria**
 
