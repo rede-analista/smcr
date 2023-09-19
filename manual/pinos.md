@@ -42,7 +42,7 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
 Parâmetro TEMPO RETENÇÃO
   - Informa quantos clicos a task deixará de ler o status de um pino se a opção RETENÇÃO estiver ativada.<br>
     O tempo de retenção não é contado em milisegundos mas sim em tempo de clico do processador, para mais detalhe do tempo de retenção veja "NOTA 5"<br>
-    Esta informação pode ser de 1 a 254 ciclos.
+    Esta informação pode ser de 1 a 255 ciclos.
 
 [Exemplo Cadastro](excadpino.md)
 
