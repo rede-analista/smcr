@@ -39,6 +39,11 @@ Se a configuração default não foi alterada o nome da rede própria do ESP ser
       Após essa quantidade de tentativas o módulo continua a carragar as configurações deixando o serviço que falhou sem utilizar.<br>
 
     NOTA 3: Este parâmetro foi implementado para que o módulo não fique "preso" durante o boot por falta de conexão com alhuma serviço externo que impeça o funcionamento local do módulo.
+
+- Se quiser salvar as informações na memória flash do ESP, na tela inicial clique em "Parâmetros", despois clique em "Salvar na Flash".<br>
+  Responda "Sim" à pergunta e clique em "Salvar na Flash".<br>
+  
+  ![image](https://github.com/rede-analista/smcr/assets/66534023/2c82afff-a3c7-4ba4-ab7e-398530c743da)    
  
 ## Atualização de Firmware
 - Você pode atualizar o firmware do módulo pelw rede wifi de trabalho, para isto clique na opção "Atualizar Firmware"na página inicial.<br>
