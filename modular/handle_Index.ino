@@ -16,7 +16,7 @@ void f_handle_Index() {
   html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vU16_portaWeb) + "/pinos'> Configurar Pinos</a> - ";
   html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vU16_portaWeb) + "/configurag'> Configurações Gerais</a> - ";
   html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vU16_portaWeb) + "/lsprefpin'> Parâmetros</a> - ";
-  html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vU16_portaWeb) + "/reboota'> Reiniciar Este Módulo</a> - ";
+  html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vU16_portaWeb) + "/reboota'> Reiniciar Módulo</a> - ";
   html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vU16_portaWeb) + "/firmware'> Atualizar Firmware</a> - ";
   html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vU16_portaWeb) + "/recarrega'> Recarregar Funções</a> - ";
   html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vU16_portaWeb) + "/limpaflash'> Limpar Flash</a></center>";

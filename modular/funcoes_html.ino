@@ -17,13 +17,13 @@ void f_handle_ConfiguraGeral() {
   html += "<br><a href=\"/\">Página Inicial</a><br>";
   html += "<div style='border-style:inset; width:700px; background-color: rgb(148, 187, 242)' id='divDoForm'>";
   html += "<form action='/configurag' method='POST' style='margin:5px'>";
-  html += "<label for='id_modap'>Habilitar Modo AP: ";
+  html += "<label for='id_modap'>Habilita Modo AP: ";
   html += "<input type='text' name='MODAP' id='id_modap' value='"+String(vB_modoAP)+"' required> 0=Não / 1=Sim</label>";
   html += "<br><br>";
   html += "<label for='id_enviarec'>Habilita Envio Receptor: ";
   html += "<input type='text' name='ENVIAREC' id='id_enviarec' value='"+String(vB_exec_Receptor)+"' required> 0=Não / 1=Sim</label>";
   html += "<br>";
-  html += "<label for='id_nomerec'>Nome do Receptor: ";
+  html += "<label for='id_nomerec'>Nome Módulo Remoto: ";
   html += "<input type='text' name='NOMEREC' id='id_nomerec' value='"+vS_nomeReceptor+"' required></label>";
   html += "<br>";
   html += "<label for='id_iprec'>IP do Receptor: ";
@@ -35,7 +35,7 @@ void f_handle_ConfiguraGeral() {
   html += "<label for='id_mtbsrec'>Tempo de Envio do Receptor: ";
   html += "<input type='text' name='MTBSREC' id='id_mtbsrec' value='"+String(vU16_rec_MTBS)+"' required></label>";
   html += "<br><br>";
-  html += "<label for='id_hateleg'>Habilitar Telegram:";
+  html += "<label for='id_hateleg'>Habilita Telegram:";
   html += "<input type='text' name='HATELEG' id='id_hateleg' value='"+String(vB_exec_Telegram)+"' required> 0=Não / 1=Sim</label>";
   html += "<br>";
   html += "<label for='id_apiteleg'>Chave API Telegram: ";
@@ -50,7 +50,7 @@ void f_handle_ConfiguraGeral() {
   html += "<label for='id_tmpteleg'>Tempo de Verificação do Telegram: ";
   html += "<input type='number' name='TMPTELEG' id='id_tmpteleg' value='"+String(vU16_bot_MTBS)+"' required></label>";
   html += "<br><br>";
-  html += "<label for='id_hamqtt'>Habilitar MqTT:";
+  html += "<label for='id_hamqtt'>Habilita MqTT:";
   html += "<input type='text' name='HAMQTT' id='id_hamqtt' value='"+String(vB_exec_MqTT)+"' required> 0=Não / 1=Sim</label>";
   html += "<br>";  
   html += "<label for='id_ipmqtt'>IP Servidor MqTT: ";
@@ -74,7 +74,7 @@ void f_handle_ConfiguraGeral() {
   html += "<label for='id_tmpdiscmqtt'>Tempo de Descoberta do MqTT: ";
   html += "<input type='number' name='TMPDISCMQTT' id='id_tmpdiscmqtt' value='"+String(vU32_mqtt_disc_MTBS)+"' required></label>";
   html += "<br><br>";
-  html += "<label for='id_haassist'>Habilitar Assistentes:";
+  html += "<label for='id_haassist'>Habilita Assistentes:";
   html += "<input type='text' name='HAASSIST' id='id_haassist' value='"+String(vB_exec_Assistente)+"' required> 0=Não / 1=Sim</label>";
   html += "<br>";
   html += "<label for='id_nomeassistgoogle'>Nome Assistentes Google: ";
