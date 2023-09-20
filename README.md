@@ -32,7 +32,7 @@ A interface web disponibiliza 23 posições de configurações de pinos, ou seja
     4. Deninir envio dados para outro módulo ESP32.
     5. Definir envio ao telegram.
     6. Definir envio ao MqTT.
-    7. Definir envio assistetes.
+    7. Definir envio assistentes.
   - Recursos Gerais:
     1. Habilidat/desabilitar modo AP.
     2. Denifir informações de outro módulo ESP32 (receptor).
@@ -48,7 +48,6 @@ A interface web disponibiliza 23 posições de configurações de pinos, ou seja
   - Comando de voz por assistentes.
   - Tratar informações/configurações antes de aplicar/salvar no módulo.
   - Detalhar comentários no código fonte.
-  - 
 
 - Atividades/Recursos não previstos:
   - Não é previso comunicação usando ssl (somente para uso interno), não deve ser usado em uma rede pública ou redes desprotegidas, não usa acesso https.
