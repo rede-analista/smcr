@@ -33,7 +33,7 @@ A interface web disponibiliza 23 posições de configurações de pinos, ou seja
     5. Definir envio ao telegram.
     6. Definir envio ao MqTT.
     7. Definir envio assistentes.
-  - Recursos Gerais:
+  - [Recursos Gerais](configgeral.md):
     1. Habilidat/desabilitar modo AP.
     2. Denifir informações de outro módulo ESP32 (receptor).
     3. Denifir informações do bot Telegram.
