@@ -42,8 +42,8 @@ A interface web disponibiliza 23 posições de configurações de pinos, ou seja
     6. Visualizar configurações em memória e na flash.
   - [Funções de Manutenção](manual/funmanu.md):
     1. Reiniciar módulo ESP32.
-    2. Limpeza de configurações da flash.
-    3. Formatação da flash.
+    2. Limpeza de configurações ou Formatação da flash.
+    3. Recarregar Funções do Setup.
 
 - Atividades/Recursos previstos:
   - Comando de voz por assistentes.
