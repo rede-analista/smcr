@@ -101,7 +101,9 @@ void f_handle_ConfiguraPortas() {
       aU8_Pinos[0][x] = SERVIDOR_WEB.arg(("PINO"+String(x))).toInt();
       aU8_Pinos[1][x] = SERVIDOR_WEB.arg(("TIPO"+String(x))).toInt();
       aU8_Pinos[2][x] = SERVIDOR_WEB.arg(("MODO"+String(x))).toInt();
-      pinMode(aU8_Pinos[0][x],aU8_Pinos[2][x]);
+      if (aU8_Pinos[1][x] == 1) {
+        pinMode(aU8_Pinos[0][x],aU8_Pinos[2][x]);
+      }
       aU8_Pinos[3][x] = SERVIDOR_WEB.arg(("XOR"+String(x))).toInt();
       //aU8_Pinos[4][x] = Status ignorar
       aU8_Pinos[5][x] = SERVIDOR_WEB.arg(("RETEM"+String(x))).toInt();

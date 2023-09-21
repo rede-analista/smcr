@@ -10,8 +10,18 @@ void f_recebeDados() {
   //vS_uri = SERVIDOR_WEB.uri();
   if (SERVIDOR_WEB.args() == 4) {
     if (f_validaNomeReceptor(SERVIDOR_WEB.arg(0))) {
-      aU8_Pinos[4][SERVIDOR_WEB.arg(2).toInt()] = SERVIDOR_WEB.arg(3).toInt();
-      Serial.println("Recebido dados da placa " + SERVIDOR_WEB.arg(0));      
+      Serial.println("Recebido dados da placa " + SERVIDOR_WEB.arg(0));
+      switch (SERVIDOR_WEB.arg(1).toInt()) {
+        case 1:
+          aU8_Pinos[4][SERVIDOR_WEB.arg(2).toInt()] = SERVIDOR_WEB.arg(3).toInt();
+          break;
+        case 2:
+          aU8_Pinos[4][SERVIDOR_WEB.arg(2).toInt()] = SERVIDOR_WEB.arg(3).toInt();
+          break;
+        case 3:
+          aU8_Pinos[4][SERVIDOR_WEB.arg(2).toInt()] = SERVIDOR_WEB.arg(3).toInt();
+          break;
+      }
       Serial.println("Acao/Indice/Status " + SERVIDOR_WEB.arg(1) + " " + SERVIDOR_WEB.arg(2) + " " + SERVIDOR_WEB.arg(3));
       SERVIDOR_WEB.send(200, "text/plain", "OK - DADOS RECEBIDO\n");
       //vI_cicloHandshake = vI_tempoHandshake;
@@ -32,24 +42,26 @@ bool f_validaNomeReceptor(String modulo) {
   int16_t indice = vS_nomeReceptor.indexOf(modulo);
   bool resultado = false;
   if (indice >= 0 ) {
-    Serial.print("Inicio1: ");
-    Serial.println(indice);
-    Serial.println(" Corte: "+ vS_nomeReceptor.substring(indice,indice+modulo.length()));
+    //Serial.print("Inicio1: ");
+    //Serial.println(indice);
+    //Serial.println(" Corte: "+ vS_nomeReceptor.substring(indice,indice+modulo.length()));
     if (modulo == vS_nomeReceptor.substring(indice,indice+modulo.length())) {
-      Serial.println("Meio: ");
-      Serial.println(indice);
+      //Serial.println("Meio: ");
+      //Serial.println(indice);
       resultado = true;
     }
   }
-  Serial.print("Final: ");
-  Serial.println(indice);
+  //Serial.print("Final: ");
+  //Serial.println(indice);
   return resultado;
 }
 
 //========================================
 void f_configuraReceptor(bool force) {
-  if (!vB_exec_Receptor || force) {
+  if (!vB_exec_Receptor) {
     f_carregaConfi("RECEPTOR",force);
+  } else if (force) {
+    vB_exec_Receptor = true;
   }
 }
 
@@ -83,7 +95,7 @@ void f_checkAcoesReceptor() {
       } else if(aU16_Acao3[5][x] && !aU8_Pinos[4][x] && aU8_ControlMsgRec[2][x]){
         f_enviaModulo(String(aU16_Acao3[2][x]), String(aU16_Acao3[0][x]), String(aU8_Pinos[4][x]));
         aU8_ControlMsgRec[2][x] = 0;
-      }     
+      }
     }
     check_acoes_rec_lasttime = agora;
   }
@@ -210,8 +222,10 @@ String f_traduzAcoesAss(uint16_t cod) {
 
 //========================================
 void f_configuraAssistente(bool force) {
-  if (!vB_exec_Assistente || force) {
+  if (!vB_exec_Assistente) {
     f_carregaConfi("ASSISTENTE",force);
+  } else if (force) {
+    vB_exec_Assistente = true;
   }
   if (WiFi.status() == 3 && vB_exec_Assistente) {
     Serial.println("Iniciando configuracao ASSISTENTES: ");
@@ -421,8 +435,10 @@ MQTTReserved    15 << 4 // Reserved
 
 //========================================
 void f_configuraMQTT(bool force) {
-  if (!vB_exec_MqTT || force) {
+  if (!vB_exec_MqTT) {
     f_carregaConfi("MQTT",force);
+  } else if (force) {
+    vB_exec_MqTT = true;
   }
   if (WiFi.status() == 3 && vB_exec_MqTT) {
     Serial.print("Iniciando configuracao MQTT: ");
@@ -445,9 +461,11 @@ void f_configuraMQTT(bool force) {
 //========================================
 bool f_configuraTELEGRAM(bool force) {
   bool resultado = false;
-  if (!vB_exec_Telegram || force) {
+  if (!vB_exec_Telegram) {
     f_carregaConfi("TELEGRAM",force);
-  }  
+  } else if (force) {
+    vB_exec_Telegram = true;
+  }
   if (WiFi.status() == 3 && vB_exec_Telegram) {
     Serial.print("Iniciando configuracao de hora e telegram: ");
     configTime(0, 0, "pool.ntp.br"); // Ajusta hora via NTP
@@ -515,10 +533,10 @@ void f_carregaConfi(String ref, bool force) {
     } else {
       vB_exec_MqTT = CONFIG_FLASH.getBool("exe_mqtt", false); //Se true esta placa ESP envia mensagens via mqtt
     }
-    vS_mqttTopico = CONFIG_FLASH.getString("top_mqtt", ""); //Topico MqTT
-    vS_mqttServer = CONFIG_FLASH.getString("srv_mqtt", ""); //Servidor MqTT
-    vS_mqttUser = CONFIG_FLASH.getString("usr_mqtt", ""); //Usuario MqTT
-    vS_mqttSenha = CONFIG_FLASH.getString("pss_mqtt", ""); //Senha MqTT
+    vS_mqttTopico = CONFIG_FLASH.getString("top_mqtt", "pubsub"); //Topico MqTT
+    vS_mqttServer = CONFIG_FLASH.getString("srv_mqtt", "10."); //Servidor MqTT
+    vS_mqttUser = CONFIG_FLASH.getString("usr_mqtt", "usr"); //Usuario MqTT
+    vS_mqttSenha = CONFIG_FLASH.getString("pss_mqtt", "pwd"); //Senha MqTT
     vU16_mqttPorta = CONFIG_FLASH.getUShort("porta_mqtt", 0); //Porta para comunicacao com mqtt
     vU16_mqtt_MTBS = CONFIG_FLASH.getULong64("time_mqtt", 65535); //Tempo em milisegundos para comunicacao com mqtt
     vU32_mqtt_disc_MTBS = CONFIG_FLASH.getULong64("disc_mqtt", 65535); //Tempo em milisegundos para discovery com mqtt
@@ -529,19 +547,19 @@ void f_carregaConfi(String ref, bool force) {
     } else {
       vB_exec_Assistente = CONFIG_FLASH.getBool("exe_ass", false);
     }
-    vS_assNomeGoogle = CONFIG_FLASH.getString("ass_google", "");
-    vS_assNomeAlexa = CONFIG_FLASH.getString("ass_alexa", "");
-    vS_assLinguagem = CONFIG_FLASH.getString("ass_ling", "");
+    vS_assNomeGoogle = CONFIG_FLASH.getString("ass_google", "dh");
+    vS_assNomeAlexa = CONFIG_FLASH.getString("ass_alexa", "alx");
+    vS_assLinguagem = CONFIG_FLASH.getString("ass_ling", "ling");
     vU16_ass_MTBS = CONFIG_FLASH.getULong64("ass_time", 65535);
-    vS_ass_Alerta = CONFIG_FLASH.getString("ass_alerta", "");
-    vS_ass_Normal = CONFIG_FLASH.getString("ass_normal", "");
+    vS_ass_Alerta = CONFIG_FLASH.getString("ass_alerta", "frase alerta");
+    vS_ass_Normal = CONFIG_FLASH.getString("ass_normal", "frase normal");
   }
   if (ref == "RECEPTOR" || ref == "TUDO") {
     vB_exec_Receptor = CONFIG_FLASH.getBool("exe_rec", false);
     vU16_rec_MTBS = CONFIG_FLASH.getULong64("time_rec", 65535);
-    vS_ipReceptor = CONFIG_FLASH.getString("ip_rec", "");
+    vS_ipReceptor = CONFIG_FLASH.getString("ip_rec", "ip");
     vU16_portaWebReceptor = CONFIG_FLASH.getULong64("porta_rec", 65535);
-    vS_nomeReceptor = CONFIG_FLASH.getString("nome_rec", "");
+    vS_nomeReceptor = CONFIG_FLASH.getString("nome_rec", "nome");
   }
   CONFIG_FLASH.end();
   Serial.println(" OK");
@@ -814,7 +832,7 @@ void f_pisca(uint8_t pino) {
 
 //========================================
 void f_gravaPino(uint8_t tipo, uint8_t pino, uint8_t valor) {
-  if (tipo == 1) {
+  if (tipo == 1 || tipo == 254) {
     digitalWrite(pino,valor);
   } else {
     analogWrite(pino, valor);
@@ -865,7 +883,9 @@ aS8_Pinos[0][x] = Nome ou descricao
     for (uint8_t y=0; y<vU8_totPinos; y++) {
       aU8_Pinos[x][y] = aU8Buffer[x][y];
       if (x == 2) {
-        pinMode(aU8_Pinos[0][y],aU8_Pinos[x][y]);
+        if (aU8_Pinos[1][x] == 1) {
+          pinMode(aU8_Pinos[0][y],aU8_Pinos[x][y]);
+        }
       }
     }
   }

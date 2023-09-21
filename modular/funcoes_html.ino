@@ -150,10 +150,10 @@ void f_handle_RecerregarFuncoes() {
   html += "<div id='telarecarrega'> ";
   html += "<div id='bloqueiaTela'></div>";
   html += "<h1>!! RECARREGAR FUNÇÕES DO SETUP !!</h1>";
-  html += "<div style='border-style:inset; width:400px; background-color: rgb(148, 187, 242)' id='divDoForm'>";
+  html += "<div style='border-style:inset; width:600px; background-color: rgb(148, 187, 242)' id='divDoForm'>";
   html += "<form action='/recarrega' method='POST' style='margin:5px'>";
   html += "<label for='id_recarrega'>Você confirma recarregar as funções do setup? </label>";
-  html += "<br>Tudo, TELEGRAM, MQTT ou ASSISTENTES";
+  html += "<br>Tudo, TELEGRAM, MQTT, RECEPTOR ou ASSISTENTES";
   html += "<input type='text' name='RECRG' id='id_recarrega' value='Não' required>";
   html += "<br>";
   html += "<br>";
@@ -183,7 +183,11 @@ void f_handle_RecerregarFuncoes() {
       Serial.println("Recarregando Assistentes... ");
       f_configuraAssistente(true);
       html += f_MensagemHTML("ASSISTENTES RECARREGADO", "A função Assistentes da placa ["+vS_nomeDispositivo+"] foi recarregada.", sucesso);
-    }
+    } else if (SERVIDOR_WEB.arg("RECRG") == "RECEPTOR") {
+      Serial.println("Recarregando Receptor... ");
+      f_configuraReceptor(true);
+      html += f_MensagemHTML("RECEPTOR RECARREGADO", "A função Receptor da placa ["+vS_nomeDispositivo+"] foi recarregada.", sucesso);
+    }    
       Serial.println("OK");
   }
   html += "<br><a href=\"/\">Página Inicial</a>\n";
