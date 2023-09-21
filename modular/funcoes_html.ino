@@ -20,7 +20,7 @@ void f_handle_ConfiguraGeral() {
   html += "<label for='id_modap'>Habilita Modo AP: ";
   html += "<input type='text' name='MODAP' id='id_modap' value='"+String(vB_modoAP)+"' required> 0=Não / 1=Sim</label>";
   html += "<br><br>";
-  html += "<label for='id_enviarec'>Habilita Envio Receptor: ";
+  html += "<label for='id_enviarec'>Habilita Inter Módulos: ";
   html += "<input type='text' name='ENVIAREC' id='id_enviarec' value='"+String(vB_exec_Receptor)+"' required> 0=Não / 1=Sim</label>";
   html += "<br>";
   html += "<label for='id_nomerec'>Nome Módulo Remoto: ";
