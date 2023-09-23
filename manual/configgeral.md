@@ -11,7 +11,9 @@
 - Parâmetro HABILITAR MODO AP
   - Você pode desabilitar o modo AP. O modo AP é um recurso que o ESP32 gera uma rede wifi caso ele não consiga conexão no SSID de trabalho. [Veja Modo AP](rede.md)
 
-## [Informações do Inter Módulos](intermod.md)
+## Informações do Inter Módulos
+- Parâmetro HABILITAR MODO AP
+  - Você pode habilitar a comunicação entre módulos. A comunicação entre módulos é um recurso que o ESP32 envia informações de stauts do pino para outro módulo usando a rede wifi. Com esta atualização remota de status do pino voce pode acionar um equipamento mesmo que o sensor esteja em outro módulo esp distante. [Veja Inter Módulos](intermod.md)
    
 ## Informações do Telegram
 
