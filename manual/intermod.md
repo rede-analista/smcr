@@ -19,4 +19,10 @@
     
     exemplo:<br>![image](https://github.com/rede-analista/smcr/assets/66534023/1d3faffa-bafb-4e6f-833f-fe74bfebf5af)
 
-    No exemplo acima este módulo irá aceitar informações de outros módulos que tenha o hostname "Medidor", "Aquario" ou "Gerador".
+    No exemplo acima o módulo está copnfigurado para aceitar informações de outros módulos que tenha o hostname "Medidor", "Aquario" ou "Gerador".<br>
+
+
+- Se quiser salvar as informações na memória flash do ESP, na tela inicial clique em "Parâmetros", despois clique em "Salvar na Flash".<br>
+  Responda "Sim" à pergunta e clique em "Salvar na Flash".<br>
+  
+  ![image](https://github.com/rede-analista/smcr/assets/66534023/2c82afff-a3c7-4ba4-ab7e-398530c743da)    
