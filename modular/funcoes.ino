@@ -1,4 +1,20 @@
 //========================================
+void f_iniciaInterModulos() {
+  Serial.print("Iniciando configuracao inter modulos... ");
+  CONFIG_FLASH.begin("confiGeral", true);
+  String aSBuffer[2][vU8_totPinos] = {};
+  CONFIG_FLASH.getBytes("paS_InterMod", aSBuffer, CONFIG_FLASH.getBytesLength("paS_InterMod"));
+  CONFIG_FLASH.end();
+
+  for (uint8_t x=0; x<vI8_aS_InterMod; x++){
+    for (uint8_t y=0; y<vU8_totPinos; y++) {
+      aS_InterMod[x][y] = aSBuffer[x][y];
+    }
+  }
+  Serial.println("OK");
+}
+
+//========================================
 void f_recebeDados() {
   /*
    GET_SERVIDOR
@@ -9,7 +25,7 @@ void f_recebeDados() {
   */
   //vS_uri = SERVIDOR_WEB.uri();
   if (SERVIDOR_WEB.args() == 4) {
-    if (f_validaNomeReceptor(SERVIDOR_WEB.arg(0))) {
+    if (f_retornaIndiceModulo(SERVIDOR_WEB.arg(0)) > 0) {
       Serial.println("Recebido dados da placa " + SERVIDOR_WEB.arg(0));
       switch (SERVIDOR_WEB.arg(1).toInt()) {
         case 1:
@@ -38,63 +54,63 @@ void f_recebeDados() {
 }
 
 //========================================
-bool f_validaNomeReceptor(String modulo) {
-  int16_t indice = vS_nomeReceptor.indexOf(modulo);
-  bool resultado = false;
-  if (indice >= 0 ) {
-    //Serial.print("Inicio1: ");
-    //Serial.println(indice);
-    //Serial.println(" Corte: "+ vS_nomeReceptor.substring(indice,indice+modulo.length()));
-    if (modulo == vS_nomeReceptor.substring(indice,indice+modulo.length())) {
-      //Serial.println("Meio: ");
-      //Serial.println(indice);
-      resultado = true;
+int8_t f_retornaIndiceModulo(String modulo) {
+  // Recebe o nome e retorna o indice
+  int8_t resultado = 0;
+  if (modulo.length() > 3) {
+    for (int x=0; x<vU8_totPinos; x++) {
+      if (modulo == aS_InterMod[0][x]) {
+        resultado = x;
+        break;
+      }
     }
   }
-  //Serial.print("Final: ");
-  //Serial.println(indice);
   return resultado;
 }
 
 //========================================
-void f_configuraReceptor(bool force) {
-  if (!vB_exec_Receptor) {
-    f_carregaConfi("RECEPTOR",force);
+void f_configuraModulos(bool force) {
+  if (!vB_exec_Modulos) {
+    f_carregaConfi("MODULOS",force);
   } else if (force) {
-    vB_exec_Receptor = true;
+    vB_exec_Modulos = true;
+  }
+  if (vB_exec_Modulos) {
+    f_iniciaInterModulos();
   }
 }
 
 //========================================
-void f_checkAcoesReceptor() {
+void f_checkAcoesModulos() {
   uint64_t agora = millis();
-  if ((agora - check_acoes_rec_lasttime) > vU16_rec_MTBS) {
-    if (!vB_exec_Receptor) {
-      f_configuraReceptor(false);
-    }    
+  if ((agora - check_acoes_rec_lasttime) > vU16_modulos_MTBS) {
     for (uint8_t x=0; x<vU8_totPinos; x++) {
-      if (aU16_Acao1[5][x] && aU8_Pinos[4][x] && !aU8_ControlMsgRec[0][x]) {
-        if (f_enviaModulo(String(aU16_Acao1[2][x]), String(x), String(aU8_Pinos[4][x])) == 200){
-          aU8_ControlMsgRec[0][x] = 1;
+      if ((aU16_Acao1[5][x] >0 ) && aU8_Pinos[4][x] && !aU8_ControlMsgMod[0][x]) {
+        if (f_enviaModulo(aU16_Acao1[5][x],String(aU16_Acao1[2][x]), String(x), String(aU8_Pinos[4][x])) == 200) {
+          aU8_ControlMsgMod[0][x] = 1;
         }
-      } else if(aU16_Acao1[5][x] && !aU8_Pinos[4][x] && aU8_ControlMsgRec[0][x]){
-        if (f_enviaModulo(String(aU16_Acao1[2][x]), String(x), String(aU8_Pinos[4][x])) == 200){
-          aU8_ControlMsgRec[0][x] = 0;
+      } else if ((aU16_Acao1[5][x] >0 ) && !aU8_Pinos[4][x] && aU8_ControlMsgMod[0][x]){
+        if (f_enviaModulo(aU16_Acao1[5][x],String(aU16_Acao1[2][x]), String(x), String(aU8_Pinos[4][x])) == 200) {
+          aU8_ControlMsgMod[0][x] = 0;
         }
       }
-      if (aU16_Acao2[5][x] && aU8_Pinos[4][x] && !aU8_ControlMsgRec[1][x]) {
-        f_enviaModulo(String(aU16_Acao2[2][x]), String(aU16_Acao2[0][x]), String(aU8_Pinos[4][x]));
-        aU8_ControlMsgRec[1][x] = 1;
-      } else if(aU16_Acao2[5][x] && !aU8_Pinos[4][x] && aU8_ControlMsgRec[1][x]){
-        f_enviaModulo(String(aU16_Acao2[2][x]), String(aU16_Acao2[0][x]), String(aU8_Pinos[4][x]));
-        aU8_ControlMsgRec[1][x] = 0;
+      if ((aU16_Acao2[5][x] >0 ) && aU8_Pinos[4][x] && !aU8_ControlMsgMod[1][x]) {
+        if (f_enviaModulo(aU16_Acao1[5][x],String(aU16_Acao2[2][x]), String(x), String(aU8_Pinos[4][x])) == 200) {
+          aU8_ControlMsgMod[1][x] = 1;
+        }
+      } else if ((aU16_Acao2[5][x] >0 ) && !aU8_Pinos[4][x] && aU8_ControlMsgMod[1][x]){
+        if (f_enviaModulo(aU16_Acao1[5][x],String(aU16_Acao2[2][x]), String(x), String(aU8_Pinos[4][x])) == 200) {
+          aU8_ControlMsgMod[1][x] = 0;
+        }
       }
-      if (aU16_Acao3[5][x] && aU8_Pinos[4][x] && !aU8_ControlMsgRec[2][x]) {
-        f_enviaModulo(String(aU16_Acao3[2][x]), String(aU16_Acao3[0][x]), String(aU8_Pinos[4][x]));
-        aU8_ControlMsgRec[2][x] = 1;
-      } else if(aU16_Acao3[5][x] && !aU8_Pinos[4][x] && aU8_ControlMsgRec[2][x]){
-        f_enviaModulo(String(aU16_Acao3[2][x]), String(aU16_Acao3[0][x]), String(aU8_Pinos[4][x]));
-        aU8_ControlMsgRec[2][x] = 0;
+      if ((aU16_Acao3[5][x] >0 ) && aU8_Pinos[4][x] && !aU8_ControlMsgMod[2][x]) {
+        if (f_enviaModulo(aU16_Acao1[5][x],String(aU16_Acao3[2][x]), String(x), String(aU8_Pinos[4][x])) == 200) {
+          aU8_ControlMsgMod[2][x] = 1;
+        }
+      } else if ((aU16_Acao3[5][x] >0 ) && !aU8_Pinos[4][x] && aU8_ControlMsgMod[2][x]){
+        if (f_enviaModulo(aU16_Acao1[5][x],String(aU16_Acao3[2][x]), String(x), String(aU8_Pinos[4][x])) == 200) {
+          aU8_ControlMsgMod[2][x] = 0;
+        }
       }
     }
     check_acoes_rec_lasttime = agora;
@@ -102,7 +118,7 @@ void f_checkAcoesReceptor() {
 }
 
 //========================================
-int f_enviaModulo(String acao, String pino, String valor){
+int f_enviaModulo(uint8_t idmodulo, String acao, String pino, String valor){
   /*
    GET_SERVIDOR
    Argumento 0 = Nome do Dispositivo
@@ -124,20 +140,20 @@ int f_enviaModulo(String acao, String pino, String valor){
    HTTPC_ERROR_READ_TIMEOUT        (-11)
   */
   HTTPClient CLIENTE;
-  GET_SERVIDOR = "http://" + vS_ipReceptor + ":" + vU16_portaWebReceptor + "/recdados?placa=" + vS_nomeDispositivo + "&ac=" + acao + "&pn=" + pino + "&vl=" + valor;
+  GET_SERVIDOR = "http://" + aS_InterMod[1][idmodulo] + ":" + vU16_portaWebModulos + "/dados?pl=" + vS_nomeDispositivo + "&ac=" + acao + "&pn=" + pino + "&vl=" + valor;
   if (ULTIMOS_GET_SERVIDOR.length() > 260) {
     ULTIMOS_GET_SERVIDOR = "";
   }
   ULTIMOS_GET_SERVIDOR += GET_SERVIDOR;
   ULTIMOS_GET_SERVIDOR += "<br><br>";
-  RESPONSE_TIMEOUT = vU16_rec_MTBS;
+  RESPONSE_TIMEOUT = vU16_modulos_MTBS;
   CLIENTE.setTimeout(RESPONSE_TIMEOUT);
   CLIENTE.begin(GET_SERVIDOR.c_str());
   int httpResponseCode = CLIENTE.GET();
   String payload = CLIENTE.getString();
   vS_payload = payload;
   CLIENTE.end();
-  Serial.println("Informacao GET enviada: "+GET_SERVIDOR);        
+  Serial.println("\nEnviado: "+GET_SERVIDOR);
   Serial.println("HTTP Response code: " + String(httpResponseCode));
   Serial.println(payload);
   return httpResponseCode;
@@ -221,17 +237,17 @@ String f_traduzAcoesAss(uint16_t cod) {
 }
 
 //========================================
-void f_configuraAssistente(bool force) {
+void f_configuraAssistenteGH(bool force) {
   if (!vB_exec_Assistente) {
     f_carregaConfi("ASSISTENTE",force);
   } else if (force) {
     vB_exec_Assistente = true;
   }
   if (WiFi.status() == 3 && vB_exec_Assistente) {
-    Serial.println("Iniciando configuracao ASSISTENTES: ");
+    Serial.print("Iniciando configuracao assistente Google: ");
     uint8_t cont = 1;
     while ( !CLIENT_ASS_GOOGLE.device(vS_assNomeGoogle.c_str(), vS_assLinguagem.c_str()) ) {
-      Serial.print("Conectando ao ASSISTENTE... ");
+      Serial.print("Conectando ao GH... ");
       Serial.print(cont);
       Serial.print(" tentativa de ");
       Serial.print(vU8_tentativaConexoes);
@@ -245,7 +261,7 @@ void f_configuraAssistente(bool force) {
     }
     Serial.print(CLIENT_ASS_GOOGLE.getIPAddress());
     Serial.println(" OK");
-    f_enviaAssistentes("Iniciando módulo "+vS_nomeDispositivo+".");
+    f_enviaAssistentes("O módulo "+vS_nomeDispositivo+" foi iniciado.");
   }
 }
 
@@ -554,15 +570,12 @@ void f_carregaConfi(String ref, bool force) {
     vS_ass_Alerta = CONFIG_FLASH.getString("ass_alerta", "frase alerta");
     vS_ass_Normal = CONFIG_FLASH.getString("ass_normal", "frase normal");
   }
-  if (ref == "RECEPTOR" || ref == "TUDO") {
-    vB_exec_Receptor = CONFIG_FLASH.getBool("exe_rec", false);
-    vU16_rec_MTBS = CONFIG_FLASH.getULong64("time_rec", 65535);
-    vS_ipReceptor = CONFIG_FLASH.getString("ip_rec", "ip");
-    vU16_portaWebReceptor = CONFIG_FLASH.getULong64("porta_rec", 65535);
-    vS_nomeReceptor = CONFIG_FLASH.getString("nome_rec", "nome");
+  if (ref == "MODULOS" || ref == "TUDO") {
+    vB_exec_Modulos = CONFIG_FLASH.getBool("exe_mod", false);
+    vU16_modulos_MTBS = CONFIG_FLASH.getULong64("time_mod", 65535);
+    vU16_portaWebModulos = CONFIG_FLASH.getULong64("porta_mod", 65535);
   }
   CONFIG_FLASH.end();
-  Serial.println(" OK");
 }
 
 //========================================
@@ -698,11 +711,17 @@ void f_salvaFlash() {
   CONFIG_FLASH.putString("ass_ling", vS_assLinguagem);
   CONFIG_FLASH.putString("ass_alerta", vS_ass_Alerta);
   CONFIG_FLASH.putString("ass_normal", vS_ass_Normal);
-  CONFIG_FLASH.putBool("exe_rec", vB_exec_Receptor);
-  CONFIG_FLASH.putULong64("time_rec", vU16_rec_MTBS);
-  CONFIG_FLASH.putULong64("porta_rec", vU16_portaWebReceptor);
-  CONFIG_FLASH.putString("ip_rec", vS_ipReceptor);
-  CONFIG_FLASH.putString("nome_rec", vS_nomeReceptor);
+  CONFIG_FLASH.putBool("exe_mod", vB_exec_Modulos);
+  CONFIG_FLASH.putULong64("time_mod", vU16_modulos_MTBS);
+  CONFIG_FLASH.putULong64("porta_mod", vU16_portaWebModulos);
+
+  Serial.print("Numero de elementos aS_InterMod: ");
+  Serial.println(sizeof(aS_InterMod) / sizeof(uint8_t));
+  Serial.print("Tamanho aS_InterMod em bytes: ");
+  Serial.println( sizeof(aS_InterMod) );
+  CONFIG_FLASH.putBytes( "paS_InterMod", aS_InterMod, sizeof(aS_InterMod) );
+  Serial.print("Tamanho paaS_InterMod em bytes: ");
+  Serial.println( CONFIG_FLASH.getBytesLength("paS_InterMod"));
 
   Serial.print("Numero de elementos aU8_Pinos: ");
   Serial.println(sizeof(aU8_Pinos) / sizeof(uint8_t));
@@ -853,22 +872,9 @@ uint8_t f_lePino(uint8_t tipo, uint8_t invert, uint8_t pino) {
 //========================================
 void f_iniciaPinos(bool force) {
 /*
-vI8_aU8_Pinos = 7;
-aU8_Pinos[7][23]
-aU8_Pinos[Propriedade][Pino]
 aU8_Pinos[0][x] = Fisico Mapeamento dos pinos fisicos
 aU8_Pinos[1][x] = Tipo 1=DIGITAL / 0=ANALOGICO
 aU8_Pinos[2][x] = Modo INPUT=1 / OUTPUT=3 / PULLUP=4 / INPUT_PULLUP=5 / PULLDOWN=8 / INPUT_PULLDOWN=9 / OPEN_DRAIN=10 / OUTPUT_OPEN_DRAIN=12 / ANALOG=0
-aU8_Pinos[3][x] = Invertido(XOR) 1=SIM / 0=NAO
-aU8_Pinos[4][x] = Status 0=LOW / 1=HIGH
-aU8_Pinos[5][x] = Retencao 0=NAO / 1=SIM
-aU8_Pinos[6][x] = Tempo Retencao 0 a 254
-*/
-/*
-vI8_aS8_Pinos = 1;
-aS8_Pinos[1][23]
-aS8_Pinos[Propriedade][Pino]
-aS8_Pinos[0][x] = Nome ou descricao
 */
   Serial.print("Iniciando configuracao dos pinos... ");
   CONFIG_FLASH.begin("confiGeral", true);
@@ -877,16 +883,16 @@ aS8_Pinos[0][x] = Nome ou descricao
 
   String aSBuffer[1][vU8_totPinos] = {};
   CONFIG_FLASH.getBytes("paS8_Pinos", aSBuffer, CONFIG_FLASH.getBytesLength("paS8_Pinos"));
-
   CONFIG_FLASH.end();
+
   for (uint8_t x=0; x<vI8_aU8_Pinos; x++){
     for (uint8_t y=0; y<vU8_totPinos; y++) {
       aU8_Pinos[x][y] = aU8Buffer[x][y];
-      if (x == 2) {
-        if (aU8_Pinos[1][x] == 1) {
-          pinMode(aU8_Pinos[0][y],aU8_Pinos[x][y]);
-        }
-      }
+    }
+  }
+  for (uint8_t x=0; x<vU8_totPinos; x++){
+    if (aU8_Pinos[1][x] == 1) {
+      pinMode(aU8_Pinos[0][x],aU8_Pinos[2][x]);
     }
   }
   for (uint8_t x=0; x<vI8_aS8_Pinos; x++){
@@ -894,7 +900,6 @@ aS8_Pinos[0][x] = Nome ou descricao
       aS8_Pinos[x][y] = aSBuffer[x][y];
     }
   }
-//
   Serial.println("OK");
 }
 
@@ -918,7 +923,8 @@ bool f_configuraWEB() {
     SERVIDOR_WEB.on("/salvaflash", f_handle_SalvaFlash);
     SERVIDOR_WEB.on("/recarrega", f_handle_RecerregarFuncoes);
     SERVIDOR_WEB.on("/lsprefpin", f_listaPreferences);
-    SERVIDOR_WEB.on("/recdados", f_recebeDados);
+    SERVIDOR_WEB.on("/dados", f_recebeDados);
+    SERVIDOR_WEB.on("/intermod", f_handle_InterModulos);
     SERVIDOR_WEB.on("/update", HTTP_POST, []() {
                                                   SERVIDOR_WEB.sendHeader("Connection", "close");
                                                   SERVIDOR_WEB.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");

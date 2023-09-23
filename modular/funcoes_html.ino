@@ -14,26 +14,12 @@ void f_handle_ConfiguraGeral() {
   html += "<h1>Configuração de Parâmetros Gerais</h1>";
   html += "<div id='mensagens'><p>Insira novas informações. Em seguida, clique em Aplicar para enviar os dados para o ["+vS_nomeDispositivo+"]: </p></div><br>";
   html += "<br><a href=\"/wifi\">Config Wifi</a>";
+  html += "<br><a href=\"/intermod\">Config Inter Módulos</a>";
   html += "<br><a href=\"/\">Página Inicial</a><br>";
   html += "<div style='border-style:inset; width:700px; background-color: rgb(148, 187, 242)' id='divDoForm'>";
   html += "<form action='/configurag' method='POST' style='margin:5px'>";
   html += "<label for='id_modap'>Habilita Modo AP: ";
   html += "<input type='text' name='MODAP' id='id_modap' value='"+String(vB_modoAP)+"' required> 0=Não / 1=Sim</label>";
-  html += "<br><br>";
-  html += "<label for='id_enviarec'>Habilita Inter Módulos: ";
-  html += "<input type='text' name='ENVIAREC' id='id_enviarec' value='"+String(vB_exec_Receptor)+"' required> 0=Não / 1=Sim</label>";
-  html += "<br>";
-  html += "<label for='id_nomerec'>Nome Módulo Remoto: ";
-  html += "<input type='text' name='NOMEREC' id='id_nomerec' value='"+vS_nomeReceptor+"' required></label>";
-  html += "<br>";
-  html += "<label for='id_iprec'>IP do Receptor: ";
-  html += "<input type='text' name='IPREC' id='id_iprec' value='"+String(vS_ipReceptor)+"' required></label>";
-  html += "<br>";
-  html += "<label for='id_portarec'>Porta do Receptor: ";
-  html += "<input type='text' name='PORTAREC' id='id_ipporta' value='"+String(vU16_portaWebReceptor)+"' required></label>";
-  html += "<br>";
-  html += "<label for='id_mtbsrec'>Tempo de Envio do Receptor: ";
-  html += "<input type='text' name='MTBSREC' id='id_mtbsrec' value='"+String(vU16_rec_MTBS)+"' required></label>";
   html += "<br><br>";
   html += "<label for='id_hateleg'>Habilita Telegram:";
   html += "<input type='text' name='HATELEG' id='id_hateleg' value='"+String(vB_exec_Telegram)+"' required> 0=Não / 1=Sim</label>";
@@ -101,11 +87,6 @@ void f_handle_ConfiguraGeral() {
   if (SERVIDOR_WEB.arg("SUBMIT_SALVAR").length() > 0) {
     Serial.print("Atualizando Informacoes Gerais: ");
     vB_modoAP = SERVIDOR_WEB.arg("MODAP").toInt();
-    vB_exec_Receptor = SERVIDOR_WEB.arg("ENVIAREC").toInt();
-    vS_nomeReceptor = SERVIDOR_WEB.arg("NOMEREC");
-    vS_ipReceptor = SERVIDOR_WEB.arg("IPREC");
-    vU16_portaWebReceptor = SERVIDOR_WEB.arg("PORTAREC").toInt();
-    vU16_rec_MTBS = SERVIDOR_WEB.arg("MTBSREC").toInt();
     vB_exec_Telegram = SERVIDOR_WEB.arg("HATELEG").toInt();
     vS_api_Telegram = SERVIDOR_WEB.arg("APITELEG");
     vS_chat_Telegram = SERVIDOR_WEB.arg("GRPTELEG");
@@ -130,6 +111,7 @@ void f_handle_ConfiguraGeral() {
     html += f_MensagemHTML("INFORMAÇÕES GERAIS APLICADAS", "As informações GERAIS foram aplicadas. NÃO Deslige a placa ["+vS_nomeDispositivo+"] antes de salvar as novas configurações.", sucesso);
   }
   html += "<br><a href=\"/wifi\">Config Wifi</a>";
+  html += "<br><a href=\"/intermod\">Config Inter Módulos</a>";
   html += "<br><a href=\"/\">Página Inicial</a>\n";
   html += "</body>";
   html += "</html>";
@@ -168,8 +150,8 @@ void f_handle_RecerregarFuncoes() {
       Serial.println("Recarregando Setup... ");
         f_configuraTELEGRAM(true);
         f_configuraMQTT(true);
-        f_configuraAssistente(true);
-        f_configuraReceptor(true);
+        f_configuraAssistenteGH(true);
+        f_configuraModulos(true);
       html += f_MensagemHTML("SETUP RECARREGADO", "As funções do setup da placa ["+vS_nomeDispositivo+"] foram recarregadas.", sucesso);
     } else if (SERVIDOR_WEB.arg("RECRG") == "TELEGRAM") {
       Serial.println("Recarregando Telegram... ");
@@ -181,11 +163,11 @@ void f_handle_RecerregarFuncoes() {
       html += f_MensagemHTML("MQTT RECARREGADO", "A função MqTT da placa ["+vS_nomeDispositivo+"] foi recarregada.", sucesso);
     } else if (SERVIDOR_WEB.arg("RECRG") == "ASSISTENTES") {
       Serial.println("Recarregando Assistentes... ");
-      f_configuraAssistente(true);
+      f_configuraAssistenteGH(true);
       html += f_MensagemHTML("ASSISTENTES RECARREGADO", "A função Assistentes da placa ["+vS_nomeDispositivo+"] foi recarregada.", sucesso);
-    } else if (SERVIDOR_WEB.arg("RECRG") == "RECEPTOR") {
+    } else if (SERVIDOR_WEB.arg("RECRG") == "MODULOS") {
       Serial.println("Recarregando Receptor... ");
-      f_configuraReceptor(true);
+      f_configuraModulos(true);
       html += f_MensagemHTML("RECEPTOR RECARREGADO", "A função Receptor da placa ["+vS_nomeDispositivo+"] foi recarregada.", sucesso);
     }    
       Serial.println("OK");
@@ -397,6 +379,9 @@ void f_limpaFLASH() {
       CONFIG_FLASH.remove("ass_time");
       CONFIG_FLASH.remove("ass_alerta");
       CONFIG_FLASH.remove("ass_normal");
+      CONFIG_FLASH.remove("exe_mod");
+      CONFIG_FLASH.remove("time_mod");
+      CONFIG_FLASH.remove("porta_mod");
       CONFIG_FLASH.remove("paU8_Pinos");
       CONFIG_FLASH.remove("paS8_Pinos");
       CONFIG_FLASH.remove("paU16_Acao1");
@@ -405,6 +390,7 @@ void f_limpaFLASH() {
       CONFIG_FLASH.remove("paS8_Acao2");
       CONFIG_FLASH.remove("paU16_Acao3");
       CONFIG_FLASH.remove("paS8_Acao3");
+      CONFIG_FLASH.remove("paS_InterMod");
       CONFIG_FLASH.end();
       Serial.println(" OK");
       html += f_MensagemHTML("MEMÓRIA FLASH AÇÕES/PINOS/ETC LIMPA", "As Configurações da placa ["+vS_nomeDispositivo+"] foram apagadas.", sucesso);
@@ -733,16 +719,16 @@ void f_listaPreferences() {
   html += WiFi.SSID();
   html += "<br>Modo AP: ";
   html += vB_modoAP;
-  html += "<br>Envia Receptor habilitado: ";
-  html += vB_exec_Receptor;
-  html += "<br>Nome do Receptor: ";
-  html += vS_nomeReceptor;
-  html += "<br>IP do Receptor: ";
-  html += vS_ipReceptor;
-  html += "<br>Porta do Receptor: ";
-  html += vU16_portaWebReceptor;
-  html += "<br>Tempo Envio ao Receptor: ";
-  html += vB_exec_Receptor;
+  html += "<br>Inter Módulos habilitado: ";
+  html += vB_exec_Modulos;
+  html += "<br>Nome - IP dos Módulos ";
+  for (uint8_t x=0; x<vU8_totPinos; x++) {
+    html += "<br>Índice: " + String(x) + " = " + aS_InterMod[0][x] + " - " + aS_InterMod[1][x];
+  }
+  html += "<br>Porta dos Módulos: ";
+  html += vU16_portaWebModulos;
+  html += "<br>Tempo Envio aos Módulos: ";
+  html += vU16_modulos_MTBS;
   html += "<h3>TELEGRAM</h3>";
   html += "<br>Habilita Telegram: ";
   html += vB_exec_Telegram;
@@ -823,6 +809,10 @@ void f_listaPreferences() {
   CONFIG_FLASH.getBytes("paU16_Acao3", aU16Buffer3, CONFIG_FLASH.getBytesLength("paU16_Acao3"));
   String aSBuffer3[2][vU8_totPinos] = {};
   CONFIG_FLASH.getBytes("paS8_Acao3", aSBuffer3, CONFIG_FLASH.getBytesLength("paS8_Acao3"));
+
+  String aSBuffer4[2][vU8_totPinos] = {};
+  CONFIG_FLASH.getBytes("paS_InterMod", aSBuffer4, CONFIG_FLASH.getBytesLength("paS_InterMod"));
+   
 
   html += "<h3>PINOS</h3>";  
   for (uint8_t x=0; x<vI8_aU8_Pinos; x++){
@@ -933,11 +923,21 @@ void f_listaPreferences() {
   html += "<br>SSID Modo AP: "+CONFIG_FLASH.getString("nome_wifi_ap", "");
   html += "<br>Senha Wifi Modo AP: "+CONFIG_FLASH.getString("senha_wifi_ap", "");
   html += "<br>Modo AP habilitado: "+String(CONFIG_FLASH.getBool("modo_wifi_ap", false));
-  html += "<br>Envia Receptor habilitado: "+String(CONFIG_FLASH.getBool("exe_rec", false));
-  html += "<br>Nome do receptor: "+CONFIG_FLASH.getString("nome_rec", "");
-  html += "<br>IP do Receptor: "+CONFIG_FLASH.getString("ip_rec", "");
-  html += "<br>Porta do Receptor: "+String(CONFIG_FLASH.getULong64("porta_rec", 65535));
-  html += "<br>Tempo Enviao Receptor: "+String(CONFIG_FLASH.getULong64("time_rec", 65535));
+  html += "<br>Inter Módulos habilitado: "+String(CONFIG_FLASH.getBool("exe_mod", false));
+  html += "<br>Porta dos Módulos: "+String(CONFIG_FLASH.getULong64("porta_mod", 65535));
+  html += "<br>Tempo Envio aos Módulos: "+String(CONFIG_FLASH.getULong64("time_mod", 65535));
+  html += "<br>MÓDULO - IP<br>";
+  for (uint8_t x=0; x<vI8_aS_InterMod; x++){
+    html += "Índice "+String(x);
+    html += " = {";        
+    for (uint8_t y=0; y<vU8_totPinos; y++) {
+      html += aSBuffer4[x][y];
+      if (y < vU8_totPinos-1) {
+        html += ",";
+      }       
+    }
+    html += "}<br>";
+  }
   html += "<h3>TELEGRAM</h3>";
   html += "Habilita Telegram: "+String(CONFIG_FLASH.getBool("exe_teleg", false));
   html += "<br>API Telegram: "+CONFIG_FLASH.getString("api_teleg", ":");
