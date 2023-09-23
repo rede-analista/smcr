@@ -35,7 +35,7 @@ A interface web disponibiliza 23 posições de configurações de pinos, ou seja
     7. Definir envio assistentes.
   - [Recursos Gerais](manual/configgeral.md):
     1. Habilidat/desabilitar modo AP.
-    2. Denifir informações de outro módulo ESP32 (receptor).
+    2. Denifir informações de Inter Módulos.
     3. Denifir informações do bot Telegram.
     4. Denifir informações do broker MqTT.
     5. Denifir informações dos assistentes.
