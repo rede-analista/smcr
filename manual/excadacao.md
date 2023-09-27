@@ -1,3 +1,17 @@
+# Parâmetros
+ - PINO ORGIEM: Será listado os pinos cadastrados no cadastro de portas.
+ - PINO DESTINO: 1 a 255 (deve ser um pino que já foi realizado cadastro no cadastro de portas)
+ - AÇÃO: 0=NENHUMA / 1=LIGA / 2=LIGA DELAY / 3=PISCA / 4=PULSO / 5=PULSO DELAY
+ - TEMPO AÇÃO ON: 0 a 65535 (Tempo em ciclos)
+ - TEMPO AÇÃO OFF: 0 a 65535 (Tempo em ciclos)
+ - NÍVEL ACIONAMENTO: 1=ALTO / 0=BAIXO
+ - ENVIA MÓDULO: 0=Não / 1 A 43=ID do Módulo que será enviado
+ - ENVIA TELEGRAM: 0=Nao / 1=Sim
+ - NOTIFICA ASSISTENTES: 0=Nao / 1=Sim
+ - ENVIA MQTT:  0=Não / 1=Sim
+ - CLASSE MQTT: [Veja](https://www.home-assistant.io/integrations/mqtt/)
+ - ÍCONE MQTT: [Veja](https://www.home-assistant.io/integrations/mqtt/)
+
 # Exemplo de Cadastro de Ações
 
 - Como exemplo pode usar os pinos [cadastrados anteriormente](excadpino.md).<br>
