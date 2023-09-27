@@ -1,7 +1,7 @@
 # Parâmetros
  - NOME: Caracteres (evitar acentuação, nã há tratamento para caracteres especiais);
- - PINO: 2,4,5,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33,34,35,36,39, etc. (aceita valor entre 0 a 255)
- - MODO: INPUT=1 / OUTPUT=3 / PULLUP=4 / INPUT_PULLUP=5 / PULLDOWN=8 / INPUT_PULLDOWN=9 / OPEN_DRAIN=10 / OUTPUT_OPEN_DRAIN=12
+ - PINO: 2,4,5,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33,34,35,36,39,231,242,255 etc. (aceita valor entre 0 a 255)
+ - MODO: 1=INPUT / 3=OUTPUT / 4=PULLUP / 5=INPUT_PULLUP / 8=PULLDOWN / 9=INPUT_PULLDOWN / 10=OPEN_DRAIN / 12=OUTPUT_OPEN_DRAIN
  - XOR: 0=Não / 1=Sim
  - RETENÇÃO: 0=Não / 1=Sim
  - TEMPO RETENÇÃO: 0 a 255
