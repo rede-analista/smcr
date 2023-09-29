@@ -29,6 +29,9 @@ void f_handle_InterModulos() {
   html += "<br>";
   html += "<label for='id_mtbsrec'>Tempo de Envio do Receptor: ";
   html += "<input type='text' name='MTBSREC' id='id_mtbsrec' value='"+String(vU16_modulos_MTBS)+"' required></label>";
+  html += "<br>";
+  html += "<label for='id_ciclomod'>Ciclos Handshake: ";
+  html += "<input type='text' name='CICLOMOD' id='id_ciclomod' value='"+String(vI_cicloHandshake)+"' required></label>";
   html += "<br><br>";
   uint8_t linha = vU8_totPinos/5;
   uint8_t colINICIO = 0;
@@ -89,6 +92,7 @@ void f_handle_InterModulos() {
     vB_exec_Modulos = SERVIDOR_WEB.arg("ENVIAREC").toInt();
     vU16_portaWebModulos = SERVIDOR_WEB.arg("PORTAREC").toInt();
     vU16_modulos_MTBS = SERVIDOR_WEB.arg("MTBSREC").toInt();
+    vI_cicloHandshake = SERVIDOR_WEB.arg("CICLOMOD").toInt();
     Serial.println("OK");
     Serial.println("Informacoes novas em uso.");
     html += f_MensagemHTML("INFORMAÇÕES ATUALIZADAS", "As informações dos MÓDULOS foram atualizadas. NÃO Deslige a placa ["+vS_nomeDispositivo+"] antes de salvar as novas configurações.", sucesso);

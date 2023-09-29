@@ -20,7 +20,7 @@ void f_handle_Index() {
   html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vU16_portaWeb) + "/firmware'> Atualizar Firmware</a> - ";
   html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vU16_portaWeb) + "/recarrega'> Recarregar Funções</a> - ";
   html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vU16_portaWeb) + "/limpaflash'> Limpar Flash</a></center>";
-  html += "<h3>SENSORES</h3>";
+  html += "<h2>SENSORES</h2>";
   html += "<table border='1'>";
   uint8_t linha = vU8_totPinos/5;
   uint8_t colINICIO = 0;
@@ -59,7 +59,29 @@ void f_handle_Index() {
     }
   }
   CONFIG_FLASH.end();
-  html += "</table>";
+  html += "</table><br>";
+  html += "<h2>COMUNICAÇÃO MÓDULOS</h2>";
+  html += "Tempo Handshake: ";
+  html += String(vI_controleCicloHandshake);
+  html += " de ";
+  html += String(vI_cicloHandshake);
+  html += "<br> Alerta Handshake: ";
+  html += String(vB_AlertaHandshake);
+  html += "<p>Último recebido: ";
+  html += vS_uri;
+  html += "</p>";
+  html += "<p>Último envio: ";
+  html += GET_SERVIDOR;
+  html += "</p>";
+  html += "<p>Resposta: ";
+  html += vI_httpResponseCode;
+  html += " <br>";
+  html += vS_payload;
+  html += "</p>";
+  html += "<br><br>Últimos envios:<br>";
+  html += ULTIMOS_GET_SERVIDOR;
+  html += "<br><br>Últimos recebidos:<br>";
+  html += ULTIMOS_GET_RECEBIDOS;
   html += "<br><br><a href=\"/\">Página Inicial</a>\n";
   html += "</body>";
   html += "</html>";
