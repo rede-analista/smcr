@@ -90,7 +90,7 @@
     - aU16_Acao[4][x] = Tempo Acao OFF (LIGA DELAY=2 / PISCA=3 / PULSO=4 / PULSO DELAY ON=5)
     - aU16_Acao[5][x] = Acionamento Alto=1 / Baixo=0
 
-  - aS8_Acao1[2][43] = Array de 2 linhas e 23 colunas. (cada array)
+  - aS8_Acao1[2][43] = Array de 2 linhas e 43 colunas. (cada array)
     - aS8_Acao1[Propriedade][Pino]
     - aS8_Acao1[0][x] Índice 0 = Classe da ação para o MqTT
     - aS8_Acao1[1][x] Índice 1 = Icone da ação para o MqTT
