@@ -13,17 +13,17 @@
 
 ## Informações do Inter Módulos
 - Parâmetro HABILITAR INTER MÓDULOS
-  - Você pode habilitar a comunicação entre módulos. A comunicação entre módulos é um recurso que o ESP32 envia informações de stauts do pino para outro módulo usando a rede wifi. Com esta atualização remota de status do pino voce pode acionar um equipamento mesmo que o sensor esteja em outro módulo esp distante. [Veja Inter Módulos](intermod.md)
+  - Você pode habilitar a comunicação entre módulos. A comunicação entre módulos é um recurso que o ESP32 envia informações de status do pino para outro módulo usando a rede wifi. Com esta atualização remota de status do pino voce pode acionar um equipamento mesmo que o sensor esteja em outro módulo esp distante. [Veja Inter Módulos](intermod.md)
    
 ## Informações do Telegram
 
 - Parâmetro HABILITA TELEGRAM
-  - Habilita o envio de notificações para um grupo no Telegram.
-    NOTA 3: Para habilitar esta opção os parâmetros referente ao Telegram precisam ser informados.
+  - Habilita o envio de notificações para um grupo no Telegram.<br>
+    NOTA 1: Para habilitar esta opção os parâmetros referente ao Telegram precisam ser informados.
 
 - Parâmetro CHAVE API TELEGRAM
-  - Informe a chave da API do bot do Telegram.
-    NOTA 4: Para cada módulo deve ser gerado uma chave, caso utilize a mesma chave pode gerar conflito onde um módulo recebe informações do Telegram e outro módulo com a mesma chave não receba as informações corretamente.
+  - Informe a chave da API do bot do Telegram.<br>
+    NOTA 2: Para cada módulo deve ser gerado uma chave, caso utilize a mesma chave pode gerar conflito onde um módulo recebe informações do Telegram e outro módulo com a mesma chave não receba as informações corretamente.
 
 - Parâmetro ID GRUPO TELEGRAM
   - Informe o ID do grupo deo Telegram que será enviado as notificações.
@@ -38,8 +38,8 @@
 ## Informações do MQTT
 
 - Parâmetro HABILITA MQTT
-  - Habilita o envio de informações para um broker mqtt.
-    NOTA 5: Para habilitar esta opção os parâmetros referente ao mqtt precisam ser informados.
+  - Habilita o envio de informações para um broker mqtt.<br>
+    NOTA 3: Para habilitar esta opção os parâmetros referente ao mqtt precisam ser informados.
 
 - Parâmetro IP MQTT
   - Informe o IP do mqtt que irá receber as informações.
@@ -65,13 +65,13 @@
 ## Informações do MQTT
 
 - Parâmetro HABILITA ASSISTENTES
-  - Habilita o envio de notificações para assistentes e o comando de voz por assistentes.
-    NOTA 6: Para habilitar esta opção os parâmetros referente aos assistentes precisam ser informados.
+  - Habilita o envio de notificações para assistentes e o comando de voz por assistentes.>br>
+    NOTA 4: Para habilitar esta opção os parâmetros referente aos assistentes precisam ser informados.
 
 - Parâmetro NOME GOOGLE
   - Informe nome que o dispositivo Google Home está cadastrado no seu aplicativo.
 
-Parâmetro NOME ALEXA
+- Parâmetro NOME ALEXA
   - Informe nome que o dispositivo Alexa está cadastrado no seu aplicativo.
 
 - Parâmetro LINGUAGEM ASSISTENTES
@@ -90,14 +90,15 @@ Parâmetro NOME ALEXA
 - Depois de preencher as informações clique em "Aplicar(sem salvar)".<br>
   Isto cadastra as informações porém não salva as informações da flash do ESP. Se o módulo for reiniciado antes de salvar as informações serão perdidas.<br>
 
-  NOTA 7: Algumas informações só serão usadas após recarregar as funções do setup() do ESP32, para isto na página inical clice em "Recarregar Funções".<br>
+  NOTA 5: Algumas informações só serão usadas após recarregar as funções do setup() do ESP32, para isto na página inical clice em "Recarregar Funções".<br>
   Após abrir a página de funções escolha uma opção, por exemplo "TELEGRAM" e clique em "Recarregar" para aplicar as novas configurações.
+  
   ![image](https://github.com/rede-analista/smcr/assets/66534023/097f3317-c794-4df5-8a3f-84a66bee2790)
 
   **Lembre-se que "Recarregar" as funções não salva as informações na flash, se o módulo for reiniciado antes de salvar na flash as informações serão perdidas**
 
 
-  NOTA 8: Algumas informações só serão usadas pelo sistema após reiniciar o módulo, antes de reiniciar as informações devem sar salvas na flash.<br>
+  NOTA 6: Algumas informações só serão usadas pelo sistema após reiniciar o módulo, antes de reiniciar as informações devem sar salvas na flash.<br>
 
 - Se quiser salvar as informações na memória flash do ESP, na tela inicial clique em "Parâmetros", despois clique em "Salvar na Flash".<br>
   Responda "Sim" à pergunta e clique em "Salvar na Flash".<br>
