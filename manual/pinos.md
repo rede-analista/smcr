@@ -22,7 +22,7 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
   - É a informação do pino físico do ESP32, aqui será feito a associação do pino físico na placa ESP.<br>
     Esta informação será usada na configuração de Ações(eventos).
     Deve ser um número que corresponde ao pino físico do ESP, por exemplo, este número pode ser 2,4,5,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33,34,35,36,39, etc.<br>
-    NOTA 4: O Pino 255 é reservado para controle de status de comunicação entre módulos. [Veja](manual/intermod.md)
+    NOTA 4: O Pino 255 é reservado para controle de status de comunicação entre módulos. [Veja Inter Módulos](manual/intermod.md)
 
 - Parâmetro STATUS
   - Informa o status UP ou DOWN da última leitura do pino.Esta informação será LOW=0 / HIGH=1 para pinos digitais<br>
