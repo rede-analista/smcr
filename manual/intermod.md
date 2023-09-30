@@ -9,7 +9,10 @@
     - Informe a porta TCP(porta web) do módulo que irá receber as informações.
 
   - Parâmetro TEMPO ENVIO RECEPTOR
-    - Informe o tem em milisegundos que a função de enviar informações à outro módulo será executada.
+    - Informe o tempo em milisegundos que a função de enviar informações à outro módulo será executada.
+
+  - Parâmetro CICLOS HANDSHAKE
+    - Informe o tempo em ciclos que um módulo ficará enviando informações entre eles, este valor é decrementado toda vez que a função "f_checkAcoesModulos()" é executada, se o módulo não receber nenhama informação durante um período este valor irá chegar a zero e irá colocar o status do pino 255 em 1(alto). Este processo pode ser usado parar gerar um alerta informando que houve perda de comunicação entra os módulos.
 
   - Parâmetro NOME
     - Informe o nome do módulo remoto, esta informação é usada apenas para validação quando receber dados de outro ESP. Se o nome do módulo que enviou a informação não for igual a um desses campos os dados serão descartados.<br>
