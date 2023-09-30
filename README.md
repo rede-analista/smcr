@@ -11,7 +11,7 @@ A interface web disponibiliza 43 posições de configurações de pinos, ou seja
 **NOTA: Não sou programador e nem técnico em eletrônica, somente me interesso por programação e controladores, sendo assim, não espere uma programação "bonita" e/ou dentro das melhores práticas, mas fique a vontade para trocar informações ou sugerir alguma melhoria**
 
 ## Recursos:
-- Recursos já disponíveis: [Print de Telas](prints.md)
+- Recursos já disponíveis: [Print de Telas](manual/prints.md)
   - [Recursos de Rede](manual/rede.md):
     1. Configuração inicial em modo AP.
     2. Configuração Wifi (ssid/senha).
