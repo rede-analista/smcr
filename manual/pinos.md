@@ -62,7 +62,7 @@ Parâmetro TEMPO RETENÇÃO
 
 - São usados 2 arrays com as informações dos pinos o array aU8_Pinos do tipo uint8_t e o array aS8_Pinos do tipo string.<br>
 
-  - aU8_Pinos[7][23] = Array de 7 linhas e 23 colunas.
+  - aU8_Pinos[7][43] = Array de 7 linhas e 43 colunas.
     - aU8_Pinos[Propriedade][Pino]
     - aU8_Pinos[0][x] Índice 0 = PINO           = Guarda número do pino físico.
     - aU8_Pinos[1][x] Índice 1 = TIPO           = Guarda o tipo do pino. 1=DIGITAL / 0=ANALOGICO
@@ -72,6 +72,6 @@ Parâmetro TEMPO RETENÇÃO
     - aU8_Pinos[5][x] Índice 5 = RETENÇÃO       = Guarda se deve aplicar retenção na leitura do pino. 0=NAO / 1=SIM
     - aU8_Pinos[6][x] Índice 6 = TEMPO RETENÇÃO = Guarda o tempo de retenção da leitura do pino, 0 a 254
 
-  - aS8_Pinos[1][23] = Array de 1 linha e 23 colunas.
+  - aS8_Pinos[1][43] = Array de 1 linha e 43 colunas.
     - aS8_Pinos[Propriedade][Pino]
     - aS8_Pinos[0][x] = Nome/descricao do pino.
