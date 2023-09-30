@@ -7,16 +7,13 @@ void f_handle_InterModulos() {
   html += "<head>";
   html += "<meta charset='UTF-8'>";
   html += "<meta name='viewport' content='width=device-width, initial-scale=1.0' />";
-  html += "<title>"+vS_nomeDispositivo+"</title>";
+  html += "<title>"+vS_nomeDispositivo+" Cadastro Inter Módulos</title>";
   html += "</head>";
   html += "<body id='body'>";
   html += "<div id='telaConfigInterModulos'> ";
   html += "<div id='bloqueiaTela'></div>";
   html += "<h1>Insira as informações dos Módulos</h1>";
-  html += "<div id='mensagens'><p>Insira novas informações de configuração dos módulos. Em seguida, clique em Salvar para enviar os dados para o ["+vS_nomeDispositivo+"]: </p></div>";
-  html += "<br> ID - Referência de cadastro do Módulo";
-  html += "<br> Nome - Nome do Módulo";
-  html += "<br> Ip - Endereço IP do Módulo<br>";
+  html += "<div id='mensagens'><p>Insira novas informações de configuração dos módulos. Em seguida, clique em \"Aplicar\" para enviar os dados para o ["+vS_nomeDispositivo+"]: </p></div>";
   html += "<br><a href=\"/\">Página Inicial</a>\n";
   html += "<br><div style='border-style:inset; width:1300px; background-color: rgb(148, 187, 242)' id='divDoForm'>";
   html += "<form action='/intermod' method='POST' style='margin:5px'>";
@@ -48,7 +45,7 @@ void f_handle_InterModulos() {
     html += "       <td style='background-color: LightGrey'><center>Nome</center></td>";
                     for (x=colINICIO; x<colFIM; x++){
                       if (x == 0 && colINICIO == 0) {
-                        html += "<td><input type='text' style='background-color: LightGrey' name='NOME"+String(x)+"' value='' readonly ></td>";
+                        html += "<td><input type='text' style='background-color: LightGrey' name='NOME"+String(x)+"' value='DESATIVADO' readonly ></td>";
                       } else {
                         html += "<td><input type='text' name='NOME"+String(x)+"' value='"+aS_InterMod[0][x]+"'></td>";
                       }

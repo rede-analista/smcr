@@ -151,7 +151,12 @@ void f_checkAcoesModulos() {
     }
     aU8_Pinos[4][f_retornaIndicePino(255)] = vB_AlertaHandshake;
     if (f_checkAcaoCadastrada() && vI_controleCicloHandshake < 2) {
-      f_enviaModulo(vU8_ultimoModEnviado,"255", String(f_retornaIndicePino(255)), "0");
+      if (f_enviaModulo(vU8_ultimoModEnviado,"255", String(f_retornaIndicePino(255)), "0") != 200) {
+        vU8_ultimoModEnviado++;
+        if (vU8_ultimoModEnviado > vU8_totPinos) {
+          vU8_ultimoModEnviado = 0;
+        }
+      }
     }
   }
 }
