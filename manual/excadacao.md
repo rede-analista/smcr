@@ -5,7 +5,7 @@
  - TEMPO AÇÃO ON: 0 a 65535 (Tempo em ciclos)
  - TEMPO AÇÃO OFF: 0 a 65535 (Tempo em ciclos)
  - NÍVEL ACIONAMENTO: 1=ALTO / 0=BAIXO
- - ENVIA MÓDULO: 0=Não / 1 A 43=ID do Módulo que será enviado
+ - ENVIA MÓDULO: 0=Não / 1 A 43=ID do Módulo(receptor) que será enviado o status do pino
  - ENVIA TELEGRAM: 0=Nao / 1=Sim
  - NOTIFICA ASSISTENTES: 0=Nao / 1=Sim
  - ENVIA MQTT:  0=Não / 1=Sim
@@ -20,8 +20,7 @@
     - Ação: 3 (pisca)
     - Nível Acion.: 1 (alto)
 
-    ![image](https://github.com/rede-analista/smcr/assets/66534023/2f64315c-d8f0-4dc5-bafc-bae803d205e9)
-
+    ![image](https://github.com/rede-analista/smcr/assets/66534023/162a5396-82de-4a6c-b253-5a29b13b7516)
 
 
 - Depois de preencher as informações clique em "Aplicar(sem salvar)".<br>
