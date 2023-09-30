@@ -21,7 +21,8 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
 - Parâmetro PINO
   - É a informação do pino físico do ESP32, aqui será feito a associação do pino físico na placa ESP.<br>
     Esta informação será usada na configuração de Ações(eventos).
-    Deve ser um número que corresponde ao pino físico do ESP, por exemplo, este número pode ser 2,4,5,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33,34,35,36,39, etc.
+    Deve ser um número que corresponde ao pino físico do ESP, por exemplo, este número pode ser 2,4,5,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33,34,35,36,39, etc.<br>
+    NOTA 4: O Pino 255 é reservado para controle de status de comunicação entre módulos. [Veja](manual/intermod.md)
 
 - Parâmetro STATUS
   - Informa o status UP ou DOWN da última leitura do pino.Esta informação será LOW=0 / HIGH=1 para pinos digitais<br>
@@ -55,9 +56,9 @@ Parâmetro TEMPO RETENÇÃO
 - A leitura de status dos pinos é executada pela task "TaskLeituraPinos" o código desta task está no arquivo "tarefas.ino".<br>
   Essa task é iniciada no final da função "setup()" do módulo ESP, basicamente ela realiza a leitura do status dos pinos e atualiza o array "aU8_Pinos[4][x]" com o status atual de cada pino.<br>
 
-  NOTA 4: Se um pino for cadastrado como TIPO = 254 a task não irá realizar a leitura deste pino e portanto seu status não será atualizado por esta função.
+  NOTA 5: Se um pino for cadastrado como TIPO = 254 a task não irá realizar a leitura deste pino e portanto seu status não será atualizado por esta função.
 
-  NOTA 5: Essa task é executada continuamente aplicando apenas uma pausa pela função "vTaskDelay(9/portTICK_PERIOD_MS)" isto que dizer que o período de leitura de cada pino é feita no tempo de 9 dividido por portTICK_PERIOD_MS, isto está ligado diretamente a frequência do processador.<br>
+  NOTA 6: Essa task é executada continuamente aplicando apenas uma pausa pela função "vTaskDelay(9/portTICK_PERIOD_MS)" isto que dizer que o período de leitura de cada pino é feita no tempo de 9 dividido por portTICK_PERIOD_MS, isto está ligado diretamente a frequência do processador.<br>
           #define portTICK_PERIOD_MS ((TickType_t)1000 / configTICK_RATE_HZ)
 
 - São usados 2 arrays com as informações dos pinos o array aU8_Pinos do tipo uint8_t e o array aS8_Pinos do tipo string.<br>
