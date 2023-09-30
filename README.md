@@ -49,6 +49,7 @@ A interface web disponibiliza 43 posições de configurações de pinos, ou seja
   - Comando de voz por assistentes.
   - Tratar informações/configurações antes de aplicar/salvar no módulo.
   - Detalhar comentários no código fonte.
+  - Exportar e importar configurações salvas.
 
 - Atividades/Recursos não previstos:
   - Não é previso comunicação usando ssl (somente para uso interno), não deve ser usado em uma rede pública ou redes desprotegidas, não usa acesso https.
