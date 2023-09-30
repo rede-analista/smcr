@@ -17,7 +17,8 @@
     
     ![image](https://github.com/rede-analista/smcr/assets/66534023/36ed98f7-db92-4eed-8a08-e9e3062f0b47)
 
-    No exemplo acima o módulo está copnfigurado para aceitar informações de outros módulos que tenha o hostname "Medidor", "Aquario" ou "Gerador".<br>
+    No exemplo acima o módulo está copnfigurado para aceitar informações de outros módulos que tenha o hostname "Medidor", "Aquario" ou "Gerador". Estas informações tambem serão usadas caso queira enviar informaçções para outros módulos.<br>
+    NOTA 3: Um módulo pode enviar e receber informações, ou seja, pode ser um transmissor e um receptor, basta efetuar este cadastro de nomes e IPs e configurar as ações com os ID que foram cadastrados nesta página.
 
 - Se quiser salvar as informações na memória flash do ESP, na tela inicial clique em "Parâmetros", despois clique em "Salvar na Flash".<br>
   Responda "Sim" à pergunta e clique em "Salvar na Flash".<br>
