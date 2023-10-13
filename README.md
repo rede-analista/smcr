@@ -83,7 +83,7 @@ Depois de salvar as informações o módulo irá reiniciar e conectar na sua red
 
 
 Pelo navegador acesse o endereço "http://esp32modularx.local:8080", irá abrir a página inicial do módulo ESP32 e voce terá acesso as demais páginas de configuração.
-![image](https://github.com/rede-analista/smcr/assets/66534023/a7510847-2f21-4376-87bf-3931af9edcc0)
+![image](https://github.com/rede-analista/smcr/assets/66534023/1074c823-c588-414a-8686-6b82792baf21)
 
 
 
