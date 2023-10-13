@@ -88,7 +88,8 @@ Pelo navegador acesse o endereço "http://esp32modularx.local:8080", irá abrir 
 
 
 
-A informações default de hostname, porta, senha, etc. podem ser alteradas depois pela interface web. Caso queira alterar as informações no código antes de compilar/gravar elas podem ser encontradas no arquivo "funcoes.ino" nas linhas 495 a 498.
+
+<br>NOTA 1: A informações default de hostname, porta, senha, etc. podem ser alteradas depois pela interface web. Caso queira alterar as informações no código antes de compilar/gravar elas podem ser encontradas no arquivo "funcoes.ino" nas linhas 495 a 498.
 ![image](https://github.com/rede-analista/smcr/assets/66534023/7ba3fe7a-30c6-4afc-a335-33dfb037514c)
 
 
