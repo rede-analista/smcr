@@ -90,15 +90,11 @@
 - Depois de preencher as informações clique em "Aplicar(sem salvar)".<br>
   Isto cadastra as informações porém não salva as informações da flash do ESP. Se o módulo for reiniciado antes de salvar as informações serão perdidas.<br>
 
-  NOTA 5: Algumas informações só serão usadas após recarregar as funções do setup() do ESP32, para isto na página inical clice em "Recarregar Funções".<br>
-  Após abrir a página de funções escolha uma opção, por exemplo "TELEGRAM" e clique em "Recarregar" para aplicar as novas configurações.
-  
-  ![image](https://github.com/rede-analista/smcr/assets/66534023/097f3317-c794-4df5-8a3f-84a66bee2790)
-
+  NOTA 5: Algumas informações só serão usadas após recarregar as funções do setup() do ESP32, [Veja Recarregar Funçõẽs](funmanu.md)<br>
   **Lembre-se que "Recarregar" as funções não salva as informações na flash, se o módulo for reiniciado antes de salvar na flash as informações serão perdidas**
 
 
-  NOTA 6: Algumas informações só serão usadas pelo sistema após reiniciar o módulo, antes de reiniciar as informações devem sar salvas na flash.<br>
+  
 
 - Se quiser salvar as informações na memória flash do ESP, na tela inicial clique em "Parâmetros", despois clique em "Salvar na Flash".<br>
   Responda "Sim" à pergunta e clique em "Salvar na Flash".<br>
