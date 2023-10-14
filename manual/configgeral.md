@@ -62,7 +62,7 @@
 - Parâmetro TEMPO DISCOVERY MQTT
   - Informe o tem em milisegundos que a função de enviar discovery ao mqtt será executada.
 
-## Informações do MQTT
+## Informações dos Assistentes
 
 - Parâmetro HABILITA ASSISTENTES
   - Habilita o envio de notificações para assistentes e o comando de voz por assistentes.>br>
