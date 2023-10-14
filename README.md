@@ -40,7 +40,7 @@ A interface web disponibiliza 43 posições de configurações de pinos, ou seja
     4. Denifir informações do broker MqTT.
     5. Denifir informações dos assistentes.
     6. Visualizar configurações em memória e na flash.
-    7. Atualização em massa de pinos e ações.
+    7. Atualização em massa de pinos, ações e Intermódulos.
   - [Funções de Manutenção](manual/funmanu.md):
     1. Reiniciar módulo ESP32.
     2. Limpeza de configurações ou Formatação da flash.
