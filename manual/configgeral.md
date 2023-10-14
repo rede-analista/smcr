@@ -114,7 +114,7 @@
 ## Configuração em Massa
 
 - Alguns cadastros possuem uma quantidade maior de informações, por exemplo, cadastro dos pinos ou cadastro de ações, etc. Para facilitar a configuraçõa de uma nova placa ESP ou uma substituição, foi criado esta opção para que alguns desses cadastros possam ser realizada de forma massiva. Copiando as informações desses campos pode se feito tambem um backup parcial das configurações do módulo.<br>
-  NOTA 6: Esse import só preenhce os campos do cadasrtro, após efetuar o import você deve entrar no cadastro e aplicar as novas informações.
+  
 
 ![image](https://github.com/rede-analista/smcr/assets/66534023/c90bd2b8-e8c1-40d8-b1b0-e2051d1da8cb)
 
