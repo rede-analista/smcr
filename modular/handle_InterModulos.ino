@@ -13,22 +13,22 @@ void f_handle_InterModulos() {
   html += "<div id='telaConfigInterModulos'> ";
   html += "<div id='bloqueiaTela'></div>";
   html += "<h1>Insira as informações dos Módulos</h1>";
-  html += "<div id='mensagens'><p>Insira novas informações de configuração dos módulos. Em seguida, clique em \"Aplicar\" para enviar os dados para o ["+vS_nomeDispositivo+"]: </p></div>";
+  html += "<div id='mensagens'><p>Insira novas informações de configuração dos módulos. Em seguida, clique em \"Aplicar\".</p></div>";
   html += "<br><a href=\"/\">Página Inicial</a>\n";
-  html += "<br><div style='border-style:inset; width:1300px; background-color: rgb(148, 187, 242)' id='divDoForm'>";
+  html += "<br><div style='border-style:inset; width:970px; background-color: rgb(148, 187, 242)' id='divDoForm'>";
   html += "<form action='/intermod' method='POST' style='margin:5px'>";
   html += "<table border='1'>";
   html += "<label for='id_enviarec'>Habilita Inter Módulos: ";
   html += "<input type='text' name='ENVIAREC' id='id_enviarec' value='"+String(vB_exec_Modulos)+"' required> 0=Não / 1=Sim</label>";
   html += "<br>";
   html += "<label for='id_portarec'>Porta do Receptor: ";
-  html += "<input type='text' name='PORTAREC' id='id_ipporta' value='"+String(vU16_portaWebModulos)+"' required></label>";
+  html += "<input type='text' name='PORTAREC' id='id_ipporta' value='"+String(vU16_portaWebModulos)+"'></label>";
   html += "<br>";
   html += "<label for='id_mtbsrec'>Tempo de Envio do Receptor: ";
-  html += "<input type='text' name='MTBSREC' id='id_mtbsrec' value='"+String(vU16_modulos_MTBS)+"' required></label>";
+  html += "<input type='text' name='MTBSREC' id='id_mtbsrec' value='"+String(vU16_modulos_MTBS)+"'></label>";
   html += "<br>";
   html += "<label for='id_ciclomod'>Ciclos Handshake: ";
-  html += "<input type='text' name='CICLOMOD' id='id_ciclomod' value='"+String(vI_cicloHandshake)+"' required></label>";
+  html += "<input type='text' name='CICLOMOD' id='id_ciclomod' value='"+String(vI_cicloHandshake)+"'></label>";
   html += "<br><br>";
   uint8_t linha = vU8_totPinos/5;
   uint8_t colINICIO = 0;
@@ -38,16 +38,16 @@ void f_handle_InterModulos() {
     html += "    <tr>";
     html += "       <td style='background-color: LightGrey'><center>ID</center></td>";
                     for (x=colINICIO; x<colFIM; x++){
-                      html += "<td><input type='text' style='background-color: LightGrey' name='ID"+String(x)+"' value='"+String(x)+"' readonly required></td>";
+                      html += "<td><input type='text' style='background-color: LightGrey' name='ID"+String(x)+"' maxlength='14' size='14' value='"+String(x)+"' readonly required></td>";
                     }
     html += "    </tr>";
     html += "    <tr>";
     html += "       <td style='background-color: LightGrey'><center>Nome</center></td>";
                     for (x=colINICIO; x<colFIM; x++){
                       if (x == 0 && colINICIO == 0) {
-                        html += "<td><input type='text' style='background-color: LightGrey' name='NOME"+String(x)+"' value='DESATIVADO' readonly ></td>";
+                        html += "<td><input type='text' style='background-color: LightGrey' name='NOME"+String(x)+"' maxlength='14' size='14' value='DESATIVADO' readonly ></td>";
                       } else {
-                        html += "<td><input type='text' name='NOME"+String(x)+"' value='"+aS_InterMod[0][x]+"'></td>";
+                        html += "<td><input type='text' name='NOME"+String(x)+"' maxlength='14' size='14' value='"+aS_InterMod[0][x]+"'></td>";
                       }
                     }
     html += "    </tr>";
@@ -55,9 +55,9 @@ void f_handle_InterModulos() {
     html += "       <td style='background-color: LightGrey'><center>Ip</center></td>";
                     for (x=colINICIO; x<colFIM; x++){
                       if (x == 0 && colINICIO == 0) {
-                        html += "<td><input type='text' style='background-color: LightGrey' name='IP"+String(x)+"' value='' readonly></td>";
+                        html += "<td><input type='text' style='background-color: LightGrey' name='IP"+String(x)+"' maxlength='15' size='15' value='' readonly></td>";
                       } else {
-                        html += "<td><input type='text' name='IP"+String(x)+"' value='"+aS_InterMod[1][x]+"'></td>";
+                        html += "<td><input type='text' name='IP"+String(x)+"' maxlength='15' size='15' value='"+aS_InterMod[1][x]+"'></td>";
                       }
                     }
     html += "    </tr>";

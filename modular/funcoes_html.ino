@@ -63,22 +63,32 @@ void f_handle_ConfiguraGeral() {
   html += "<label for='id_haassist'>Habilita Assistentes:";
   html += "<input type='text' name='HAASSIST' id='id_haassist' value='"+String(vB_exec_Assistente)+"' required> 0=Não / 1=Sim</label>";
   html += "<br>";
-  html += "<label for='id_nomeassistgoogle'>Nome Assistentes Google: ";
-  html += "<input type='text' name='NOMEASSGOOGLE' id='id_nomeassistgoogle' value='"+String(vS_assNomeGoogle)+"' required></label>";
+  html += "<label for='id_nomeassistgoogle'>Nome Assistente Google: ";
+  html += "<input type='text' name='NOMEASSGOOGLE' id='id_nomeassistgoogle' value='"+String(vS_assNomeGoogle)+"'></label> (vazio para não usar Google Home)";
+  html += "<br>";
+  html += "<label for='id_nomeassistalexa'>Nome Assistente Alexa: ";
+  html += "<input type='text' name='NOMEASSALEXA' id='id_nomeassistalexa' value='"+String(vS_assNomeAlexa)+"'></label> (vazio para não usar Alexa)";
   html += "<br>";
   html += "<label for='id_lingassist'>Linguagem Assistentes: ";
-  html += "<input type='text' name='LINGASSIST' id='id_lingassist' value='"+String(vS_assLinguagem)+"' required></label>";
+  html += "<input type='text' name='LINGASSIST' id='id_lingassist' value='"+String(vS_assLinguagem)+"'></label>";
   html += "<br>";
   html += "<label for='id_timeassist'>Tempo Envio Assistentes: ";
-  html += "<input type='text' name='TIMEASSIST' id='id_timeassist' value='"+String(vU16_ass_MTBS)+"' required></label>";
+  html += "<input type='text' name='TIMEASSIST' id='id_timeassist' value='"+String(vU16_ass_MTBS)+"'></label>";
   html += "<br>";
   html += "<label for='id_alertaassist'>Início Frase Alerta Assistentes: ";
-  html += "<input type='text' name='ALERTAASSIST' id='id_alertaassist' value='"+vS_ass_Alerta+"' required></label>";
+  html += "<input type='text' name='ALERTAASSIST' id='id_alertaassist' value='"+vS_ass_Alerta+"'></label>";
   html += "<br>";
   html += "<label for='id_normalassist'>Início Frase Normalização Assistentes: ";
-  html += "<input type='text' name='NORMALASSIST' id='id_normalassist' value='"+vS_ass_Normal+"' required></label>";
+  html += "<input type='text' name='NORMALASSIST' id='id_normalassist' value='"+vS_ass_Normal+"'></label>";
   html += "<br>";
   html += "<br>";
+  html += "<label for='id_corsts1'>Cor Status 1=HIGH: ";
+  html += "<input type='text' name='CORSTS1' id='id_corsts1' value='"+vS_corStatus1+"'></label>";
+  html += "<br>";
+  html += "<label for='id_corsts0'>Cor Status 0=LOW: ";
+  html += "<input type='text' name='CORSTS0' id='id_corsts0' value='"+vS_corStatus0+"'></label>";
+  html += "<br>";
+  html += "<br>";  
   html += "<input type='submit' name='SUBMIT_SALVAR' value='Aplicar (sem salvar)' id='id_salvar'>";
   html += "</form>";
   html += "</div>";
@@ -102,10 +112,13 @@ void f_handle_ConfiguraGeral() {
     vU32_mqtt_disc_MTBS = SERVIDOR_WEB.arg("TMPDISCMQTT").toInt();
     vB_exec_Assistente = SERVIDOR_WEB.arg("HAASSIST").toInt();
     vS_assNomeGoogle = SERVIDOR_WEB.arg("NOMEASSGOOGLE");
+    vS_assNomeAlexa = SERVIDOR_WEB.arg("NOMEASSALEXA");
     vS_assLinguagem = SERVIDOR_WEB.arg("LINGASSIST");
     vU16_ass_MTBS = SERVIDOR_WEB.arg("TIMEASSIST").toInt();
     vS_ass_Alerta = SERVIDOR_WEB.arg("ALERTAASSIST");
     vS_ass_Normal = SERVIDOR_WEB.arg("NORMALASSIST");
+    vS_corStatus1 = SERVIDOR_WEB.arg("CORSTS1");
+    vS_corStatus0 = SERVIDOR_WEB.arg("CORSTS0");
     Serial.println("OK");
     Serial.println("Informacoes novas em uso.");
     html += f_MensagemHTML("INFORMAÇÕES GERAIS APLICADAS", "As informações GERAIS foram aplicadas. NÃO Deslige a placa ["+vS_nomeDispositivo+"] antes de salvar as novas configurações.", sucesso);
@@ -119,7 +132,7 @@ void f_handle_ConfiguraGeral() {
 }
 
 //========================================
-void f_handle_RecerregarFuncoes() {
+void f_handle_RecarregarFuncoes() {
   String html;
   html += "<!DOCTYPE html>";
   html += "<html lang='pt-br'>";
@@ -135,7 +148,7 @@ void f_handle_RecerregarFuncoes() {
   html += "<div style='border-style:inset; width:600px; background-color: rgb(148, 187, 242)' id='divDoForm'>";
   html += "<form action='/recarrega' method='POST' style='margin:5px'>";
   html += "<label for='id_recarrega'>Você confirma recarregar as funções do setup? </label>";
-  html += "<br>Tudo, TELEGRAM, MQTT, RECEPTOR ou ASSISTENTES";
+  html += "<br>Tudo, PINOS, TELEGRAM, MQTT, RECEPTOR ou ASSISTENTES";
   html += "<input type='text' name='RECRG' id='id_recarrega' value='Não' required>";
   html += "<br>";
   html += "<br>";
@@ -143,16 +156,21 @@ void f_handle_RecerregarFuncoes() {
   html += "</form>";
   html += "</div>";
   html += "</div>";
-  Serial.println("Aguardando informacoes...f_handle_RecerregarFuncoes()");
+  Serial.println("Aguardando informacoes...f_handle_RecarregarFuncoes()");
 
   if (SERVIDOR_WEB.arg("SUBMIT_SALVAR").length() > 0) {
     if (SERVIDOR_WEB.arg("RECRG") == "Tudo") {
       Serial.println("Recarregando Setup... ");
+        f_iniciaPinos(true);
         f_configuraTELEGRAM(true);
         f_configuraMQTT(true);
         f_configuraAssistenteGH(true);
         f_configuraModulos(true);
       html += f_MensagemHTML("SETUP RECARREGADO", "As funções do setup da placa ["+vS_nomeDispositivo+"] foram recarregadas.", sucesso);
+    } else if (SERVIDOR_WEB.arg("RECRG") == "PINOS") {
+      Serial.println("Recarregando Pinos... ");
+      f_iniciaPinos(true);
+      html += f_MensagemHTML("PINOS RECARREGADO", "A função Pinos da placa ["+vS_nomeDispositivo+"] foi recarregada.", sucesso);
     } else if (SERVIDOR_WEB.arg("RECRG") == "TELEGRAM") {
       Serial.println("Recarregando Telegram... ");
       f_configuraTELEGRAM(true);
@@ -164,6 +182,7 @@ void f_handle_RecerregarFuncoes() {
     } else if (SERVIDOR_WEB.arg("RECRG") == "ASSISTENTES") {
       Serial.println("Recarregando Assistentes... ");
       f_configuraAssistenteGH(true);
+      f_configuraAssistenteALX(true);
       html += f_MensagemHTML("ASSISTENTES RECARREGADO", "A função Assistentes da placa ["+vS_nomeDispositivo+"] foi recarregada.", sucesso);
     } else if (SERVIDOR_WEB.arg("RECRG") == "MODULOS") {
       Serial.println("Recarregando Receptor... ");
@@ -317,6 +336,8 @@ void f_limpaFLASH() {
   html += "<body id='body'>";
   html += "<div id='telaLimpaflash'> ";
   html += "<div id='bloqueiaTela'></div>";
+  html += "<h1>!! LIMPA MEMÓRIA FLASH !!</h1>";
+  html += "<div style='border-style:inset; width:600px; background-color: Tomato' id='divDoForm'>";
   html += "<form action='/limpaflash' method='POST' style='margin:5px'>";
   html += "<label for='id_flash'>Qual ação de limpeza quer realizar da memória flash?: </label><br>";
   html += "<br>Acoes , ExcetoWifi, Tudo, Formatar";
@@ -542,7 +563,7 @@ void f_handle_NotFound() {
   html += "<br><a href=\"/\">Página Inicial</a>\n";
   html += "</body>";
   html += "</html>";
-  SERVIDOR_WEB.send(200, "text/html", html);
+  SERVIDOR_WEB.send(404, "text/html", html);
 }
 
 //========================================
@@ -611,8 +632,9 @@ void f_listaPreferences() {
   html += "<body>";
   html += "<h1>Informações de Parâmetros do Sistema e Flash</h1>";
   html += "<div id='mensagens'></div>";
-  html += "<a href=\"/\">Página Inicial</a><br><br>\n";
-  html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vU16_portaWeb) + "/salvaflash'> Salvar na Flash </a>";
+  html += "<a href=\"/\">Página Inicial</a><br>";
+  html += "<a href=\"/expimp\">Configuração em Massa</a><br>";
+  html += "<a href=\"/salvaflash\">Salvar na Flash</a><br>";
   html += "<h1>EXECUTANDO NA MEMÓRIA</h1>";
   html += "<h3>PINOS</h3>";
   for (uint8_t x=0; x<vI8_aU8_Pinos; x++){
@@ -624,7 +646,7 @@ void f_listaPreferences() {
         html += ",";
       }
     }
-    html += "}<br>";
+    html += "} (" + aS8_PinosMenu[0][x] + ")<br>";
   }
   html += "<h3>NOMES</h3>";
   for (uint8_t x=0; x<vI8_aS8_Pinos; x++){
@@ -636,7 +658,7 @@ void f_listaPreferences() {
         html += ",";
       }
     }
-    html += "}<br>";
+    html += "} (Nome)<br>";
   }  
   html += "<h3>AÇÕES</h3>";
   html += "<h5>AçõesPg 1</h5>";
@@ -649,7 +671,7 @@ void f_listaPreferences() {
         html += ",";
       }
     }
-    html += "}<br>";
+    html += "} (" + aS8_AcoesMenu[0][x] + ")<br>";
   }
   html += "<h5>Ações NetConfig</h5>";
   for (uint8_t x=0; x<vI8_aU16_AcaoRede; x++){
@@ -661,7 +683,7 @@ void f_listaPreferences() {
         html += ",";
       }
     }
-    html += "}<br>";
+    html += "} (" + aS8_AcoesRedeMenu[0][x] + ")<br>";
   }
   html += "<h5>Ações MqTTConfig</h5>";
   for (uint8_t x=0; x<vI8_aS8_Acao; x++){
@@ -673,7 +695,7 @@ void f_listaPreferences() {
         html += ",";
       }
     }
-    html += "}<br>";
+    html += "} (" + aS8_AcoesStringMenu[0][x] + ")<br>";
   }
   html += "<h5>AçõesPg 2</h5>";
   for (uint8_t x=0; x<vI8_aU16_Acao; x++){
@@ -685,7 +707,7 @@ void f_listaPreferences() {
         html += ",";
       }
     }
-    html += "}<br>";
+    html += "} (" + aS8_AcoesMenu[0][x] + ")<br>";
   }
   html += "<h5>Ações NetConfig</h5>";
   for (uint8_t x=0; x<vI8_aU16_AcaoRede; x++){
@@ -697,7 +719,7 @@ void f_listaPreferences() {
         html += ",";
       }
     }
-    html += "}<br>";
+    html += "} (" + aS8_AcoesRedeMenu[0][x] + ")<br>";
   }
   html += "<h5>Ações MqTTConfig</h5>";
   for (uint8_t x=0; x<vI8_aS8_Acao; x++){
@@ -709,7 +731,7 @@ void f_listaPreferences() {
         html += ",";
       }
     }
-    html += "}<br>";
+    html += "} (" + aS8_AcoesStringMenu[0][x] + ")<br>";
   }  
   html += "<h5>AçõesPg 3</h5>";
   for (uint8_t x=0; x<vI8_aU16_Acao; x++){
@@ -721,7 +743,7 @@ void f_listaPreferences() {
         html += ",";
       }
     }
-    html += "}<br>";
+    html += "} (" + aS8_AcoesMenu[0][x] + ")<br>";
   }
   html += "<h5>Ações NetConfig</h5>";
   for (uint8_t x=0; x<vI8_aU16_AcaoRede; x++){
@@ -733,7 +755,7 @@ void f_listaPreferences() {
         html += ",";
       }
     }
-    html += "}<br>";
+    html += "} (" + aS8_AcoesRedeMenu[0][x] + ")<br>";
   }
   html += "<h5>Ações MqTTConfig</h5>";
   for (uint8_t x=0; x<vI8_aS8_Acao; x++){
@@ -745,7 +767,7 @@ void f_listaPreferences() {
         html += ",";
       }
     }
-    html += "}<br>";
+    html += "} (" + aS8_AcoesStringMenu[0][x] + ")<br>";
   }
   html += "<h3>REDE</h3>";
   html += "Hostname: ";
@@ -758,7 +780,7 @@ void f_listaPreferences() {
   html += vB_modoAP;
   html += "<br>Inter Módulos habilitado: ";
   html += vB_exec_Modulos;
-  html += "<br>Nome - IP dos Módulos ";
+  html += "<br>Nome - IP dos Módulos <br>";
   for (uint8_t x=0; x<vI8_aS_InterMod; x++){
     html += "Índice "+String(x);
     html += " = {";
@@ -1001,7 +1023,7 @@ void f_listaPreferences() {
   html += "<br>Ciclo Handshake: "+String(CONFIG_FLASH.getULong64("ciclo_mod", 65535));
   String aSBuffer4[vI8_aS_InterMod][vU8_totPinos] = {};
   CONFIG_FLASH.getBytes("paS_InterMod", aSBuffer4, CONFIG_FLASH.getBytesLength("paS_InterMod"));
-  html += "<br>MÓDULO - IP<br>";
+  html += "<br>Nome - IP dos Módulos<br>";
   for (uint8_t x=0; x<vI8_aS_InterMod; x++){
     html += "Índice "+String(x);
     html += " = {";        
@@ -1041,8 +1063,10 @@ void f_listaPreferences() {
   html += "<br>Tempo Início Frase Alerta Assistentes: "+CONFIG_FLASH.getString("ass_alerta", "");
   html += "<br>Tempo Início Frase Normalização Assistentes: "+CONFIG_FLASH.getString("ass_normal", "");
   CONFIG_FLASH.end();
-  html += "<br><br><a href='http://" + WiFi.localIP().toString() + ":" + String(vU16_portaWeb) + "/salvaflash'> Salvar na Flash </a>";
-  html += "<br><br><a href=\"/\">Página Inicial</a>\n";
+
+  html += "<br><a href=\"/salvaflash\">Salvar na Flash</a><br>";
+  html += "<a href=\"/expimp\">Configuração em Massa</a><br>";
+  html += "<a href=\"/\">Página Inicial</a><br>";
   html += "</body>";
   html += "</html>";
   SERVIDOR_WEB.send(200, "text/html", html);

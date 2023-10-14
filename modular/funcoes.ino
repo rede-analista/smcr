@@ -1,4 +1,4 @@
-////========================================
+//========================================
 uint8_t f_retornaIndicePino(uint8_t pino) {
   uint8_t resultado = 255;
   for (uint8_t x=0; x<vU8_totPinos; x++) {
@@ -44,32 +44,28 @@ void f_recebeDados() {
     ULTIMOS_GET_RECEBIDOS += "<br><br>";
 
     if (f_retornaIndiceModulo(SERVIDOR_WEB.arg(0)) > 0) {
+      String validacao = "_SEM_DADOS_";
       Serial.println("Recebido dados da placa " + SERVIDOR_WEB.arg(0));
       switch (SERVIDOR_WEB.arg(1).toInt()) {
-        case 1: // Parametro acao = 1
+        case 0: // Parametro acao = 0(Nenhuma)
           vI_controleCicloHandshake = vI_cicloHandshake;        
           aU8_Pinos[4][SERVIDOR_WEB.arg(2).toInt()] = SERVIDOR_WEB.arg(3).toInt();
+          validacao = "OK_DADO_RECEBIDO";
           break;
-        case 2: // Parametro acao = 2
-          vI_controleCicloHandshake = vI_cicloHandshake;        
-          aU8_Pinos[4][SERVIDOR_WEB.arg(2).toInt()] = SERVIDOR_WEB.arg(3).toInt();
-          break;
-        case 3: // Parametro acao = 3
-          vI_controleCicloHandshake = vI_cicloHandshake;        
-          aU8_Pinos[4][SERVIDOR_WEB.arg(2).toInt()] = SERVIDOR_WEB.arg(3).toInt();
-          break;
-        case 254: // Parametro acao = 3
-          vI_controleCicloHandshake = vI_cicloHandshake;        
-          aU8_Pinos[4][SERVIDOR_WEB.arg(2).toInt()] = SERVIDOR_WEB.arg(3).toInt();
-          break;          
-        case 255:
+        case 255: // Parametro acao = 255(sincronismo)
           vI_controleCicloHandshake = vI_cicloHandshake;
           vB_AlertaHandshake = SERVIDOR_WEB.arg(3).toInt();
           aU8_Pinos[4][SERVIDOR_WEB.arg(2).toInt()] = vB_AlertaHandshake;
+          validacao = "OK_DADO_RECEBIDO";
+          break;
+        default:
+          vI_controleCicloHandshake = vI_cicloHandshake;        
+          aU8_Pinos[4][SERVIDOR_WEB.arg(2).toInt()] = SERVIDOR_WEB.arg(3).toInt();
+          validacao = "OK_DADO_RECEBIDO";
           break;
       }
       Serial.println("Acao/Indice/Status " + SERVIDOR_WEB.arg(1) + " " + SERVIDOR_WEB.arg(2) + " " + SERVIDOR_WEB.arg(3));
-      SERVIDOR_WEB.send(200, "text/plain", "OK - DADOS RECEBIDO\n");
+      SERVIDOR_WEB.send(200, "text/plain", validacao);
     } else {
       Serial.println("Falha dados da placa " + SERVIDOR_WEB.arg(0));
       Serial.println("Acao/Indice/Status " + SERVIDOR_WEB.arg(1) + " " + SERVIDOR_WEB.arg(2) + " " + SERVIDOR_WEB.arg(3));
@@ -151,12 +147,7 @@ void f_checkAcoesModulos() {
     }
     aU8_Pinos[4][f_retornaIndicePino(255)] = vB_AlertaHandshake;
     if (f_checkAcaoCadastrada() && vI_controleCicloHandshake < 2) {
-      if (f_enviaModulo(vU8_ultimoModEnviado,"255", String(f_retornaIndicePino(255)), "0") != 200) {
-        vU8_ultimoModEnviado++;
-        if (vU8_ultimoModEnviado > vU8_totPinos) {
-          vU8_ultimoModEnviado = 0;
-        }
-      }
+      f_enviaModulo(aU16_AcaoRede1[0][f_retornaIndicePino(255)],"255", String(f_retornaIndicePino(255)), "0");
     }
   }
 }
@@ -198,28 +189,35 @@ int f_enviaModulo(uint8_t idmodulo, String acao, String pino, String valor){
    HTTPC_ERROR_STREAM_WRITE        (-10)
    HTTPC_ERROR_READ_TIMEOUT        (-11)
   */
-  HTTPClient CLIENTE;
+  vI_httpResponseCode = 0;
+  if (WiFi.status() != WL_CONNECTED) { 
+    f_configuraWIFI();
+  } else {
+     HTTPClient CLIENTE;
 
-  GET_SERVIDOR = "http://" + aS_InterMod[1][idmodulo] + ":" + vU16_portaWebModulos + "/dados?pl=" + vS_nomeDispositivo + "&ac=" + acao + "&pn=" + pino + "&vl=" + valor;
-  if (ULTIMOS_GET_SERVIDOR.length() > 260) {
-    ULTIMOS_GET_SERVIDOR = "";
+     GET_SERVIDOR = "http://" + aS_InterMod[1][idmodulo] + ":" + vU16_portaWebModulos + "/dados?pl=" + vS_nomeDispositivo + "&ac=" + acao + "&pn=" + pino + "&vl=" + valor;
+     if (ULTIMOS_GET_SERVIDOR.length() > 260) {
+       ULTIMOS_GET_SERVIDOR = "";
+     }
+     ULTIMOS_GET_SERVIDOR += GET_SERVIDOR;
+     ULTIMOS_GET_SERVIDOR += "<br><br>";
+     RESPONSE_TIMEOUT = vU16_modulos_MTBS;
+     CLIENTE.setTimeout(RESPONSE_TIMEOUT);
+     CLIENTE.begin(GET_SERVIDOR.c_str());
+     vI_httpResponseCode = CLIENTE.GET();
+     String payload = CLIENTE.getString();
+     vS_payload = payload;
+     CLIENTE.end();
+     if (vI_httpResponseCode == 200) {
+       vI_controleCicloHandshake = vI_cicloHandshake;
+       if (vS_payload == "OK_DADO_RECEBIDO") {
+         vU8_ultimoModEnviado = idmodulo;
+       }
+     }
+     Serial.println("\nEnviado: "+GET_SERVIDOR);
+     Serial.println("HTTP Response code: " + String(vI_httpResponseCode));
+     Serial.println(payload);
   }
-  ULTIMOS_GET_SERVIDOR += GET_SERVIDOR;
-  ULTIMOS_GET_SERVIDOR += "<br><br>";
-  RESPONSE_TIMEOUT = vU16_modulos_MTBS;
-  CLIENTE.setTimeout(RESPONSE_TIMEOUT);
-  CLIENTE.begin(GET_SERVIDOR.c_str());
-  vI_httpResponseCode = CLIENTE.GET();
-  String payload = CLIENTE.getString();
-  vS_payload = payload;
-  CLIENTE.end();
-  if (vI_httpResponseCode == 200) {
-    vI_controleCicloHandshake = vI_cicloHandshake;
-    vU8_ultimoModEnviado = idmodulo;
-  }
-  Serial.println("\nEnviado: "+GET_SERVIDOR);
-  Serial.println("HTTP Response code: " + String(vI_httpResponseCode));
-  Serial.println(payload);
   return vI_httpResponseCode;
 }
 
@@ -259,7 +257,13 @@ bool f_checkAcoesAssistentes() {
 
 //========================================
 bool f_enviaAssistentes(String msg) {
-  return CLIENT_ASS_GOOGLE.notify(msg.c_str());
+  bool resultado = false;
+  if (WiFi.status() != WL_CONNECTED) {
+    f_configuraWIFI();
+  } else {
+    resultado =  CLIENT_ASS_GOOGLE.notify(msg.c_str());
+  }
+  return resultado;
 }
 
 //========================================
@@ -296,8 +300,60 @@ String f_traduzAcoesAss(uint16_t cod) {
     case 5:
       resultado = "PULSO_DELAY";
       break;
+    case 254:
+      resultado = "STATUS_REMOTO";
+      break;      
   }
   return resultado;
+}
+
+//========================================
+void f_rebootaESP(uint8_t parametro) {
+  ESP.restart();
+}
+
+//========================================
+void f_callbackNotificaAlexa(uint8_t parametro) {
+  Serial.println("Execucao de f_callbackNotificaAlexa(uint8_t parametro)");
+  Serial.println(parametro);
+  Serial.println("Fim de Execucao de f_callbackNotificaAlexa(uint8_t parametro)");
+}
+
+//========================================
+void f_configuraAssistenteALX(bool force) {
+  if (!vB_exec_Assistente) {
+    f_carregaConfi("ASSISTENTE",force);
+  } else if (force) {
+    vB_exec_Assistente = true;
+  }
+  if (WiFi.status() == 3 && vB_exec_Assistente) {
+    Serial.print("Iniciando configuracao assistente Alexa: ");
+    if (vS_assNomeAlexa.length() > 3) {
+      uint8_t cont = 1;
+      CLIENT_ASS_ALEXA.setDiscoverable(true);
+      CLIENT_ASS_ALEXA.addDevice("Reiniciar Módulo "+vS_nomeDispositivo, f_rebootaESP);
+      while ( !CLIENT_ASS_ALEXA.begin() ) {
+        Serial.print("Conectando a ALX... ");
+        Serial.print(cont);
+        Serial.print(" tentativa de ");
+        Serial.print(vU8_tentativaConexoes);
+        Serial.print(" : ");
+        Serial.println(CLIENT_ASS_ALEXA.getEscapedMac());
+        cont++;
+        if (cont > vU8_tentativaConexoes) {
+          break;
+        }
+        delay(5000);      
+      }
+      if (cont > vU8_tentativaConexoes) {
+        Serial.println(" OK");
+      } else {
+        Serial.println(" FALHA ao iniciar assistente ALX.");
+      }
+    } else {
+      Serial.println(" IGNORANDO ALX sem nome cadastrado.");
+    }
+  }
 }
 
 //========================================
@@ -309,23 +365,31 @@ void f_configuraAssistenteGH(bool force) {
   }
   if (WiFi.status() == 3 && vB_exec_Assistente) {
     Serial.print("Iniciando configuracao assistente Google: ");
-    uint8_t cont = 1;
-    while ( !CLIENT_ASS_GOOGLE.device(vS_assNomeGoogle.c_str(), vS_assLinguagem.c_str()) ) {
-      Serial.print("Conectando ao GH... ");
-      Serial.print(cont);
-      Serial.print(" tentativa de ");
-      Serial.print(vU8_tentativaConexoes);
-      Serial.print(" : ");
-      Serial.println(CLIENT_ASS_GOOGLE.getLastError());
-      cont++;
-      if (cont > vU8_tentativaConexoes) {
-        break;
+    if (vS_assNomeGoogle.length() > 3) {
+      uint8_t cont = 1;
+      while ( !CLIENT_ASS_GOOGLE.device(vS_assNomeGoogle.c_str(), vS_assLinguagem.c_str()) ) {
+        Serial.print("Conectando ao GH... ");
+        Serial.print(cont);
+        Serial.print(" tentativa de ");
+        Serial.print(vU8_tentativaConexoes);
+        Serial.print(" : ");
+        Serial.println(CLIENT_ASS_GOOGLE.getLastError());
+        cont++;
+        if (cont > vU8_tentativaConexoes) {
+          break;
+        }
+        delay(5000);      
       }
-      delay(5000);      
+      if (cont > vU8_tentativaConexoes) {
+        Serial.print(CLIENT_ASS_GOOGLE.getIPAddress());
+        Serial.println(" OK");
+        f_enviaAssistentes("O módulo "+vS_nomeDispositivo+" foi iniciado.");
+      } else {
+        Serial.println(" FALHA ao iniciar assistente GH.");
+      }
+    } else {
+      Serial.println(" IGNORANDO GH sem nome cadastrado.");
     }
-    Serial.print(CLIENT_ASS_GOOGLE.getIPAddress());
-    Serial.println(" OK");
-    f_enviaAssistentes("O módulo "+vS_nomeDispositivo+" foi iniciado.");
   }
 }
 
@@ -336,37 +400,42 @@ bool f_publishDiscoveryMessage(String icone, String classe, String servico, Stri
   servico: PISCA, PULSO, LIGA, etc.
   id_pin: 4_21
 */
-  vS_mqttDiscovery = "homeassistant/"+classe+"/"+vS_nomeDispositivo+"_"+classe+"/"+id_pin+"/config";
-
-  DynamicJsonDocument doc(1024);
-  doc["name"]    = vS_nomeDispositivo+" "+id_pin+" "+servico;
-  doc["state_topic"]  = vS_mqttTopico+"/"+id_pin+"/"+servico+"/state";
-  doc["command_topic"]  = vS_mqttTopico+"/"+id_pin+"/"+servico+"/set";
-  doc["unique_id"] = vS_nomeDispositivo+"_"+vS_mqttIdUnico+"_"+classe+"_"+id_pin+"_"+servico;
-  doc["device_class"] = classe;
-  doc["icon"] = icone;
-  doc["payload_on"]   = String(onoff);
-  doc["payload_off"]  = String(!onoff);
-  doc["value_template"] = "{{ value_json.state}}";
-
-  JsonObject device = doc.createNestedObject("device");
-  device["identifiers"] = vS_mqttIdUnico;
-  device["name"] = vS_nomeDispositivo;
-  device["model"] = "esp32dev";
-  device["sw_version"] = "SMCR 2.0";
-  device["manufacturer"] = "espressif";
-
-  char buffer[1024];
-  size_t n = serializeJson(doc, buffer);
-
-  bool resultado = CLIENT_MQTT.publish(vS_mqttDiscovery.c_str(), buffer, true);
-  //Serial.println("");
-  //Serial.print("f_publishDiscoveryMessage status: ");
-  //Serial.println(resultado);
-  //Serial.print("Topico: ");
-  //Serial.println(vS_mqttDiscovery);
-  //Serial.print("             ->");
-  //Serial.println(buffer);
+  bool resultado = false;
+  if (WiFi.status() != WL_CONNECTED) {
+    f_configuraWIFI();
+  } else {
+    vS_mqttDiscovery = "homeassistant/"+classe+"/"+vS_nomeDispositivo+"_"+classe+"/"+id_pin+"/config";
+  
+    DynamicJsonDocument doc(1024);
+    doc["name"]    = vS_nomeDispositivo+" "+id_pin+" "+servico;
+    doc["state_topic"]  = vS_mqttTopico+"/"+id_pin+"/"+servico+"/state";
+    doc["command_topic"]  = vS_mqttTopico+"/"+id_pin+"/"+servico+"/set";
+    doc["unique_id"] = vS_nomeDispositivo+"_"+vS_mqttIdUnico+"_"+classe+"_"+id_pin+"_"+servico;
+    doc["device_class"] = classe;
+    doc["icon"] = icone;
+    doc["payload_on"]   = String(onoff);
+    doc["payload_off"]  = String(!onoff);
+    doc["value_template"] = "{{ value_json.state}}";
+  
+    JsonObject device = doc.createNestedObject("device");
+    device["identifiers"] = vS_mqttIdUnico;
+    device["name"] = vS_nomeDispositivo;
+    device["model"] = "esp32dev";
+    device["sw_version"] = "SMCR 2.0";
+    device["manufacturer"] = "espressif";
+  
+    char buffer[1024];
+    size_t n = serializeJson(doc, buffer);
+  
+    resultado = CLIENT_MQTT.publish(vS_mqttDiscovery.c_str(), buffer, true);
+    //Serial.println("");
+    //Serial.print("f_publishDiscoveryMessage status: ");
+    //Serial.println(resultado);
+    //Serial.print("Topico: ");
+    //Serial.println(vS_mqttDiscovery);
+    //Serial.print("             ->");
+    //Serial.println(buffer);
+  }
   return resultado;
 }
 
@@ -391,6 +460,9 @@ String f_traduzAcoesMqTT(uint16_t cod) {
       break;
     case 5:
       resultado = "PULSO_DELAY";
+      break;
+    case 254:
+      resultado = "STATUS_REMOTO";
       break;
   }
   return resultado;
@@ -447,8 +519,12 @@ bool f_checkAcoesMqTT() {
 
 //========================================
 bool f_enviaMqTT(String tpc, String msg) {
-  String topenvia = vS_mqttTopico+"/"+tpc;
-  return CLIENT_MQTT.publish(topenvia.c_str(), msg.c_str());
+  if (WiFi.status() != WL_CONNECTED) {
+    f_configuraWIFI();
+  } else {
+    String topenvia = vS_mqttTopico+"/"+tpc;
+    return CLIENT_MQTT.publish(topenvia.c_str(), msg.c_str());
+  }
 }
 
 //========================================
@@ -579,6 +655,9 @@ String f_traduzAcoesTelegram(uint16_t cod) {
     case 5:
       resultado = "PULSO_DELAY";
       break;
+    case 254:
+      resultado = "STATUS_REMOTO";
+      break;      
   }
   return resultado;
 }
@@ -678,10 +757,16 @@ bool f_checkAcoesTelegram() {
 
 //========================================
 bool f_enviaTelegram(String msg) {
-  bot.sendChatAction(vS_chat_Telegram, "typing");
-  String vS_msgTelegram = msg;
-  vS_msgTelegram += "\n";
-  return bot.sendMessage(vS_chat_Telegram, vS_msgTelegram);
+  bool resultado = false;
+  if (WiFi.status() != WL_CONNECTED) {
+    f_configuraWIFI();
+  } else {
+    bot.sendChatAction(vS_chat_Telegram, "typing");
+    String vS_msgTelegram = msg;
+    vS_msgTelegram += "\n";
+    resultado = bot.sendMessage(vS_chat_Telegram, vS_msgTelegram);
+  }
+  return resultado;
 }
 
 //========================================
@@ -726,20 +811,23 @@ void f_handleNewMessagesTelegram(int numNewMessages) {
 //========================================
 void f_recebeTelegram() {
   uint64_t agora = millis();
-  if (agora - telegram_lasttime > vU16_bot_MTBS)
-  {
-    //if (CLIENT_TELEGRAM.connected()) {
-      int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
-      while (numNewMessages)
-      {
-        Serial.println("got response");
-        f_handleNewMessagesTelegram(numNewMessages);
-        numNewMessages = bot.getUpdates(bot.last_message_received + 1);
-      }
-    //} else {
-    //    f_configuraTELEGRAM();  
-    //}
-    telegram_lasttime = agora;
+  if ((agora - telegram_lasttime) > vU16_bot_MTBS) {
+    if (WiFi.status() != WL_CONNECTED) {
+      f_configuraWIFI();
+    } else {    
+      //if (CLIENT_TELEGRAM.connected()) {
+        int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
+        while (numNewMessages)
+        {
+          Serial.println("got response");
+          f_handleNewMessagesTelegram(numNewMessages);
+          numNewMessages = bot.getUpdates(bot.last_message_received + 1);
+        }
+      //} else {
+      //    f_configuraTELEGRAM();  
+      //}
+      telegram_lasttime = agora;
+    }
   }
 }
 
@@ -756,6 +844,8 @@ void f_salvaFlash() {
   CONFIG_FLASH.putString("nome_wifi_ap", vS_nomeDispositivo+" Ponto de Acesso");
   CONFIG_FLASH.putString("senha_wifi_ap", vS_senhaAP_Wifi);
   CONFIG_FLASH.putBool("modo_wifi_ap", vB_modoAP);
+  CONFIG_FLASH.putString("cor_sts_1", vS_corStatus1);
+  CONFIG_FLASH.putString("cor_sts_0", vS_corStatus0);
   CONFIG_FLASH.putBool("exe_teleg", vB_exec_Telegram);
   CONFIG_FLASH.putString("api_teleg", vS_api_Telegram);
   CONFIG_FLASH.putString("chat_teleg", vS_chat_Telegram);
@@ -898,7 +988,7 @@ aU16_Acao[8][x] = Notifica Assitente 0=Nao / 1=Sim
 aU16_Acao[9][x] = Acionamento Alto=1 / Baixo=0
 */
   Serial.print("Iniciando configuracao das Acoes... ");
-
+  bool addass = false;
   CONFIG_FLASH.begin("confiGeral", true);
 
   // Acoes 1
@@ -919,6 +1009,10 @@ aU16_Acao[9][x] = Acionamento Alto=1 / Baixo=0
   for (uint8_t x=0; x<vI8_aU16_AcaoRede; x++){
     for (uint8_t y=0; y<vU8_totPinos; y++) {
       aU16_AcaoRede1[x][y] = aU16BufferY[x][y];
+      if(aU16_AcaoRede1[2][y]) {
+        addass = true;
+        CLIENT_ASS_ALEXA.addDevice(f_traduzAcoesAss(aU16_Acao1[2][x])+" "+aS8_Pinos[0][y], f_callbackNotificaAlexa);
+      }
     }
   }
   for (uint8_t x=0; x<vI8_aS8_Acao; x++){
@@ -940,6 +1034,10 @@ aU16_Acao[9][x] = Acionamento Alto=1 / Baixo=0
   for (uint8_t x=0; x<vI8_aU16_AcaoRede; x++){
     for (uint8_t y=0; y<vU8_totPinos; y++) {
       aU16_AcaoRede2[x][y] = aU16BufferY[x][y];
+      if(aU16_AcaoRede2[2][y]) {
+        addass = true;
+        CLIENT_ASS_ALEXA.addDevice(f_traduzAcoesAss(aU16_Acao2[2][x])+" "+aS8_Pinos[0][y], f_callbackNotificaAlexa);
+      }
     }
   }
   for (uint8_t x=0; x<vI8_aS8_Acao; x++){
@@ -961,6 +1059,10 @@ aU16_Acao[9][x] = Acionamento Alto=1 / Baixo=0
   for (uint8_t x=0; x<vI8_aU16_AcaoRede; x++){
     for (uint8_t y=0; y<vU8_totPinos; y++) {
       aU16_AcaoRede3[x][y] = aU16BufferY[x][y];
+      if(aU16_AcaoRede3[2][y]) {
+        addass = true;
+        CLIENT_ASS_ALEXA.addDevice(f_traduzAcoesAss(aU16_Acao3[2][x])+" "+aS8_Pinos[0][y], f_callbackNotificaAlexa);
+      }
     }
   }
   for (uint8_t x=0; x<vI8_aS8_Acao; x++){
@@ -1007,10 +1109,13 @@ aU8_Pinos[2][x] = Modo INPUT=1 / OUTPUT=3 / PULLUP=4 / INPUT_PULLUP=5 / PULLDOWN
 */
   Serial.print("Iniciando configuracao dos pinos... ");
   CONFIG_FLASH.begin("confiGeral", true);
-  uint8_t aU8Buffer[7][vU8_totPinos] = {};
+  uint8_t aU8Buffer[vI8_aU8_Pinos][vU8_totPinos] = {};
   CONFIG_FLASH.getBytes("paU8_Pinos", aU8Buffer, CONFIG_FLASH.getBytesLength("paU8_Pinos"));
 
-  String aSBuffer[1][vU8_totPinos] = {};
+  vS_corStatus1 = CONFIG_FLASH.getString("cor_sts_1", "Tomato");
+  vS_corStatus0 = CONFIG_FLASH.getString("cor_sts_0", "LightGreen");
+
+  String aSBuffer[vI8_aS8_Pinos][vU8_totPinos] = {};
   CONFIG_FLASH.getBytes("paS8_Pinos", aSBuffer, CONFIG_FLASH.getBytesLength("paS8_Pinos"));
   CONFIG_FLASH.end();
 
@@ -1024,6 +1129,7 @@ aU8_Pinos[2][x] = Modo INPUT=1 / OUTPUT=3 / PULLUP=4 / INPUT_PULLUP=5 / PULLDOWN
       pinMode(aU8_Pinos[0][x],aU8_Pinos[2][x]);
     }
   }
+
   for (uint8_t x=0; x<vI8_aS8_Pinos; x++){
     for (uint8_t y=0; y<vU8_totPinos; y++) {
       aS8_Pinos[x][y] = aSBuffer[x][y];
@@ -1050,10 +1156,11 @@ bool f_configuraWEB() {
     SERVIDOR_WEB.on("/acoes2", f_handle_ConfiguraAcoes2);
     SERVIDOR_WEB.on("/acoes3", f_handle_ConfiguraAcoes3);
     SERVIDOR_WEB.on("/salvaflash", f_handle_SalvaFlash);
-    SERVIDOR_WEB.on("/recarrega", f_handle_RecerregarFuncoes);
+    SERVIDOR_WEB.on("/recarrega", f_handle_RecarregarFuncoes);
     SERVIDOR_WEB.on("/lsprefpin", f_listaPreferences);
     SERVIDOR_WEB.on("/dados", f_recebeDados);
     SERVIDOR_WEB.on("/intermod", f_handle_InterModulos);
+    SERVIDOR_WEB.on("/expimp", f_ExportImport);
     SERVIDOR_WEB.on("/update", HTTP_POST, []() {
                                                   SERVIDOR_WEB.sendHeader("Connection", "close");
                                                   SERVIDOR_WEB.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
