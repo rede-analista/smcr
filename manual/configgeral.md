@@ -94,11 +94,28 @@
   **Lembre-se que "Recarregar" as funções não salva as informações na flash, se o módulo for reiniciado antes de salvar na flash as informações serão perdidas**
 
 
-  
 
-- Se quiser salvar as informações na memória flash do ESP, na tela inicial clique em "Parâmetros", despois clique em "Salvar na Flash".<br>
+
+## Visualizar Parâmetros
+
+- Para visualizar os parâmetros que estão em execução da memória do ESP e também para visualizar as informações que estão salvas na memória flash, na página inicial clique em Parâmetros. Na tela uqe irá abri voce vera as informações. Lembre-se que a maioria das informações são tradas por arrays e é neste formato que são mostrados os dados.
+![image](https://github.com/rede-analista/smcr/assets/66534023/7bfcf06d-6510-4b78-8568-2e758a947b30)
+
+
+
+- Se quiser salvar as informações na memória flash do ESP clique em "Salvar na Flash".<br>
   Responda "Sim" à pergunta e clique em "Salvar na Flash".<br>
   
   ![image](https://github.com/rede-analista/smcr/assets/66534023/2c82afff-a3c7-4ba4-ab7e-398530c743da)
+
+
+
+  
+## Configuração em Massa
+
+- Alguns cadastros possuem uma quantidade maior de informações, por exemplo, cadastro dos pinos ou cadastro de ações, etc. Para facilitar a configuraçõa de uma nova placa ESP ou uma substituição, foi criado esta opção para que alguns desses cadastros possam ser realizada de forma massiva. Copiando as informações desses campos pode se feito tambem um backup parcial das configurações do módulo.<br>
+  NOTA 6: Esse import só preenhce os campos do cadasrtro, após efetuar o import você deve entrar no cadastro e aplicar as novas informações.
+
+![image](https://github.com/rede-analista/smcr/assets/66534023/c90bd2b8-e8c1-40d8-b1b0-e2051d1da8cb)
 
   
