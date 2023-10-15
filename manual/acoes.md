@@ -26,8 +26,9 @@
   - É o pino que irá sofrer uma alteração durante a execução da ação.
 
 - Parâmetro AÇÃO
-  - É a ação que será executada, esta informaçẽo pode ser NENHUMA=0 / LIGA=1 / LIGA DELAY=2 / PISCA=3 / PULSO=4 / PULSO DELAY ON=5 / Sincronismo=255(reservada)<br>
-    NOTA 5: A ação 255 é reservada para controle de status de comunicação entre módulos. [Veja CICLOS HANDSHAKE](intermod.md)
+  - É a ação que será executada, esta informação pode ser NENHUMA=0 / LIGA=1 / LIGA DELAY=2 / PISCA=3 / PULSO=4 / PULSO DELAY ON=5 / Status=254 / Sincronismo=255(reservada)<br>
+    NOTA 5: A ação 254 é usada para atualizar o status de um pino virtual.[Veja TIPO](pinos.md)<br>
+    NOTA 6: A ação 255 é reservada para controle de status de comunicação entre módulos. [Veja CICLOS HANDSHAKE](intermod.md)
 
 - Parâmetro TEMPO ON
   - Informa o tempo em contagem de ciclos em determinadas ações.  Este valor pode ser de 0 a 65535. 
@@ -46,19 +47,19 @@
 
 - Parâmetro ENVIA MÓDULO
   - Ativa o envio de informação de status do pino a outro módulo ESP32, esta informaçẽo pode ser NÃO=0 / 1 a 43 esta numeração corresponde ao ID do módulo que será enviado o status do pino(receptor) <br>
-    NOTA 6: Antes de habilitar este item você deve ser configurar as informações do módulo receptor.[Veja Configurações Gerais](configgeral.md)
+    NOTA 7: Antes de habilitar este item você deve ser configurar as informações do módulo receptor.[Veja Configurações Gerais](configgeral.md)
 
 - Parâmetro ENVIA TELEGRAM
   - Ativa as notificações desta ação para enviar ao Telegram, esta informaçẽo pode ser NÃO=0 / SIM=1<br>
-    NOTA 7: Antes de habilitar este item você configurar as informações do Telegram.[Veja Configurações Gerais](configgeral.md)
+    NOTA 8: Antes de habilitar este item você configurar as informações do Telegram.[Veja Configurações Gerais](configgeral.md)
 
 - Parâmetro NOT. ASSIST.
   - Ativa as notificações desta ação para notificar aos assistentes, esta informaçẽo pode ser NÃO=0 / SIM=1<br>
-    NOTA 8: Antes de habilitar este item você configurar as informações dos Assistentes.[Veja Configurações Gerais](configgeral.md)<br>
+    NOTA 9: Antes de habilitar este item você configurar as informações dos Assistentes.[Veja Configurações Gerais](configgeral.md)<br>
 
 - Parâmetro ENVIA MQTT
   - Ativa as notificações desta ação para envior a um mqtt, esta informaçẽo pode ser NÃO=0 / SIM=1<br>
-    NOTA 9: Antes de habilitar este item você configurar as informações do MQTT.[Veja Configurações Gerais](configgeral.md)
+    NOTA 10: Antes de habilitar este item você configurar as informações do MQTT.[Veja Configurações Gerais](configgeral.md)
 
 - Parâmetro CLASSE MQTT
   - É a informação de qual classe esta ação será informada ao servidor mqtt<br>
@@ -75,7 +76,7 @@
 - As ações são executadas pelas tasks "TaskAcoesPinos", "TaskAcoesPg2Pinos" e "TaskAcoesPg3Pinos" o código destas tasks está no arquivo "tarefas.ino".<br>
   Essas tasks são iniciadas no final da função "setup()" do módulo ESP, basicamente ela consulta o array onde tem o status dos pinos e executa a ação conforma foi configurado.<br>
 
-  NOTA 10: Essa task é executada continuamente aplicando apenas uma pausa pela função "vTaskDelay(8/portTICK_PERIOD_MS)" isto que dizer que o período de verificação e execução de cada ação é feita no tempo de 8 dividido por portTICK_PERIOD_MS, isto está ligado diretamente a frequência do processador.<br>
+  NOTA 11: Essa task é executada continuamente aplicando apenas uma pausa pela função "vTaskDelay(8/portTICK_PERIOD_MS)" isto que dizer que o período de verificação e execução de cada ação é feita no tempo de 8 dividido por portTICK_PERIOD_MS, isto está ligado diretamente a frequência do processador.<br>
           #define portTICK_PERIOD_MS ((TickType_t)1000 / configTICK_RATE_HZ)
 
 
