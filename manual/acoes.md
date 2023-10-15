@@ -15,7 +15,7 @@
 
   NOTA 3: Você pode navegar entra as páginas de ações mas lembre-se de aplicar as configurações antes de torcar de página para não perder as configurações que foram realizadas.<br>
 
-  NOTA 4: Se o módulo for reiniciado antes de salvar as informações na flash todas as configurações serão perdidas.
+  NOTA 4: <strong>Se o módulo for reiniciado antes de salvar as informações na flash todas as configurações serão perdidas</strong>.
   
 ![image](https://github.com/rede-analista/smcr/assets/66534023/941a35e8-41c7-427b-add3-d153d209bcb3)
 
