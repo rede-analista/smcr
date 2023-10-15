@@ -26,7 +26,7 @@
   - É o pino que irá sofrer uma alteração durante a execução da ação.
 
 - Parâmetro AÇÃO
-  - É a ação que será executada, esta informaçẽo pode ser NENHUMA=0 / LIGA=1 / LIGA DELAY=2 / PISCA=3 / PULSO=4 / PULSO DELAY ON=5 / Sincronismo=255(reservada)
+  - É a ação que será executada, esta informaçẽo pode ser NENHUMA=0 / LIGA=1 / LIGA DELAY=2 / PISCA=3 / PULSO=4 / PULSO DELAY ON=5 / Sincronismo=255(reservada)<br>
     NOTA 5: A ação 255 é reservada para controle de status de comunicação entre módulos. [Veja CICLOS HANDSHAKE](intermod.md)
 
 - Parâmetro TEMPO ON
