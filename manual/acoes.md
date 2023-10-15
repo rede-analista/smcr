@@ -13,7 +13,7 @@
 
   NOTA 2: Após configurar e clicar no botão "Aplicar" as configurações já estarão sendo usadas pelo módulo mas não estarão salvas na flash. Isto pode ser usado para testar uma configuração sem alterar a configuração que está salva na flash.
 
-  NOTA 3: Você pode navegar entra as páginas de ações mas lembre-se de aplicar as configurações antes de torcar de página para não perder as configurações que foram realizadas.<br>
+  NOTA 3: Você pode navegar entra as páginas de ações mas lembre-se de aplicar as configurações antes de trocar de página para não perder as configurações que foram realizadas na página atual.<br>
 
   NOTA 4: <strong>Se o módulo for reiniciado antes de salvar as informações na flash todas as configurações serão perdidas</strong>.
   
