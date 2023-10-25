@@ -5,9 +5,10 @@
 [Exemplo Cadastro](excadpino.md)
 
 
-- Será aberta a página com todas as informações de todos os pinos. Nesta página tem um total de 23 posições para configurações dos pinos, o cadastro dos pinos pode ser realizada em qualquer posição.
+- Será aberta a página com todas as informações de todos os pinos. Nesta página pode chegar a 52 posições para configurações dos pinos, o cadastro dos pinos pode ser realizada em qualquer posição.
 ![image](https://github.com/rede-analista/smcr/assets/66534023/99edd9c2-e18b-49e1-9c46-449e37b71a05)
 
+O total de pinos pode ser ajustado na variável "vU8_totPinos" no código antes da compilação que fica no arquivo SMCR_Modular_v15.ino.
 
 NOTA 1: Para não limitar a configuração dos pinos não há uma validação de quais pinos podem ser usados, consulte a informações de pinout do ESP32 para identificar pinos reservados e que não devem ser usados nas configurações nesta página.<br>
 
