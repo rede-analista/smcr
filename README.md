@@ -3,10 +3,10 @@ Programação ESP32 para sistema modular de sensores e acionamentos local e remo
 # Descrição:
 O objetivo é criar uma programação para ESP32, de forma que a definição os pinos não seja estática dentro do código fonte, proporcionando a possibilidade de alterar a definição dos pinos por interface web e configurar ações com base no status dos pinos.
 # Resumo:
-A programação é feita de forma que a maioria das configurações estejam disponíveis em uma interface web no ESP32, para que o usuário possa acessar pelo navegador e realizar as configurações desejadas, salvando as informações da memória flash do ESP32.<br>
+A programação é feita de forma que a maioria das configurações estejam disponíveis em uma interface web no ESP32, para que o usuário possa acessar pelo navegador e realizar as configurações desejadas, salvando as informações da memória flash (preferences) do ESP32.<br>
 Algumas das características são proporcionar comunicação com outro módulo ESP32, notificação por Telegram, comunicação com MqTT e notificação por assistentes.
 
-A interface web disponibiliza 43 posições de configurações de pinos, ou seja, voce poderá configurar até 43 pinos como entrada ou saída. Tambem pela interface poderá configurar até 3 ações para cada pino, estas ações serão executadas quando por exemplo um sensor for acionado. Na configuração de ações é possível realizar uma configuração em cascata quando por exemplo o pino 2 aciona o pino 4, o pino 4 aciona o pino 5 e assim por diante, há várias formas de realizar as configurações de ações, depende um pouco da imaginação, espero que as quantidades sejam suficientes para atender uma boa parte das necessidades.
+A interface web pode disponibilizar até 52 posições de configurações de pinos, ou seja, voce poderá configurar até 52 pinos como entrada ou saída. Tambem pela interface poderá configurar até 3 ações para cada pino, estas ações serão executadas quando por exemplo um sensor for acionado. Na configuração de ações é possível realizar uma configuração em cascata quando por exemplo o pino 2 aciona o pino 4, o pino 4 aciona o pino 5 e assim por diante, há várias formas de realizar as configurações de ações, depende um pouco da imaginação, espero que as quantidades sejam suficientes para atender uma boa parte das necessidades.
 
 **NOTA: Não sou programador e nem técnico em eletrônica, somente me interesso por programação e controladores, sendo assim, não espere uma programação "bonita" e/ou dentro das melhores práticas, mas fique a vontade para trocar informações ou sugerir alguma melhoria**
 
