@@ -156,7 +156,7 @@ void f_ExportImport() {
 
 
   html += "<h3>REDE</h3>";
-  html += "Nome - IP dos Módulos <br>";
+  html += "<h5>Nome - IP dos Módulos</h5>";
   valores = "";
   for (uint8_t x=0; x<vI8_aS_InterMod; x++){
     for (uint8_t y=0; y<vU8_totPinos; y++) {
@@ -168,6 +168,18 @@ void f_ExportImport() {
     valores += "\n";
   }
   html += "<textarea name='areaInterMod' rows='"+String(vI8_aS_InterMod)+"' cols='100'>"+valores+"</textarea>";
+  html += "<h5>Pino HandShake</h5>";
+  valores = "";
+  for (uint8_t x=0; x<vI8_aU8_InterMod; x++){
+    for (uint8_t y=0; y<vU8_totPinos; y++) {
+      valores += aU8_InterMod[x][y];
+      if (y < vU8_totPinos-1) {
+        valores += ",";
+      }
+    }
+    valores += "\n";
+  }
+  html += "<textarea name='areaInterModPinos' rows='"+String(vI8_aU8_InterMod)+"' cols='100'>"+valores+"</textarea>";
 
   html += "<br><br>";
   html += "<input type='submit' name='SUBMIT_SALVAR' value='Aplicar (sem salvar)' id='id_salvar'>";
@@ -488,13 +500,36 @@ void f_ExportImport() {
         val_linha += valores[x];
       }
     }
-    //xval = xval.substring(0,xval.length()-1);
-    //aS_InterMod[xPinos][z] = xval;
+    // Massupdade InterModulos Pinos
+    valores = SERVIDOR_WEB.arg("areaInterModPinos");
+    xPinos = 0;
+    val_linha = "";
+    for (uint16_t x=0; x<= valores.length(); x++) {
+      if (valores[x] == 13) {
+        z = 0;
+        xval = "";
+        for (uint16_t y=0; y<=val_linha.length(); y++) {
+          if (val_linha[y] == 44) {
+            aU8_InterMod[xPinos][z] = xval.toInt();
+            xval = "";
+            z++;
+          } else {
+            xval += val_linha[y];
+          }
+        }
+        aU8_InterMod[xPinos][z] = xval.toInt();
+        xPinos++;
+        val_linha = "";
+      } else {
+        val_linha += valores[x];
+      }
+    }
 
     Serial.println("OK");
     Serial.println("Informacoes novas em uso.");
-    html += f_MensagemHTML("INFORMAÇÕES ATUALIZADAS", "As informações foram atualizadas. NÃO Deslige a placa ["+vS_nomeDispositivo+"] antes de salvar as novas configurações.", sucesso);
+    html += f_MensagemHTML("INFORMAÇÕES EM MASSA ATUALIZADAS", "As informações em massa foram atualizadas. NÃO Deslige a placa ["+vS_nomeDispositivo+"] antes de salvar as novas configurações.", sucesso);
   }
+
   html += "<br><br><a href=\"/\">Página Inicial</a>\n";
   html += "</body>";
   html += "</html>";

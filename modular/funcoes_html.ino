@@ -145,10 +145,10 @@ void f_handle_RecarregarFuncoes() {
   html += "<div id='telarecarrega'> ";
   html += "<div id='bloqueiaTela'></div>";
   html += "<h1>!! RECARREGAR FUNÇÕES DO SETUP !!</h1>";
-  html += "<div style='border-style:inset; width:600px; background-color: rgb(148, 187, 242)' id='divDoForm'>";
+  html += "<div style='border-style:inset; width:700px; background-color: rgb(148, 187, 242)' id='divDoForm'>";
   html += "<form action='/recarrega' method='POST' style='margin:5px'>";
   html += "<label for='id_recarrega'>Você confirma recarregar as funções do setup? </label>";
-  html += "<br>Tudo, PINOS, TELEGRAM, MQTT, RECEPTOR ou ASSISTENTES";
+  html += "<br>Tudo, PINOS, ACOES, GACOES, TELEGRAM, MQTT, RECEPTOR ou ASSISTENTES";
   html += "<input type='text' name='RECRG' id='id_recarrega' value='Não' required>";
   html += "<br>";
   html += "<br>";
@@ -171,6 +171,14 @@ void f_handle_RecarregarFuncoes() {
       Serial.println("Recarregando Pinos... ");
       f_iniciaPinos(true);
       html += f_MensagemHTML("PINOS RECARREGADO", "A função Pinos da placa ["+vS_nomeDispositivo+"] foi recarregada.", sucesso);
+} else if (SERVIDOR_WEB.arg("RECRG") == "ACOES") {
+      Serial.println("Recarregando Grupos de Acoes... ");
+      f_iniciaAcoes(true);
+      html += f_MensagemHTML("AÇÕES RECARREGADO", "A função Ações da placa ["+vS_nomeDispositivo+"] foi recarregada.", sucesso);      
+    } else if (SERVIDOR_WEB.arg("RECRG") == "GACOES") {
+      Serial.println("Recarregando Grupos de Acoes... ");
+      f_grupoAcoes();
+      html += f_MensagemHTML("GRUPO DE AÇÕES RECARREGADO", "A função Grupos de Ações da placa ["+vS_nomeDispositivo+"] foi recarregada.", sucesso);
     } else if (SERVIDOR_WEB.arg("RECRG") == "TELEGRAM") {
       Serial.println("Recarregando Telegram... ");
       f_configuraTELEGRAM(true);
@@ -370,10 +378,13 @@ void f_limpaFLASH() {
       Serial.print("As preferencias de Ações estao sendo limpas, as configuracoes de AÇÕES serão perdidas... ");
       CONFIG_FLASH.begin("confiGeral", false);
       CONFIG_FLASH.remove("paU16_Acao1");
+      CONFIG_FLASH.remove("paU16_AcaoRede1");
       CONFIG_FLASH.remove("paS8_Acao1");
       CONFIG_FLASH.remove("paU16_Acao2");
+      CONFIG_FLASH.remove("paU16_AcaoRede2");
       CONFIG_FLASH.remove("paS8_Acao2");
       CONFIG_FLASH.remove("paU16_Acao3");
+      CONFIG_FLASH.remove("paU16_AcaoRede3");
       CONFIG_FLASH.remove("paS8_Acao3");
       CONFIG_FLASH.end();
       Serial.println(" OK");
@@ -620,6 +631,224 @@ String f_MensagemHTML(String titulo, String corpoMensagem, tipoMensagem mensagem
 }
 
 //========================================
+String f_listaPrefPinos() {
+  CONFIG_FLASH.begin("confiGeral", true);
+  uint8_t aU8Buffer[vI8_aU8_Pinos][vU8_totPinos];
+  String aSBuffer[vI8_aS8_Pinos][vU8_totPinos];
+  CONFIG_FLASH.getBytes("paU8_Pinos", aU8Buffer, CONFIG_FLASH.getBytesLength("paU8_Pinos"));
+  CONFIG_FLASH.getBytes("paS8_Pinos", aSBuffer, CONFIG_FLASH.getBytesLength("paS8_Pinos"));
+  String html = "";
+  for (uint8_t x=0; x<vI8_aU8_Pinos; x++){
+    html += "Índice "+String(x);
+    html += " = {";    
+    for (uint8_t y=0; y<vU8_totPinos; y++) {
+      html += aU8Buffer[x][y];
+      if (y < vU8_totPinos-1) {
+        html += ",";
+      }      
+    }
+    html += "}<br>";
+  }
+  html += "<h3>NOMES</h3>";
+  for (uint8_t x=0; x<vI8_aS8_Pinos; x++){
+    html += "Índice "+String(x);
+    html += " = {";     
+    for (uint8_t y=0; y<vU8_totPinos; y++) {
+      html += aSBuffer[x][y];
+      if (y < vU8_totPinos-1) {
+        html += ",";
+      }       
+    }
+    html += "}<br>";
+  }
+  CONFIG_FLASH.end();
+  return html;
+}
+
+//========================================
+String f_listaPrefAcoes(uint8_t acoes) {
+
+  CONFIG_FLASH.begin("confiGeral", true);
+  String html = "";
+  uint16_t aU16BufferX[vI8_aU16_Acao][vU8_totPinos];
+  uint16_t aU16BufferY[vI8_aU16_AcaoRede][vU8_totPinos];
+  String aSBufferZ[vI8_aS8_Acao][vU8_totPinos];
+
+  switch (acoes) {
+    case 1:
+      CONFIG_FLASH.getBytes("paU16_Acao1", aU16BufferX, CONFIG_FLASH.getBytesLength("paU16_Acao1"));
+      CONFIG_FLASH.getBytes("paU16_AcaoRede1", aU16BufferY, CONFIG_FLASH.getBytesLength("paU16_AcaoRede1"));
+      CONFIG_FLASH.getBytes("paS8_Acao1", aSBufferZ, CONFIG_FLASH.getBytesLength("paS8_Acao1"));
+      for (uint8_t x=0; x<vI8_aU16_Acao; x++){
+        html += "Índice "+String(x);
+        html += " = {";
+        for (uint8_t y=0; y<vU8_totPinos; y++) {
+          html += aU16BufferX[x][y];
+          if (y < vU8_totPinos-1) {
+            html += ",";
+          }
+        }
+        html += "}<br>";
+      }
+      html += "<h5>Ações NetConfig</h5>";
+      for (uint8_t x=0; x<vI8_aU16_AcaoRede; x++){
+        html += "Índice "+String(x);
+        html += " = {";
+        for (uint8_t y=0; y<vU8_totPinos; y++) {
+          html += aU16BufferY[x][y];
+          if (y < vU8_totPinos-1) {
+            html += ",";
+          }
+        }
+        html += "}<br>";
+      }
+      html += "<h5>Ações MqTTConfig</h5>";
+      for (uint8_t x=0; x<vI8_aS8_Acao; x++){
+        html += "Índice "+String(x);
+        html += " = {";
+        for (uint8_t y=0; y<vU8_totPinos; y++) {
+          html += aSBufferZ[x][y];
+          if (y < vU8_totPinos-1) {
+            html += ",";
+          }
+        }
+        html += "}<br>";
+      }
+      break;
+    case 2:
+      CONFIG_FLASH.getBytes("paU16_Acao2", aU16BufferX, CONFIG_FLASH.getBytesLength("paU16_Acao2"));
+      CONFIG_FLASH.getBytes("paU16_AcaoRede2", aU16BufferY, CONFIG_FLASH.getBytesLength("paU16_AcaoRede2"));
+      CONFIG_FLASH.getBytes("paS8_Acao2", aSBufferZ, CONFIG_FLASH.getBytesLength("paS8_Acao2"));
+      html += "<h5>AçõesPg 2</h5>";
+      for (uint8_t x=0; x<vI8_aU16_Acao; x++){
+        html += "Índice "+String(x);
+        html += " = {";
+        for (uint8_t y=0; y<vU8_totPinos; y++) {
+          html += aU16BufferX[x][y];
+          if (y < vU8_totPinos-1) {
+            html += ",";
+          }
+        }
+        html += "}<br>";
+      }
+      html += "<h5>Ações NetConfig</h5>";
+      for (uint8_t x=0; x<vI8_aU16_AcaoRede; x++){
+        html += "Índice "+String(x);
+        html += " = {";
+        for (uint8_t y=0; y<vU8_totPinos; y++) {
+          html += aU16BufferY[x][y];
+          if (y < vU8_totPinos-1) {
+            html += ",";
+          }
+        }
+        html += "}<br>";
+      }
+      html += "<h5>Ações MqTTConfig</h5>";
+      for (uint8_t x=0; x<vI8_aS8_Acao; x++){
+        html += "Índice "+String(x);
+        html += " = {";
+        for (uint8_t y=0; y<vU8_totPinos; y++) {
+          html += aSBufferZ[x][y];
+          if (y < vU8_totPinos-1) {
+            html += ",";
+          }
+        }
+        html += "}<br>";
+      }    
+      break;
+    case 3:
+      CONFIG_FLASH.getBytes("paU16_Acao3", aU16BufferX, CONFIG_FLASH.getBytesLength("paU16_Acao3"));
+      CONFIG_FLASH.getBytes("paU16_AcaoRede3", aU16BufferY, CONFIG_FLASH.getBytesLength("paU16_AcaoRede3"));
+      CONFIG_FLASH.getBytes("paS8_Acao3", aSBufferZ, CONFIG_FLASH.getBytesLength("paS8_Acao3"));
+      html += "<h5>AçõesPg 1</h5>";
+      for (uint8_t x=0; x<vI8_aU16_Acao; x++){
+        html += "Índice "+String(x);
+        html += " = {";
+        for (uint8_t y=0; y<vU8_totPinos; y++) {
+          html += aU16BufferX[x][y];
+          if (y < vU8_totPinos-1) {
+            html += ",";
+          }
+        }
+        html += "}<br>";
+      }
+      html += "<h5>Ações NetConfig</h5>";
+      for (uint8_t x=0; x<vI8_aU16_AcaoRede; x++){
+        html += "Índice "+String(x);
+        html += " = {";
+        for (uint8_t y=0; y<vU8_totPinos; y++) {
+          html += aU16BufferY[x][y];
+          if (y < vU8_totPinos-1) {
+            html += ",";
+          }
+        }
+        html += "}<br>";
+      }
+      html += "<h5>Ações MqTTConfig</h5>";
+      for (uint8_t x=0; x<vI8_aS8_Acao; x++){
+        html += "Índice "+String(x);
+        html += " = {";
+        for (uint8_t y=0; y<vU8_totPinos; y++) {
+          html += aSBufferZ[x][y];
+          if (y < vU8_totPinos-1) {
+            html += ",";
+          }
+        }
+        html += "}<br>";
+      }    
+      break;
+  }
+
+  CONFIG_FLASH.end();
+  return html;
+}
+
+//========================================
+String f_listaPrefModulos() {
+/*
+Usado para cadastro dos modulos (Inter Modulos)
+aS_InterMod[Propriedade][Modulo]
+aS_InterMod[0][x] = Nome Modulo
+aS_InterMod[1][x] = IP Modulo
+--------------------------------------------------------------------
+aU8_InterMod[0][x] = Pino HandShake
+*/
+  CONFIG_FLASH.begin("confiGeral", true);
+  String html = "";
+  String aSBuffer4[vI8_aS_InterMod][vU8_totPinos];
+  CONFIG_FLASH.getBytes("paS_InterMod", aSBuffer4, CONFIG_FLASH.getBytesLength("paS_InterMod"));
+  html += "<br>Nome - IP dos Módulos<br>";
+  for (uint8_t x=0; x<vI8_aS_InterMod; x++){
+    html += "Índice "+String(x);
+    html += " = {";        
+    for (uint8_t y=0; y<vU8_totPinos; y++) {
+      html += aSBuffer4[x][y];
+      if (y < vU8_totPinos-1) {
+        html += ",";
+      }       
+    }
+    html += "}<br>";
+  }
+  String aU8Buffer4[vI8_aS_InterMod][vU8_totPinos];
+  CONFIG_FLASH.getBytes("paU8_InterMod", aU8Buffer4, CONFIG_FLASH.getBytesLength("paU8_InterMod"));
+  html += "Pino HandShake dos Módulos<br>";
+  for (uint8_t x=0; x<vI8_aU8_InterMod; x++){
+    html += "Índice "+String(x);
+    html += " = {";
+    for (uint8_t y=0; y<vU8_totPinos; y++) {
+      html += aU8Buffer4[x][y];
+      if (y < vU8_totPinos-1) {
+        html += ",";
+      }
+    }
+    html += "} "+aU8_InterModMenu[0][x]+"<br>";
+  }
+
+  CONFIG_FLASH.end();
+  return html;
+}
+
+//========================================
 void f_listaPreferences() {
   String html;
   html += "<!DOCTYPE html>";
@@ -769,6 +998,24 @@ void f_listaPreferences() {
     }
     html += "} (" + aS8_AcoesStringMenu[0][x] + ")<br>";
   }
+
+  html += "<h3>GRUPO DE AÇÕES</h3>";
+  String grupo = "";
+  for (uint8_t x=0; x<vU8_totPinos; x++){
+    if (f_retornaGrupoAcao(aU16_ControlAcoesGroups[0][x]).length() > 0) {
+      grupo += "Índice "+String(x);
+      grupo += " = ";
+      grupo += aU16_ControlAcoesGroups[0][x];
+      grupo += "{";
+      grupo += f_retornaGrupoAcao(aU16_ControlAcoesGroups[0][x]);
+      grupo += "}<br>";
+    }
+  }
+  if (grupo.length() > 0) {
+    html += grupo;
+  } else {
+    html += "Sem grupo de ações";
+  }
   html += "<h3>REDE</h3>";
   html += "Hostname: ";
   html += vS_nomeDispositivo;
@@ -790,7 +1037,19 @@ void f_listaPreferences() {
         html += ",";
       }
     }
-    html += "}<br>";
+    html += "} "+aS_InterModMenu[0][x]+"<br>";
+  }
+  html += "Pino HandShake dos Módulos<br>";
+  for (uint8_t x=0; x<vI8_aU8_InterMod; x++){
+    html += "Índice "+String(x);
+    html += " = {";
+    for (uint8_t y=0; y<vU8_totPinos; y++) {
+      html += aU8_InterMod[x][y];
+      if (y < vU8_totPinos-1) {
+        html += ",";
+      } 
+    }
+    html += "} "+aU8_InterModMenu[0][x]+"<br>";
   }
   html += "<br>Porta dos Módulos: ";
   html += vU16_portaWebModulos;
@@ -798,8 +1057,6 @@ void f_listaPreferences() {
   html += vU16_modulos_MTBS;
   html += "<br>Ciclo Handshake: ";
   html += String(vI_cicloHandshake);
-  html += "<br> Status Alerta Handshake: ";
-  html += String(vB_AlertaHandshake);
   html += "<h3>TELEGRAM</h3>";
   html += "Habilita Telegram: ";
   html += vB_exec_Telegram;
@@ -847,163 +1104,22 @@ void f_listaPreferences() {
   html += vS_ass_Normal;
   //----------------------------------------------------------------//
   html += "<h1>SALVAS NA FLASH</h1>";
-  CONFIG_FLASH.begin("confiGeral", true);
+  
+  html += "<h3>PINOS</h3>"; 
+  html += f_listaPrefPinos();
 
-  uint8_t aU8Buffer[vI8_aU8_Pinos][vU8_totPinos] = {};
-  CONFIG_FLASH.getBytes("paU8_Pinos", aU8Buffer, CONFIG_FLASH.getBytesLength("paU8_Pinos"));
-  String aSBuffer[vI8_aS8_Pinos][vU8_totPinos] = {};
-  CONFIG_FLASH.getBytes("paS8_Pinos", aSBuffer, CONFIG_FLASH.getBytesLength("paS8_Pinos"));
-
-  html += "<h3>PINOS</h3>";  
-  for (uint8_t x=0; x<vI8_aU8_Pinos; x++){
-    html += "Índice "+String(x);
-    html += " = {";    
-    for (uint8_t y=0; y<vU8_totPinos; y++) {
-      html += aU8Buffer[x][y];
-      if (y < vU8_totPinos-1) {
-        html += ",";
-      }      
-    }
-    html += "}<br>";
-  }
-  html += "<h3>NOMES</h3>";
-  for (uint8_t x=0; x<vI8_aS8_Pinos; x++){
-    html += "Índice "+String(x);
-    html += " = {";     
-    for (uint8_t y=0; y<vU8_totPinos; y++) {
-      html += aSBuffer[x][y];
-      if (y < vU8_totPinos-1) {
-        html += ",";
-      }       
-    }
-    html += "}<br>";
-  }
   html += "<h3>AÇÕES</h3>";
-  // Acoes 1
-  uint16_t aU16BufferX[vI8_aU16_Acao][vU8_totPinos] = {};
-  CONFIG_FLASH.getBytes("paU16_Acao1", aU16BufferX, CONFIG_FLASH.getBytesLength("paU16_Acao1"));
+  
+  html += "<h5>AçõesPg 1 e 2</h5>";
+  html += f_listaPrefAcoes(1);
+  
+  html += "<h5>AçõesPg 3 e 4</h5>";
+  html += f_listaPrefAcoes(2);
 
-  uint16_t aU16BufferY[vI8_aU16_AcaoRede][vU8_totPinos] = {};
-  CONFIG_FLASH.getBytes("paU16_AcaoRede1", aU16BufferY, CONFIG_FLASH.getBytesLength("paU16_AcaoRede1"));
+  html += "<h5>AçõesPg 5 e 6</h5>";
+  html += f_listaPrefAcoes(3);
 
-  String aSBufferZ[vI8_aS8_Acao][vU8_totPinos] = {};
-  CONFIG_FLASH.getBytes("paS8_Acao1", aSBufferZ, CONFIG_FLASH.getBytesLength("paS8_Acao1"));
-  html += "<h5>AçõesPg 1</h5>";
-  for (uint8_t x=0; x<vI8_aU16_Acao; x++){
-    html += "Índice "+String(x);
-    html += " = {";
-    for (uint8_t y=0; y<vU8_totPinos; y++) {
-      html += aU16BufferX[x][y];
-      if (y < vU8_totPinos-1) {
-        html += ",";
-      }
-    }
-    html += "}<br>";
-  }
-  html += "<h5>Ações NetConfig</h5>";
-  for (uint8_t x=0; x<vI8_aU16_AcaoRede; x++){
-    html += "Índice "+String(x);
-    html += " = {";
-    for (uint8_t y=0; y<vU8_totPinos; y++) {
-      html += aU16BufferY[x][y];
-      if (y < vU8_totPinos-1) {
-        html += ",";
-      }
-    }
-    html += "}<br>";
-  }
-  html += "<h5>Ações MqTTConfig</h5>";
-  for (uint8_t x=0; x<vI8_aS8_Acao; x++){
-    html += "Índice "+String(x);
-    html += " = {";
-    for (uint8_t y=0; y<vU8_totPinos; y++) {
-      html += aSBufferZ[x][y];
-      if (y < vU8_totPinos-1) {
-        html += ",";
-      }
-    }
-    html += "}<br>";
-  }
-  // Acoes 2
-  CONFIG_FLASH.getBytes("paU16_Acao2", aU16BufferX, CONFIG_FLASH.getBytesLength("paU16_Acao2"));
-  CONFIG_FLASH.getBytes("paU16_AcaoRede2", aU16BufferY, CONFIG_FLASH.getBytesLength("paU16_AcaoRede2"));
-  CONFIG_FLASH.getBytes("paS8_Acao2", aSBufferZ, CONFIG_FLASH.getBytesLength("paS8_Acao2"));
-  html += "<h5>AçõesPg 2</h5>";
-  for (uint8_t x=0; x<vI8_aU16_Acao; x++){
-    html += "Índice "+String(x);
-    html += " = {";
-    for (uint8_t y=0; y<vU8_totPinos; y++) {
-      html += aU16BufferX[x][y];
-      if (y < vU8_totPinos-1) {
-        html += ",";
-      }
-    }
-    html += "}<br>";
-  }
-  html += "<h5>Ações NetConfig</h5>";
-  for (uint8_t x=0; x<vI8_aU16_AcaoRede; x++){
-    html += "Índice "+String(x);
-    html += " = {";
-    for (uint8_t y=0; y<vU8_totPinos; y++) {
-      html += aU16BufferY[x][y];
-      if (y < vU8_totPinos-1) {
-        html += ",";
-      }
-    }
-    html += "}<br>";
-  }
-  html += "<h5>Ações MqTTConfig</h5>";
-  for (uint8_t x=0; x<vI8_aS8_Acao; x++){
-    html += "Índice "+String(x);
-    html += " = {";
-    for (uint8_t y=0; y<vU8_totPinos; y++) {
-      html += aSBufferZ[x][y];
-      if (y < vU8_totPinos-1) {
-        html += ",";
-      }
-    }
-    html += "}<br>";
-  }
-  // Acoes 3
-  CONFIG_FLASH.getBytes("paU16_Acao3", aU16BufferX, CONFIG_FLASH.getBytesLength("paU16_Acao3"));
-  CONFIG_FLASH.getBytes("paU16_AcaoRede3", aU16BufferY, CONFIG_FLASH.getBytesLength("paU16_AcaoRede3"));
-  CONFIG_FLASH.getBytes("paS8_Acao3", aSBufferZ, CONFIG_FLASH.getBytesLength("paS8_Acao3"));
-  html += "<h5>AçõesPg 1</h5>";
-  for (uint8_t x=0; x<vI8_aU16_Acao; x++){
-    html += "Índice "+String(x);
-    html += " = {";
-    for (uint8_t y=0; y<vU8_totPinos; y++) {
-      html += aU16BufferX[x][y];
-      if (y < vU8_totPinos-1) {
-        html += ",";
-      }
-    }
-    html += "}<br>";
-  }
-  html += "<h5>Ações NetConfig</h5>";
-  for (uint8_t x=0; x<vI8_aU16_AcaoRede; x++){
-    html += "Índice "+String(x);
-    html += " = {";
-    for (uint8_t y=0; y<vU8_totPinos; y++) {
-      html += aU16BufferY[x][y];
-      if (y < vU8_totPinos-1) {
-        html += ",";
-      }
-    }
-    html += "}<br>";
-  }
-  html += "<h5>Ações MqTTConfig</h5>";
-  for (uint8_t x=0; x<vI8_aS8_Acao; x++){
-    html += "Índice "+String(x);
-    html += " = {";
-    for (uint8_t y=0; y<vU8_totPinos; y++) {
-      html += aSBufferZ[x][y];
-      if (y < vU8_totPinos-1) {
-        html += ",";
-      }
-    }
-    html += "}<br>";
-  }
+  CONFIG_FLASH.begin("confiGeral", true);
   html += "<h3>REDE</h3>";
   html += "SSID: "+CONFIG_FLASH.getString("nome_wifi", "");
   String vS_t = CONFIG_FLASH.getString("senha_wifi", "");
@@ -1021,20 +1137,9 @@ void f_listaPreferences() {
   html += "<br>Porta dos Módulos: "+String(CONFIG_FLASH.getULong64("porta_mod", 65535));
   html += "<br>Tempo Envio aos Módulos: "+String(CONFIG_FLASH.getULong64("time_mod", 65535));
   html += "<br>Ciclo Handshake: "+String(CONFIG_FLASH.getULong64("ciclo_mod", 65535));
-  String aSBuffer4[vI8_aS_InterMod][vU8_totPinos] = {};
-  CONFIG_FLASH.getBytes("paS_InterMod", aSBuffer4, CONFIG_FLASH.getBytesLength("paS_InterMod"));
-  html += "<br>Nome - IP dos Módulos<br>";
-  for (uint8_t x=0; x<vI8_aS_InterMod; x++){
-    html += "Índice "+String(x);
-    html += " = {";        
-    for (uint8_t y=0; y<vU8_totPinos; y++) {
-      html += aSBuffer4[x][y];
-      if (y < vU8_totPinos-1) {
-        html += ",";
-      }       
-    }
-    html += "}<br>";
-  }
+  
+  html += f_listaPrefModulos();
+
   html += "<h3>TELEGRAM</h3>";
   html += "Habilita Telegram: "+String(CONFIG_FLASH.getBool("exe_teleg", false));
   html += "<br>API Telegram: "+CONFIG_FLASH.getString("api_teleg", ":");
@@ -1062,11 +1167,12 @@ void f_listaPreferences() {
   html += "<br>Tempo Envio para Assistentes: "+String(CONFIG_FLASH.getULong64("ass_time", 65535));
   html += "<br>Tempo Início Frase Alerta Assistentes: "+CONFIG_FLASH.getString("ass_alerta", "");
   html += "<br>Tempo Início Frase Normalização Assistentes: "+CONFIG_FLASH.getString("ass_normal", "");
+
   CONFIG_FLASH.end();
 
-  html += "<br><a href=\"/salvaflash\">Salvar na Flash</a><br>";
-  html += "<a href=\"/expimp\">Configuração em Massa</a><br>";
-  html += "<a href=\"/\">Página Inicial</a><br>";
+  html += "<br><a href='/salvaflash'>Salvar na Flash</a><br>";
+  html += "<a href='/expimp'>Configuração em Massa</a><br>";
+  html += "<a href='/'>Página Inicial</a><br>";
   html += "</body>";
   html += "</html>";
   SERVIDOR_WEB.send(200, "text/html", html);

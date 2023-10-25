@@ -12,24 +12,26 @@ void f_handle_ConfiguraPortas() {
   html += "<body id='body'>";
   html += "<div id='telaConfigPortas'>";
   html += "<div id='bloqueiaTela'></div>";
-  html += "<h1>Insira as informações dos Pinos</h1>";
+  html += "<h1>Cadastro de Pinos (Portas)</h1>";
   html += "<div id='mensagens'><p>Insira as informações de configuração dos pinos e em seguida clique em \"Aplicar\".</p></div>";
-  html += "<br><a href=\"/\">Página Inicial</a>";
+  html += "<a href=\"/\">Página Inicial</a>";
   html += "<br><a href='https://github.com/rede-analista/smcr/blob/main/manual/excadpino.md' target='_blank'>Ajuda</a>";
-  html += "<br><div style='border-style:inset; width:1015px; background-color: rgb(148, 187, 242)' id='divDoForm'>";
+  html += "<br><div style='border-style:inset; width:1145px; background-color: rgb(148, 187, 242)' id='divDoForm'>";
   html += "<form action='/pinos' method='POST' style='margin:5px'>";
-  html += "<table border='1'>";
-  uint8_t linha = vU8_totPinos/5;
+  html += "<input type='submit' name='SUBMIT_SALVAR' value='Aplicar (sem salvar)' id='id_salvar'><br>";
+  short linha = vU8_totPinos/vU8_colunasTabelas;
   uint8_t colINICIO = 0;
-  uint8_t colFIM = 6;
+  uint8_t colFIM = vU8_colunasTabelas;
   uint8_t x;
-  while (linha > 0) {
+  html += "<table border='1'>";
+  while (linha >= 0) {
     html += "<tr>";
     html += "<td style='background-color: LightGrey'><center>Nome</center></td>";
-      for (x=colINICIO; x<colFIM; x++) {
-        html += "<td><input type='text' name='NOME"+String(x)+"' maxlength='14' size='14' value='"+String(aS8_Pinos[0][x])+"'></td>";
-      }
+    for (x=colINICIO; x<colFIM; x++) {
+      html += "<td><input type='text' name='NOME"+String(x)+"' maxlength='14' size='14' value='"+aS8_Pinos[0][x]+"'></td>";
+    }
     html += "</tr>";
+
     for (uint8_t xM = 0; xM<vI8_aU8_Pinos;xM++) {
       html += "<tr>";
       html += "<td style='background-color: LightGrey'><center>"+aS8_PinosMenu[0][xM]+"</center></td>";
@@ -42,23 +44,22 @@ void f_handle_ConfiguraPortas() {
       }
       html += "</tr>";
     }
+
     html += "<tr>";
-    html += "<td colspan='7' style='background-color: LightGrey' >| </td>";
+    html += "<td colspan='"+String(vU8_colunasTabelas+1)+"' style='background-color: LightGrey'>&nbsp</td>";
     html += "</tr>";
     linha--;
-    if (linha > 1) {
+    if (linha > 0) {
       colINICIO = colFIM;
-      colFIM = colFIM+6;
+      colFIM = colFIM+vU8_colunasTabelas;
     } else {
       colINICIO = colFIM;
       colFIM = vU8_totPinos;
     }
   }
   html += "</table>";
-  html += "<br>";
   html += "<input type='submit' name='SUBMIT_SALVAR' value='Aplicar (sem salvar)' id='id_salvar'>";
   html += "</form>";
-  html += "</div>";
   html += "</div>";
   Serial.println("Aguardando informacoes... f_handle_ConfiguraPortas()");
   if (SERVIDOR_WEB.arg("SUBMIT_SALVAR").length() > 0) {
@@ -77,8 +78,8 @@ void f_handle_ConfiguraPortas() {
     html += f_MensagemHTML("INFORMAÇÕES ATUALIZADAS", "As informações dos PINOS foram atualizadas. NÃO Deslige a placa ["+vS_nomeDispositivo+"] antes de salvar as novas configurações.", sucesso);
   }
   html += "<a href='https://github.com/rede-analista/smcr/blob/main/manual/excadpino.md' target='_blank'>Ajuda</a>";
-  html += "<br><a href=\"/\">Página Inicial</a>\n";
-    html += "</body>";
+  html += "<br><a href='/'>Página Inicial</a>";
+  html += "</body>";
   html += "</html>";
   SERVIDOR_WEB.send(200, "text/html", html);
 }

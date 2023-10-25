@@ -9,7 +9,7 @@ aU8_Pinos[4][x] = Status 0=LOW / 1=HIGH
 aU8_Pinos[5][x] = Retencao 0=NAO / 1=SIM
 aU8_Pinos[6][x] = Tempo Retencao 0 a 254
 */
-  uint8_t aU8_IgnoraPino[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
+  uint8_t aU8_IgnoraPino[1][vU8_totPinos];
   uint8_t idx=0;
   for (;;){
     if (aU8_Pinos[1][idx] != 254) {
@@ -32,7 +32,7 @@ aU8_Pinos[6][x] = Tempo Retencao 0 a 254
     if (idx >= vU8_totPinos){
       idx=0;
     }
-    vTaskDelay(9/portTICK_PERIOD_MS);
+    vTaskDelay(4/portTICK_PERIOD_MS);
   }
 }
 
@@ -47,23 +47,25 @@ aU16_Acao[4][x] = Tempo Acao OFF (LIGA DELAY=2 / PISCA=3 / PULSO=4 / PULSO DELAY
 aU16_Acao[5][x] = Acionamento Alto=1 / Baixo=0
 */
 
-  uint8_t aU8_Acao2DOWN[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint8_t aU8_Acao2LigaDelay[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint16_t aU16_Acao2LigaDelayTempo[1][vU8_totPinos]= {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
+  uint8_t aU8_AcaoTP1[1][vU8_totPinos];
 
-  uint8_t aU8_Acao3UP[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint8_t aU8_Acao3DOWN[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint16_t aU16_Acao3TempoUP[1][vU8_totPinos]= {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
-  uint16_t aU16_Acao3TempoDOWN[1][vU8_totPinos]= {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
+  uint8_t aU8_AcaoTP2DOWN[1][vU8_totPinos];
+  uint8_t aU8_AcaoTP2LigaDelay[1][vU8_totPinos];
+  uint16_t aU16_AcaoTP2LigaDelayTempo[1][vU8_totPinos];
 
-  uint8_t aU8_Acao4DOWN[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint8_t aU8_Acao4Pulso[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint16_t aU16_Acao4PulsoTempo[1][vU8_totPinos]= {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
+  uint8_t aU8_AcaoTP3UP[1][vU8_totPinos];
+  uint8_t aU8_AcaoTP3DOWN[1][vU8_totPinos];
+  uint16_t aU16_AcaoTP3TempoUP[1][vU8_totPinos];
+  uint16_t aU16_AcaoTP3TempoDOWN[1][vU8_totPinos];
 
-  uint8_t aU8_Acao5UP[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint8_t aU8_Acao5DOWN[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint16_t aU16_Acao5PulsoDelayTempoUP[1][vU8_totPinos]= {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
-  uint16_t aU16_Acao5PulsoDelayTempoDOWN[1][vU8_totPinos]= {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
+  uint8_t aU8_AcaoTP4DOWN[1][vU8_totPinos];
+  uint8_t aU8_AcaoTP4Pulso[1][vU8_totPinos];
+  uint16_t aU16_AcaoTP4PulsoTempo[1][vU8_totPinos];
+
+  uint8_t aU8_AcaoTP5UP[1][vU8_totPinos];
+  uint8_t aU8_AcaoTP5DOWN[2][vU8_totPinos];
+  uint16_t aU16_AcaoTP5PulsoDelayTempoUP[1][vU8_totPinos];
+  uint16_t aU16_AcaoTP5PulsoDelayTempoDOWN[1][vU8_totPinos];
 
   uint8_t idz=0;
   for (;;){
@@ -71,30 +73,52 @@ aU16_Acao[5][x] = Acionamento Alto=1 / Baixo=0
       case 1: //LIGA
         if (aU16_Acao1[0][idz] > 0 && aU16_Acao1[1][idz] > 0) {
           if (aU8_Pinos[4][idz]) {
-            f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],aU16_Acao1[5][idz]);
+            if (!aU8_AcaoTP1[0][idz]) {
+              if (f_retornaGrupoAcao(aU16_Acao1[1][idz]).length() < 1) {
+                f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],aU16_Acao1[5][idz]);
+              } else if (f_retornaStatusGrupoAcao(f_retornaGrupoAcao(aU16_Acao1[1][idz]),aU16_Acao1[5][idz])) {
+                f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],aU16_Acao1[5][idz]);
+              }
+              aU8_AcaoTP1[0][idz] = 1;
+            }
           } else {
-            f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],!aU16_Acao1[5][idz]);
+            if (aU8_AcaoTP1[0][idz]) {
+              if (f_retornaGrupoAcao(aU16_Acao1[1][idz]).length() < 1) {
+                f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],!aU16_Acao1[5][idz]);
+              } else if (f_retornaStatusGrupoAcao(f_retornaGrupoAcao(aU16_Acao1[1][idz]),!aU16_Acao1[5][idz])) {
+                f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],!aU16_Acao1[5][idz]);
+
+              }
+              aU8_AcaoTP1[0][idz] = 0;
+            }
           }
         }
         break;
       case 2: //LIGA DELAY
         if (aU16_Acao1[0][idz] > 0 && aU16_Acao1[1][idz] > 0) {
           if ( aU8_Pinos[4][idz] ) {
-              if (!aU8_Acao2LigaDelay[0][idz]) {
-                aU8_Acao2LigaDelay[0][idz] = 1;
-                aU16_Acao2LigaDelayTempo[0][idz] = aU16_Acao1[3][idz];
+              if (!aU8_AcaoTP2LigaDelay[0][idz]) {
+                aU8_AcaoTP2LigaDelay[0][idz] = 1;
+                aU16_AcaoTP2LigaDelayTempo[0][idz] = aU16_Acao1[3][idz];
               } else {
-                if ( aU16_Acao2LigaDelayTempo[0][idz] > 0) {
-                  aU16_Acao2LigaDelayTempo[0][idz]--;
+                if ( aU16_AcaoTP2LigaDelayTempo[0][idz] > 0) {
+                  aU16_AcaoTP2LigaDelayTempo[0][idz]--;
                 } else {
-                  f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],aU16_Acao1[5][idz]);
+                  if (!aU8_AcaoTP2DOWN[0][idz]) {
+                    f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],aU16_Acao1[5][idz]);
+                    aU8_AcaoTP2DOWN[0][idz] = 1;
+                  }
                 }
               }
           } else {
-            if (aU8_Acao2LigaDelay[0][idz] || aU8_Acao2DOWN[0][idz]) {
-              f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],!aU16_Acao1[5][idz]);
-              aU8_Acao2LigaDelay[0][idz] = 0;
-              aU8_Acao2DOWN[0][idz] = 0;
+            if (aU8_AcaoTP2LigaDelay[0][idz] || aU8_AcaoTP2DOWN[0][idz]) {
+              if (f_retornaGrupoAcao(aU16_Acao1[1][idz]).length() < 1) {
+                f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],!aU16_Acao1[5][idz]);
+              } else if (f_retornaStatusGrupoAcao(f_retornaGrupoAcao(aU16_Acao1[1][idz]),!aU16_Acao1[5][idz])) {
+                f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],!aU16_Acao1[5][idz]);
+              }
+              aU8_AcaoTP2LigaDelay[0][idz] = 0;
+              aU8_AcaoTP2DOWN[0][idz] = 0;
             }
           }
         }
@@ -102,33 +126,33 @@ aU16_Acao[5][x] = Acionamento Alto=1 / Baixo=0
       case 3: //PISCA
         if (aU16_Acao1[0][idz] > 0 && aU16_Acao1[1][idz] > 0) {
           if ( aU8_Pinos[4][idz] ) {
-              if (!aU8_Acao3UP[0][idz]) {
-                aU8_Acao3UP[0][idz] = 1;
-                aU8_Acao3DOWN[0][idz] = 0;
-                aU16_Acao3TempoUP[0][idz] = aU16_Acao1[3][idz];
+              if (!aU8_AcaoTP3UP[0][idz]) {
+                aU8_AcaoTP3UP[0][idz] = 1;
+                aU8_AcaoTP3DOWN[0][idz] = 0;
+                aU16_AcaoTP3TempoUP[0][idz] = aU16_Acao1[3][idz];
                 f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],aU16_Acao1[5][idz]);
               } else {
-                if ( aU16_Acao3TempoUP[0][idz] > 0) {
-                  aU16_Acao3TempoUP[0][idz]--;
+                if ( aU16_AcaoTP3TempoUP[0][idz] > 0) {
+                  aU16_AcaoTP3TempoUP[0][idz]--;
                 } else {
-                  if (!aU8_Acao3DOWN[0][idz]) {
-                    aU8_Acao3DOWN[0][idz] = 1;
-                    aU16_Acao3TempoDOWN[0][idz] = aU16_Acao1[4][idz];
+                  if (!aU8_AcaoTP3DOWN[0][idz]) {
+                    aU8_AcaoTP3DOWN[0][idz] = 1;
+                    aU16_AcaoTP3TempoDOWN[0][idz] = aU16_Acao1[4][idz];
                     f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],!aU16_Acao1[5][idz]);
                   } else {
-                    if ( aU16_Acao3TempoDOWN[0][idz] > 0) {
-                      aU16_Acao3TempoDOWN[0][idz]--;
+                    if ( aU16_AcaoTP3TempoDOWN[0][idz] > 0) {
+                      aU16_AcaoTP3TempoDOWN[0][idz]--;
                     } else {
-                      aU8_Acao3UP[0][idz] = 0;
+                      aU8_AcaoTP3UP[0][idz] = 0;
                     }
                   }
                 }
               }
           } else {
-            if (aU8_Acao3UP[0][idz] || aU8_Acao3DOWN[0][idz]) {
+            if (aU8_AcaoTP3UP[0][idz] || aU8_AcaoTP3DOWN[0][idz]) {
               f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],!aU16_Acao1[5][idz]);
-              aU8_Acao3UP[0][idz] = 0;
-              aU8_Acao3DOWN[0][idz] = 0;   
+              aU8_AcaoTP3UP[0][idz] = 0;
+              aU8_AcaoTP3DOWN[0][idz] = 0;   
             }
           }
         }
@@ -136,22 +160,25 @@ aU16_Acao[5][x] = Acionamento Alto=1 / Baixo=0
       case 4: //PULSO
         if (aU16_Acao1[0][idz] > 0 && aU16_Acao1[1][idz] > 0) {
           if ( aU8_Pinos[4][idz] ) {
-              if (!aU8_Acao4Pulso[0][idz]) {
-                aU8_Acao4Pulso[0][idz] = 1;
-                aU16_Acao4PulsoTempo[0][idz] = aU16_Acao1[3][idz];
+              if (!aU8_AcaoTP4Pulso[0][idz]) {
+                aU8_AcaoTP4Pulso[0][idz] = 1;
+                aU16_AcaoTP4PulsoTempo[0][idz] = aU16_Acao1[3][idz];
                 f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],aU16_Acao1[5][idz]);
               } else {
-                if ( aU16_Acao4PulsoTempo[0][idz] > 0) {
-                  aU16_Acao4PulsoTempo[0][idz]--;
-                } else {
-                  f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],!aU16_Acao1[5][idz]);
+                if (!aU8_AcaoTP4DOWN[0][idz]) {
+                  if ( aU16_AcaoTP4PulsoTempo[0][idz] > 0) {
+                    aU16_AcaoTP4PulsoTempo[0][idz]--;
+                  } else {
+                    f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],!aU16_Acao1[5][idz]);
+                    aU8_AcaoTP4DOWN[0][idz] = 1;
+                  }
                 }
               }
           } else {
-            if (aU8_Acao4Pulso[0][idz] || aU8_Acao4DOWN[0][idz]) {
+            if (aU8_AcaoTP4Pulso[0][idz] || aU8_AcaoTP4DOWN[0][idz]) {
               f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],!aU16_Acao1[5][idz]);
-              aU8_Acao4Pulso[0][idz] = 0;
-              aU8_Acao4DOWN[0][idz] = 0;
+              aU8_AcaoTP4Pulso[0][idz] = 0;
+              aU8_AcaoTP4DOWN[0][idz] = 0;
             }
           }
         }
@@ -159,36 +186,40 @@ aU16_Acao[5][x] = Acionamento Alto=1 / Baixo=0
       case 5: //PULSO DELAY ON
         if (aU16_Acao1[0][idz] > 0 && aU16_Acao1[1][idz] > 0) {
           if ( aU8_Pinos[4][idz] ) {
-              if (!aU8_Acao5UP[0][idz]) {
-                aU8_Acao5UP[0][idz] = 1;
-                aU16_Acao5PulsoDelayTempoUP[0][idz] = aU16_Acao1[3][idz];
+              if (!aU8_AcaoTP5UP[0][idz]) {
+                aU8_AcaoTP5UP[0][idz] = 1;
+                aU16_AcaoTP5PulsoDelayTempoUP[0][idz] = aU16_Acao1[3][idz];
               } else {
-                if ( aU16_Acao5PulsoDelayTempoUP[0][idz] > 0) {
-                  aU16_Acao5PulsoDelayTempoUP[0][idz]--;
+                if ( aU16_AcaoTP5PulsoDelayTempoUP[0][idz] > 0) {
+                  aU16_AcaoTP5PulsoDelayTempoUP[0][idz]--;
                 } else {
-                  if (aU8_Acao5UP[0][idz] && !aU8_Acao5DOWN[0][idz]) {
+                  if (aU8_AcaoTP5UP[0][idz] && !aU8_AcaoTP5DOWN[0][idz]) {
                     f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],aU16_Acao1[5][idz]);
-                    aU16_Acao5PulsoDelayTempoDOWN[0][idz] = aU16_Acao1[4][idz];
-                    aU8_Acao5DOWN[0][idz] = 1;
+                    aU16_AcaoTP5PulsoDelayTempoDOWN[0][idz] = aU16_Acao1[4][idz];
+                    aU8_AcaoTP5DOWN[0][idz] = 1;
                   } else {
-                    if (aU16_Acao5PulsoDelayTempoDOWN[0][idz] > 0) {
-                      aU16_Acao5PulsoDelayTempoDOWN[0][idz]--;
+                    if (aU16_AcaoTP5PulsoDelayTempoDOWN[0][idz] > 0) {
+                      aU16_AcaoTP5PulsoDelayTempoDOWN[0][idz]--;
                     } else {
-                      f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],!aU16_Acao1[5][idz]);
+                      if (!aU8_AcaoTP5DOWN[1][idz]) {
+                        f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],!aU16_Acao1[5][idz]);
+                        aU8_AcaoTP5DOWN[1][idz] = 1;
+                      }
                     }
                   }
                 }
               }
           } else {
-            if (aU8_Acao5UP[0][idz] ) {
-              f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],!aU16_Acao1[1][idz]);
-              aU8_Acao5UP[0][idz] = 0;
-              aU8_Acao5DOWN[0][idz] = 0;
+            if (aU8_AcaoTP5UP[0][idz] ) {
+              f_gravaPino(aU8_Pinos[1][idz],aU16_Acao1[1][idz],!aU16_Acao1[5][idz]);
+              aU8_AcaoTP5UP[0][idz] = 0;
+              aU8_AcaoTP5DOWN[0][idz] = 0;
+              aU8_AcaoTP5DOWN[1][idz] = 0;
             }
           }
         }
         break;
-      case 254:
+      case 254: //Atualiza Status para pino Remoto
         if (aU16_Acao1[0][idz] > 0 && aU16_Acao1[1][idz] > 0) {
           if (aU8_Pinos[4][idz]) {
             aU8_Pinos[4][f_retornaIndicePino(aU16_Acao1[1][idz])] = aU16_Acao1[5][idz];
@@ -202,7 +233,7 @@ aU16_Acao[5][x] = Acionamento Alto=1 / Baixo=0
     if (idz >= vU8_totPinos){
       idz=0;
     }
-    vTaskDelay(6/portTICK_PERIOD_MS);
+    vTaskDelay(3/portTICK_PERIOD_MS);
   }
 }
 
@@ -223,54 +254,78 @@ aU16_Acao[8][x] = Notifica Assitente 0=Nao / 1=Sim
 aU16_Acao[5][x] = Acionamento Alto=1 / Baixo=0
 */
 
-  uint8_t aU8_Acao2DOWN[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint8_t aU8_Acao2LigaDelay[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint16_t aU16_Acao2LigaDelayTempo[1][vU8_totPinos]= {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
+  uint8_t aU8_AcaoTP1[1][vU8_totPinos];
 
-  uint8_t aU8_Acao3UP[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint8_t aU8_Acao3DOWN[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint16_t aU16_Acao3TempoUP[1][vU8_totPinos]= {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
-  uint16_t aU16_Acao3TempoDOWN[1][vU8_totPinos]= {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
+  uint8_t aU8_AcaoTP2DOWN[1][vU8_totPinos];
+  uint8_t aU8_AcaoTP2LigaDelay[1][vU8_totPinos];
+  uint16_t aU16_AcaoTP2LigaDelayTempo[1][vU8_totPinos];
 
-  uint8_t aU8_Acao4DOWN[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint8_t aU8_Acao4Pulso[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint16_t aU16_Acao4PulsoTempo[1][vU8_totPinos]= {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
+  uint8_t aU8_AcaoTP3UP[1][vU8_totPinos];
+  uint8_t aU8_AcaoTP3DOWN[1][vU8_totPinos];
+  uint16_t aU16_AcaoTP3TempoUP[1][vU8_totPinos];
+  uint16_t aU16_AcaoTP3TempoDOWN[1][vU8_totPinos];
 
-  uint8_t aU8_Acao5UP[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint8_t aU8_Acao5DOWN[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint16_t aU16_Acao5PulsoDelayTempoUP[1][vU8_totPinos]= {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
-  uint16_t aU16_Acao5PulsoDelayTempoDOWN[1][vU8_totPinos]= {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
+  uint8_t aU8_AcaoTP4DOWN[1][vU8_totPinos];
+  uint8_t aU8_AcaoTP4Pulso[1][vU8_totPinos];
+  uint16_t aU16_AcaoTP4PulsoTempo[1][vU8_totPinos];
+
+  uint8_t aU8_AcaoTP5UP[1][vU8_totPinos];
+  uint8_t aU8_AcaoTP5DOWN[2][vU8_totPinos];
+  uint16_t aU16_AcaoTP5PulsoDelayTempoUP[1][vU8_totPinos];
+  uint16_t aU16_AcaoTP5PulsoDelayTempoDOWN[1][vU8_totPinos];
 
   uint8_t idz=0;
   for (;;){
-        switch (aU16_Acao2[2][idz]) {
+    switch (aU16_Acao2[2][idz]) {
       case 1: //LIGA
         if (aU16_Acao2[0][idz] > 0 && aU16_Acao2[1][idz] > 0) {
           if (aU8_Pinos[4][idz]) {
-            f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],aU16_Acao2[5][idz]);
+            if (!aU8_AcaoTP1[0][idz]) {
+              if (f_retornaGrupoAcao(aU16_Acao2[1][idz]).length() < 1) {
+                f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],aU16_Acao2[5][idz]);
+              } else if (f_retornaStatusGrupoAcao(f_retornaGrupoAcao(aU16_Acao2[1][idz]),aU16_Acao2[5][idz])) {
+                f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],aU16_Acao2[5][idz]);
+              }
+              aU8_AcaoTP1[0][idz] = 1;
+            }
           } else {
-            f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],!aU16_Acao2[5][idz]);
+            if (aU8_AcaoTP1[0][idz]) {
+              if (f_retornaGrupoAcao(aU16_Acao2[1][idz]).length() < 1) {
+                f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],!aU16_Acao2[5][idz]);
+              } else if (f_retornaStatusGrupoAcao(f_retornaGrupoAcao(aU16_Acao2[1][idz]),!aU16_Acao2[5][idz])) {
+                f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],!aU16_Acao2[5][idz]);
+
+              }
+              aU8_AcaoTP1[0][idz] = 0;
+            }
           }
         }
         break;
       case 2: //LIGA DELAY
         if (aU16_Acao2[0][idz] > 0 && aU16_Acao2[1][idz] > 0) {
           if ( aU8_Pinos[4][idz] ) {
-              if (!aU8_Acao2LigaDelay[0][idz]) {
-                aU8_Acao2LigaDelay[0][idz] = 1;
-                aU16_Acao2LigaDelayTempo[0][idz] = aU16_Acao2[3][idz];
+              if (!aU8_AcaoTP2LigaDelay[0][idz]) {
+                aU8_AcaoTP2LigaDelay[0][idz] = 1;
+                aU16_AcaoTP2LigaDelayTempo[0][idz] = aU16_Acao2[3][idz];
               } else {
-                if ( aU16_Acao2LigaDelayTempo[0][idz] > 0) {
-                  aU16_Acao2LigaDelayTempo[0][idz]--;
+                if ( aU16_AcaoTP2LigaDelayTempo[0][idz] > 0) {
+                  aU16_AcaoTP2LigaDelayTempo[0][idz]--;
                 } else {
-                  f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],aU16_Acao2[5][idz]);
+                  if (!aU8_AcaoTP2DOWN[0][idz]) {
+                    f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],aU16_Acao2[5][idz]);
+                    aU8_AcaoTP2DOWN[0][idz] = 1;
+                  }
                 }
               }
           } else {
-            if (aU8_Acao2LigaDelay[0][idz] || aU8_Acao2DOWN[0][idz]) {
-              f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],!aU16_Acao2[5][idz]);
-              aU8_Acao2LigaDelay[0][idz] = 0;
-              aU8_Acao2DOWN[0][idz] = 0; 
+            if (aU8_AcaoTP2LigaDelay[0][idz] || aU8_AcaoTP2DOWN[0][idz]) {
+              if (f_retornaGrupoAcao(aU16_Acao2[1][idz]).length() < 1) {
+                f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],!aU16_Acao2[5][idz]);
+              } else if (f_retornaStatusGrupoAcao(f_retornaGrupoAcao(aU16_Acao2[1][idz]),!aU16_Acao2[5][idz])) {
+                f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],!aU16_Acao2[5][idz]);
+              }
+              aU8_AcaoTP2LigaDelay[0][idz] = 0;
+              aU8_AcaoTP2DOWN[0][idz] = 0;
             }
           }
         }
@@ -278,33 +333,33 @@ aU16_Acao[5][x] = Acionamento Alto=1 / Baixo=0
       case 3: //PISCA
         if (aU16_Acao2[0][idz] > 0 && aU16_Acao2[1][idz] > 0) {
           if ( aU8_Pinos[4][idz] ) {
-              if (!aU8_Acao3UP[0][idz]) {
-                aU8_Acao3UP[0][idz] = 1;
-                aU8_Acao3DOWN[0][idz] = 0;
-                aU16_Acao3TempoUP[0][idz] = aU16_Acao2[3][idz];
+              if (!aU8_AcaoTP3UP[0][idz]) {
+                aU8_AcaoTP3UP[0][idz] = 1;
+                aU8_AcaoTP3DOWN[0][idz] = 0;
+                aU16_AcaoTP3TempoUP[0][idz] = aU16_Acao2[3][idz];
                 f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],aU16_Acao2[5][idz]);
               } else {
-                if ( aU16_Acao3TempoUP[0][idz] > 0) {
-                  aU16_Acao3TempoUP[0][idz]--;
+                if ( aU16_AcaoTP3TempoUP[0][idz] > 0) {
+                  aU16_AcaoTP3TempoUP[0][idz]--;
                 } else {
-                  if (!aU8_Acao3DOWN[0][idz]) {
-                    aU8_Acao3DOWN[0][idz] = 1;
-                    aU16_Acao3TempoDOWN[0][idz] = aU16_Acao2[4][idz];
+                  if (!aU8_AcaoTP3DOWN[0][idz]) {
+                    aU8_AcaoTP3DOWN[0][idz] = 1;
+                    aU16_AcaoTP3TempoDOWN[0][idz] = aU16_Acao2[4][idz];
                     f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],!aU16_Acao2[5][idz]);
                   } else {
-                    if ( aU16_Acao3TempoDOWN[0][idz] > 0) {
-                      aU16_Acao3TempoDOWN[0][idz]--;
+                    if ( aU16_AcaoTP3TempoDOWN[0][idz] > 0) {
+                      aU16_AcaoTP3TempoDOWN[0][idz]--;
                     } else {
-                      aU8_Acao3UP[0][idz] = 0;
+                      aU8_AcaoTP3UP[0][idz] = 0;
                     }
                   }
                 }
               }
           } else {
-            if (aU8_Acao3UP[0][idz] || aU8_Acao3DOWN[0][idz]) {
+            if (aU8_AcaoTP3UP[0][idz] || aU8_AcaoTP3DOWN[0][idz]) {
               f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],!aU16_Acao2[5][idz]);
-              aU8_Acao3UP[0][idz] = 0;
-              aU8_Acao3DOWN[0][idz] = 0;
+              aU8_AcaoTP3UP[0][idz] = 0;
+              aU8_AcaoTP3DOWN[0][idz] = 0;   
             }
           }
         }
@@ -312,22 +367,25 @@ aU16_Acao[5][x] = Acionamento Alto=1 / Baixo=0
       case 4: //PULSO
         if (aU16_Acao2[0][idz] > 0 && aU16_Acao2[1][idz] > 0) {
           if ( aU8_Pinos[4][idz] ) {
-              if (!aU8_Acao4Pulso[0][idz]) {
-                aU8_Acao4Pulso[0][idz] = 1;
-                aU16_Acao4PulsoTempo[0][idz] = aU16_Acao2[3][idz];
+              if (!aU8_AcaoTP4Pulso[0][idz]) {
+                aU8_AcaoTP4Pulso[0][idz] = 1;
+                aU16_AcaoTP4PulsoTempo[0][idz] = aU16_Acao2[3][idz];
                 f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],aU16_Acao2[5][idz]);
               } else {
-                if ( aU16_Acao4PulsoTempo[0][idz] > 0) {
-                  aU16_Acao4PulsoTempo[0][idz]--;
-                } else {
-                  f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],!aU16_Acao2[5][idz]);
+                if (!aU8_AcaoTP4DOWN[0][idz]) {
+                  if ( aU16_AcaoTP4PulsoTempo[0][idz] > 0) {
+                    aU16_AcaoTP4PulsoTempo[0][idz]--;
+                  } else {
+                    f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],!aU16_Acao2[5][idz]);
+                    aU8_AcaoTP4DOWN[0][idz] = 1;
+                  }
                 }
               }
           } else {
-            if (aU8_Acao4Pulso[0][idz] || aU8_Acao4DOWN[0][idz]) {
+            if (aU8_AcaoTP4Pulso[0][idz] || aU8_AcaoTP4DOWN[0][idz]) {
               f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],!aU16_Acao2[5][idz]);
-              aU8_Acao4Pulso[0][idz] = 0;
-              aU8_Acao4DOWN[0][idz] = 0;
+              aU8_AcaoTP4Pulso[0][idz] = 0;
+              aU8_AcaoTP4DOWN[0][idz] = 0;
             }
           }
         }
@@ -335,36 +393,40 @@ aU16_Acao[5][x] = Acionamento Alto=1 / Baixo=0
       case 5: //PULSO DELAY ON
         if (aU16_Acao2[0][idz] > 0 && aU16_Acao2[1][idz] > 0) {
           if ( aU8_Pinos[4][idz] ) {
-              if (!aU8_Acao5UP[0][idz]) {
-                aU8_Acao5UP[0][idz] = 1;
-                aU16_Acao5PulsoDelayTempoUP[0][idz] = aU16_Acao2[3][idz];
+              if (!aU8_AcaoTP5UP[0][idz]) {
+                aU8_AcaoTP5UP[0][idz] = 1;
+                aU16_AcaoTP5PulsoDelayTempoUP[0][idz] = aU16_Acao2[3][idz];
               } else {
-                if ( aU16_Acao5PulsoDelayTempoUP[0][idz] > 0) {
-                  aU16_Acao5PulsoDelayTempoUP[0][idz]--;
+                if ( aU16_AcaoTP5PulsoDelayTempoUP[0][idz] > 0) {
+                  aU16_AcaoTP5PulsoDelayTempoUP[0][idz]--;
                 } else {
-                  if (aU8_Acao5UP[0][idz] && !aU8_Acao5DOWN[0][idz]) {
+                  if (aU8_AcaoTP5UP[0][idz] && !aU8_AcaoTP5DOWN[0][idz]) {
                     f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],aU16_Acao2[5][idz]);
-                    aU16_Acao5PulsoDelayTempoDOWN[0][idz] = aU16_Acao2[4][idz];
-                    aU8_Acao5DOWN[0][idz] = 1;
+                    aU16_AcaoTP5PulsoDelayTempoDOWN[0][idz] = aU16_Acao2[4][idz];
+                    aU8_AcaoTP5DOWN[0][idz] = 1;
                   } else {
-                    if (aU16_Acao5PulsoDelayTempoDOWN[0][idz] > 0) {
-                      aU16_Acao5PulsoDelayTempoDOWN[0][idz]--;
+                    if (aU16_AcaoTP5PulsoDelayTempoDOWN[0][idz] > 0) {
+                      aU16_AcaoTP5PulsoDelayTempoDOWN[0][idz]--;
                     } else {
-                      f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],!aU16_Acao2[5][idz]);
+                      if (!aU8_AcaoTP5DOWN[1][idz]) {
+                        f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],!aU16_Acao2[5][idz]);
+                        aU8_AcaoTP5DOWN[1][idz] = 1;
+                      }
                     }
                   }
                 }
               }
           } else {
-            if (aU8_Acao5UP[0][idz] ) {
-              f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],!aU16_Acao2[1][idz]);
-              aU8_Acao5UP[0][idz] = 0;
-              aU8_Acao5DOWN[0][idz] = 0;
+            if (aU8_AcaoTP5UP[0][idz] ) {
+              f_gravaPino(aU8_Pinos[1][idz],aU16_Acao2[1][idz],!aU16_Acao2[5][idz]);
+              aU8_AcaoTP5UP[0][idz] = 0;
+              aU8_AcaoTP5DOWN[0][idz] = 0;
+              aU8_AcaoTP5DOWN[1][idz] = 0;
             }
           }
         }
         break;
-      case 254:
+      case 254: //Atualiza Status para pino Remoto
         if (aU16_Acao2[0][idz] > 0 && aU16_Acao2[1][idz] > 0) {
           if (aU8_Pinos[4][idz]) {
             aU8_Pinos[4][f_retornaIndicePino(aU16_Acao2[1][idz])] = aU16_Acao2[5][idz];
@@ -378,7 +440,7 @@ aU16_Acao[5][x] = Acionamento Alto=1 / Baixo=0
     if (idz >= vU8_totPinos){
       idz=0;
     }
-    vTaskDelay(7/portTICK_PERIOD_MS);
+    vTaskDelay(3/portTICK_PERIOD_MS);
   }
 }
 
@@ -399,54 +461,78 @@ aU16_Acao[8][x] = Notifica Assitente 0=Nao / 1=Sim
 aU16_Acao[5][x] = Acionamento Alto=1 / Baixo=0
 */
 
-  uint8_t aU8_Acao2DOWN[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint8_t aU8_Acao2LigaDelay[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint16_t aU16_Acao2LigaDelayTempo[1][vU8_totPinos]= {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
+  uint8_t aU8_AcaoTP1[1][vU8_totPinos];
 
-  uint8_t aU8_Acao3UP[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint8_t aU8_Acao3DOWN[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint16_t aU16_Acao3TempoUP[1][vU8_totPinos]= {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
-  uint16_t aU16_Acao3TempoDOWN[1][vU8_totPinos]= {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
+  uint8_t aU8_AcaoTP2DOWN[1][vU8_totPinos];
+  uint8_t aU8_AcaoTP2LigaDelay[1][vU8_totPinos];
+  uint16_t aU16_AcaoTP2LigaDelayTempo[1][vU8_totPinos];
 
-  uint8_t aU8_Acao4DOWN[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint8_t aU8_Acao4Pulso[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint16_t aU16_Acao4PulsoTempo[1][vU8_totPinos]= {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
+  uint8_t aU8_AcaoTP3UP[1][vU8_totPinos];
+  uint8_t aU8_AcaoTP3DOWN[1][vU8_totPinos];
+  uint16_t aU16_AcaoTP3TempoUP[1][vU8_totPinos];
+  uint16_t aU16_AcaoTP3TempoDOWN[1][vU8_totPinos];
 
-  uint8_t aU8_Acao5UP[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint8_t aU8_Acao5DOWN[1][vU8_totPinos]= {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-  uint16_t aU16_Acao5PulsoDelayTempoUP[1][vU8_totPinos]= {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
-  uint16_t aU16_Acao5PulsoDelayTempoDOWN[1][vU8_totPinos]= {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
+  uint8_t aU8_AcaoTP4DOWN[1][vU8_totPinos];
+  uint8_t aU8_AcaoTP4Pulso[1][vU8_totPinos];
+  uint16_t aU16_AcaoTP4PulsoTempo[1][vU8_totPinos];
+
+  uint8_t aU8_AcaoTP5UP[1][vU8_totPinos];
+  uint8_t aU8_AcaoTP5DOWN[2][vU8_totPinos];
+  uint16_t aU16_AcaoTP5PulsoDelayTempoUP[1][vU8_totPinos];
+  uint16_t aU16_AcaoTP5PulsoDelayTempoDOWN[1][vU8_totPinos];
 
   uint8_t idz=0;
   for (;;){
-        switch (aU16_Acao3[2][idz]) {
+    switch (aU16_Acao3[2][idz]) {
       case 1: //LIGA
         if (aU16_Acao3[0][idz] > 0 && aU16_Acao3[1][idz] > 0) {
           if (aU8_Pinos[4][idz]) {
-            f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],aU16_Acao3[5][idz]);
+            if (!aU8_AcaoTP1[0][idz]) {
+              if (f_retornaGrupoAcao(aU16_Acao3[1][idz]).length() < 1) {
+                f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],aU16_Acao3[5][idz]);
+              } else if (f_retornaStatusGrupoAcao(f_retornaGrupoAcao(aU16_Acao3[1][idz]),aU16_Acao3[5][idz])) {
+                f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],aU16_Acao3[5][idz]);
+              }
+              aU8_AcaoTP1[0][idz] = 1;
+            }
           } else {
-            f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],!aU16_Acao3[5][idz]);
+            if (aU8_AcaoTP1[0][idz]) {
+              if (f_retornaGrupoAcao(aU16_Acao3[1][idz]).length() < 1) {
+                f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],!aU16_Acao3[5][idz]);
+              } else if (f_retornaStatusGrupoAcao(f_retornaGrupoAcao(aU16_Acao3[1][idz]),!aU16_Acao3[5][idz])) {
+                f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],!aU16_Acao3[5][idz]);
+
+              }
+              aU8_AcaoTP1[0][idz] = 0;
+            }
           }
         }
         break;
       case 2: //LIGA DELAY
         if (aU16_Acao3[0][idz] > 0 && aU16_Acao3[1][idz] > 0) {
           if ( aU8_Pinos[4][idz] ) {
-              if (!aU8_Acao2LigaDelay[0][idz]) {
-                aU8_Acao2LigaDelay[0][idz] = 1;
-                aU16_Acao2LigaDelayTempo[0][idz] = aU16_Acao3[3][idz];
+              if (!aU8_AcaoTP2LigaDelay[0][idz]) {
+                aU8_AcaoTP2LigaDelay[0][idz] = 1;
+                aU16_AcaoTP2LigaDelayTempo[0][idz] = aU16_Acao3[3][idz];
               } else {
-                if ( aU16_Acao2LigaDelayTempo[0][idz] > 0) {
-                  aU16_Acao2LigaDelayTempo[0][idz]--;
+                if ( aU16_AcaoTP2LigaDelayTempo[0][idz] > 0) {
+                  aU16_AcaoTP2LigaDelayTempo[0][idz]--;
                 } else {
-                  f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],aU16_Acao3[5][idz]);
+                  if (!aU8_AcaoTP2DOWN[0][idz]) {
+                    f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],aU16_Acao3[5][idz]);
+                    aU8_AcaoTP2DOWN[0][idz] = 1;
+                  }
                 }
               }
           } else {
-            if (aU8_Acao2LigaDelay[0][idz] || aU8_Acao2DOWN[0][idz]) {
-              f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],!aU16_Acao3[5][idz]);
-              aU8_Acao2LigaDelay[0][idz] = 0;
-              aU8_Acao2DOWN[0][idz] = 0;
+            if (aU8_AcaoTP2LigaDelay[0][idz] || aU8_AcaoTP2DOWN[0][idz]) {
+              if (f_retornaGrupoAcao(aU16_Acao3[1][idz]).length() < 1) {
+                f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],!aU16_Acao3[5][idz]);
+              } else if (f_retornaStatusGrupoAcao(f_retornaGrupoAcao(aU16_Acao3[1][idz]),!aU16_Acao3[5][idz])) {
+                f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],!aU16_Acao3[5][idz]);
+              }
+              aU8_AcaoTP2LigaDelay[0][idz] = 0;
+              aU8_AcaoTP2DOWN[0][idz] = 0;
             }
           }
         }
@@ -454,33 +540,33 @@ aU16_Acao[5][x] = Acionamento Alto=1 / Baixo=0
       case 3: //PISCA
         if (aU16_Acao3[0][idz] > 0 && aU16_Acao3[1][idz] > 0) {
           if ( aU8_Pinos[4][idz] ) {
-              if (!aU8_Acao3UP[0][idz]) {
-                aU8_Acao3UP[0][idz] = 1;
-                aU8_Acao3DOWN[0][idz] = 0;
-                aU16_Acao3TempoUP[0][idz] = aU16_Acao3[3][idz];
+              if (!aU8_AcaoTP3UP[0][idz]) {
+                aU8_AcaoTP3UP[0][idz] = 1;
+                aU8_AcaoTP3DOWN[0][idz] = 0;
+                aU16_AcaoTP3TempoUP[0][idz] = aU16_Acao3[3][idz];
                 f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],aU16_Acao3[5][idz]);
               } else {
-                if ( aU16_Acao3TempoUP[0][idz] > 0) {
-                  aU16_Acao3TempoUP[0][idz]--;
+                if ( aU16_AcaoTP3TempoUP[0][idz] > 0) {
+                  aU16_AcaoTP3TempoUP[0][idz]--;
                 } else {
-                  if (!aU8_Acao3DOWN[0][idz]) {
-                    aU8_Acao3DOWN[0][idz] = 1;
-                    aU16_Acao3TempoDOWN[0][idz] = aU16_Acao3[4][idz];
+                  if (!aU8_AcaoTP3DOWN[0][idz]) {
+                    aU8_AcaoTP3DOWN[0][idz] = 1;
+                    aU16_AcaoTP3TempoDOWN[0][idz] = aU16_Acao3[4][idz];
                     f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],!aU16_Acao3[5][idz]);
                   } else {
-                    if ( aU16_Acao3TempoDOWN[0][idz] > 0) {
-                      aU16_Acao3TempoDOWN[0][idz]--;
+                    if ( aU16_AcaoTP3TempoDOWN[0][idz] > 0) {
+                      aU16_AcaoTP3TempoDOWN[0][idz]--;
                     } else {
-                      aU8_Acao3UP[0][idz] = 0;
+                      aU8_AcaoTP3UP[0][idz] = 0;
                     }
                   }
                 }
               }
           } else {
-            if (aU8_Acao3UP[0][idz] || aU8_Acao3DOWN[0][idz]) {
+            if (aU8_AcaoTP3UP[0][idz] || aU8_AcaoTP3DOWN[0][idz]) {
               f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],!aU16_Acao3[5][idz]);
-              aU8_Acao3UP[0][idz] = 0;
-              aU8_Acao3DOWN[0][idz] = 0; 
+              aU8_AcaoTP3UP[0][idz] = 0;
+              aU8_AcaoTP3DOWN[0][idz] = 0;   
             }
           }
         }
@@ -488,22 +574,25 @@ aU16_Acao[5][x] = Acionamento Alto=1 / Baixo=0
       case 4: //PULSO
         if (aU16_Acao3[0][idz] > 0 && aU16_Acao3[1][idz] > 0) {
           if ( aU8_Pinos[4][idz] ) {
-              if (!aU8_Acao4Pulso[0][idz]) {
-                aU8_Acao4Pulso[0][idz] = 1;
-                aU16_Acao4PulsoTempo[0][idz] = aU16_Acao3[3][idz];
+              if (!aU8_AcaoTP4Pulso[0][idz]) {
+                aU8_AcaoTP4Pulso[0][idz] = 1;
+                aU16_AcaoTP4PulsoTempo[0][idz] = aU16_Acao3[3][idz];
                 f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],aU16_Acao3[5][idz]);
               } else {
-                if ( aU16_Acao4PulsoTempo[0][idz] > 0) {
-                  aU16_Acao4PulsoTempo[0][idz]--;
-                } else {
-                  f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],!aU16_Acao3[5][idz]);
+                if (!aU8_AcaoTP4DOWN[0][idz]) {
+                  if ( aU16_AcaoTP4PulsoTempo[0][idz] > 0) {
+                    aU16_AcaoTP4PulsoTempo[0][idz]--;
+                  } else {
+                    f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],!aU16_Acao3[5][idz]);
+                    aU8_AcaoTP4DOWN[0][idz] = 1;
+                  }
                 }
               }
           } else {
-            if (aU8_Acao4Pulso[0][idz] || aU8_Acao4DOWN[0][idz]) {
+            if (aU8_AcaoTP4Pulso[0][idz] || aU8_AcaoTP4DOWN[0][idz]) {
               f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],!aU16_Acao3[5][idz]);
-              aU8_Acao4Pulso[0][idz] = 0;
-              aU8_Acao4DOWN[0][idz] = 0; 
+              aU8_AcaoTP4Pulso[0][idz] = 0;
+              aU8_AcaoTP4DOWN[0][idz] = 0;
             }
           }
         }
@@ -511,36 +600,40 @@ aU16_Acao[5][x] = Acionamento Alto=1 / Baixo=0
       case 5: //PULSO DELAY ON
         if (aU16_Acao3[0][idz] > 0 && aU16_Acao3[1][idz] > 0) {
           if ( aU8_Pinos[4][idz] ) {
-              if (!aU8_Acao5UP[0][idz]) {
-                aU8_Acao5UP[0][idz] = 1;
-                aU16_Acao5PulsoDelayTempoUP[0][idz] = aU16_Acao3[3][idz];
+              if (!aU8_AcaoTP5UP[0][idz]) {
+                aU8_AcaoTP5UP[0][idz] = 1;
+                aU16_AcaoTP5PulsoDelayTempoUP[0][idz] = aU16_Acao3[3][idz];
               } else {
-                if ( aU16_Acao5PulsoDelayTempoUP[0][idz] > 0) {
-                  aU16_Acao5PulsoDelayTempoUP[0][idz]--;
+                if ( aU16_AcaoTP5PulsoDelayTempoUP[0][idz] > 0) {
+                  aU16_AcaoTP5PulsoDelayTempoUP[0][idz]--;
                 } else {
-                  if (aU8_Acao5UP[0][idz] && !aU8_Acao5DOWN[0][idz]) {
+                  if (aU8_AcaoTP5UP[0][idz] && !aU8_AcaoTP5DOWN[0][idz]) {
                     f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],aU16_Acao3[5][idz]);
-                    aU16_Acao5PulsoDelayTempoDOWN[0][idz] = aU16_Acao3[4][idz];
-                    aU8_Acao5DOWN[0][idz] = 1;
+                    aU16_AcaoTP5PulsoDelayTempoDOWN[0][idz] = aU16_Acao3[4][idz];
+                    aU8_AcaoTP5DOWN[0][idz] = 1;
                   } else {
-                    if (aU16_Acao5PulsoDelayTempoDOWN[0][idz] > 0) {
-                      aU16_Acao5PulsoDelayTempoDOWN[0][idz]--;
+                    if (aU16_AcaoTP5PulsoDelayTempoDOWN[0][idz] > 0) {
+                      aU16_AcaoTP5PulsoDelayTempoDOWN[0][idz]--;
                     } else {
-                      f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],!aU16_Acao3[5][idz]);
+                      if (!aU8_AcaoTP5DOWN[1][idz]) {
+                        f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],!aU16_Acao3[5][idz]);
+                        aU8_AcaoTP5DOWN[1][idz] = 1;
+                      }
                     }
                   }
                 }
               }
           } else {
-            if (aU8_Acao5UP[0][idz] ) {
-              f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],!aU16_Acao3[1][idz]);
-              aU8_Acao5UP[0][idz] = 0;
-              aU8_Acao5DOWN[0][idz] = 0;
+            if (aU8_AcaoTP5UP[0][idz] ) {
+              f_gravaPino(aU8_Pinos[1][idz],aU16_Acao3[1][idz],!aU16_Acao3[5][idz]);
+              aU8_AcaoTP5UP[0][idz] = 0;
+              aU8_AcaoTP5DOWN[0][idz] = 0;
+              aU8_AcaoTP5DOWN[1][idz] = 0;
             }
           }
         }
         break;
-      case 254:
+      case 254: //Atualiza Status para pino Remoto
         if (aU16_Acao3[0][idz] > 0 && aU16_Acao3[1][idz] > 0) {
           if (aU8_Pinos[4][idz]) {
             aU8_Pinos[4][f_retornaIndicePino(aU16_Acao3[1][idz])] = aU16_Acao3[5][idz];
@@ -554,6 +647,6 @@ aU16_Acao[5][x] = Acionamento Alto=1 / Baixo=0
     if (idz >= vU8_totPinos){
       idz=0;
     }
-    vTaskDelay(8/portTICK_PERIOD_MS);
+    vTaskDelay(3/portTICK_PERIOD_MS);
   }
 }

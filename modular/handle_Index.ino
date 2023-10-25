@@ -10,9 +10,9 @@ void f_handle_Index() {
   html += "<title>Módulo: "+vS_nomeDispositivo+"</title>";
   html += "</head>";
   html += "<body>";
-  html += "<center><h1>PÁGINA INICIAL [" + vS_nomeDispositivo + "]</h1>Seu ip é: ";
+  html += "<center><h1>PÁGINA STATUS [" + vS_nomeDispositivo + "]</h1>Seu ip é: ";
   html += SERVIDOR_WEB.client().remoteIP().toString();
-  html += "<br><a href='http://" + WiFi.localIP().toString() + ":" + String(vU16_portaWeb) + "/acoes'> Configurar Acoes</a> - ";
+  html += "<br><a href='http://" + WiFi.localIP().toString() + ":" + String(vU16_portaWeb) + "/acoes1pg1'> Configurar Ações</a> - ";
   html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vU16_portaWeb) + "/pinos'> Configurar Pinos</a> - ";
   html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vU16_portaWeb) + "/configurag'> Configurações Gerais</a> - ";
   html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vU16_portaWeb) + "/lsprefpin'> Parâmetros</a> - ";
@@ -21,12 +21,12 @@ void f_handle_Index() {
   html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vU16_portaWeb) + "/recarrega'> Recarregar Funções</a> - ";
   html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vU16_portaWeb) + "/limpaflash'> Limpar Flash</a></center>";
   html += "<h2>SENSORES</h2>";
-  html += "<table border='1'>";
-  uint8_t linha = vU8_totPinos/5;
+  short linha = vU8_totPinos/vU8_colunasTabelas;
   uint8_t colINICIO = 0;
-  uint8_t colFIM = 6;
-  CONFIG_FLASH.begin("ConfiPinos", true);
-  while (linha > 0) {
+  uint8_t colFIM = vU8_colunasTabelas;
+  uint8_t x;
+  html += "<table border='1'>";
+  while (linha >= 0) {
     html += "    <tr>";
     html += "        <td style='background-color: LightGrey'><center>Nome</center></td>";
                     for (uint8_t z=colINICIO; z<colFIM; z++){
@@ -50,33 +50,62 @@ void f_handle_Index() {
                         html += "        <td><center>"+String(aU8_Pinos[4][b])+"</center></td>";
                       }
                     }
-    html += "    </tr>";
-    html += "    <tr>";
-    html += "    <tr>";
-    html += "        <th colspan='7' style='background-color: LightGrey'> |</th>";
-    html += "    </tr>";
+    html += "<tr>";
+    html += "<td colspan='"+String(vU8_colunasTabelas+1)+"' style='background-color: LightGrey'>&nbsp</td>";
+    html += "</tr>";
     linha--;
-    if (linha > 1) {
+    if (linha > 0) {
       colINICIO = colFIM;
-      colFIM = colFIM+6;
+      colFIM = colFIM+vU8_colunasTabelas;
     } else {
       colINICIO = colFIM;
       colFIM = vU8_totPinos;
     }
   }
-  CONFIG_FLASH.end();
+  //CONFIG_FLASH.begin("ConfiPinos", true);
+  //CONFIG_FLASH.end();
   html += "</table><br>";
   html += "<h2>COMUNICAÇÃO ENTRE MÓDULOS</h2>";
   html += "Ciclo Handshake: ";
   html += String(vI_controleCicloHandshake);
   html += " de ";
   html += String(vI_cicloHandshake);
-  html += "<p <span>Alerta Handshake: </span>";
-  if (vB_AlertaHandshake > 0) {
-    html += "<span style='background-color:"+vS_corStatus1+"'>"+String(vB_AlertaHandshake)+"</span></p>";
-  } else {
-    html += "<span style='background-color:"+vS_corStatus0+"'>"+String(vB_AlertaHandshake)+"</span></p>";
+  html += "<br> Alerta Handshake";
+  html += "<table border='1'>";
+
+  html += "<tr>";
+  html += "<td style='background-color: LightGrey'><center>Módulo</center></td>";
+  for (uint8_t z=0; z<vU8_totPinos; z++){
+    if (aS_InterMod[0][z].length() >0 && aU8_InterMod[0][z] > 0) {
+      html += "        <td><center>"+aS_InterMod[0][z]+"</center></td>";
+    }
   }
+  html += "</tr>";
+  for (uint8_t x=0; x<vI8_aU16_InterModHA; x++) {
+      html += "    <tr>";
+      html += "    <td style='background-color: LightGrey'><center>"+aS16_InterModHA[0][x]+"</center></td>";
+      for (uint8_t y=0; y<vU8_totPinos; y++) {
+        if (aS_InterMod[0][y].length() >0) {
+          if ( x == 1) {
+            if (aU16_ControlHS[x][y] && aU8_InterMod[0][y] > 0) {
+              html += "        <td style='background-color:"+vS_corStatus1+"'><center>"+String(aU16_ControlHS[x][y])+"</td>";
+            } else {
+              if (aU8_InterMod[0][y] > 0) {
+                html += "        <td style='background-color:"+vS_corStatus0+"'><center>"+String(aU16_ControlHS[x][y])+"</td>";
+              } else {
+                html += "        <td ><center>-</td>";
+              }
+            }
+          } else {
+              html += "        <td ><center>"+String(aU16_ControlHS[x][y])+"</td>";
+          }
+        }
+      }
+      html += "    </tr>";
+
+  }
+  html += "</table>";
+
   html += "<p>Último recebido: ";
   html += vS_uri;
   html += "<br>";
@@ -100,7 +129,6 @@ void f_handle_Index() {
   html += ULTIMOS_GET_SERVIDOR;
   html += "<br><br>Últimos recebidos:<br>";
   html += ULTIMOS_GET_RECEBIDOS;
-  html += "<br><a href=\"/\">Página Inicial</a>\n";
   html += "</body>";
   html += "</html>";
   SERVIDOR_WEB.send(200, "text/html", html);
