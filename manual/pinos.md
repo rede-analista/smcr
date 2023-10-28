@@ -22,7 +22,7 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
 - Parâmetro PINO
   - É a informação do pino físico do ESP32, aqui será feito a associação do pino físico na placa ESP.<br>
     Esta informação será usada na configuração de Ações(eventos).
-    Deve ser um número que corresponde ao pino físico do ESP, por exemplo, este número pode ser 2,4,5,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33,34,35,36,39...251,253,254,255 etc.<br>
+    Deve ser um número que corresponde ao pino físico do ESP, por exemplo, este número pode ser 2,4,5,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33,34,35,36,39...251,253,254<br>
     NOTA 4: O Pino 255 é reservado para controle de status de comunicação entre módulos. [Veja CICLOS HANDSHAKE](intermod.md)
 
 - Parâmetro STATUS
