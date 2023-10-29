@@ -57,6 +57,12 @@
     WL_DISCONNECTED     = 6<br>
 
 
+# Parâmetros Recebidos Servidor WEB
+     Argumento 0 = Nome do Dispositivo<br>
+     Argumento 1 = Acao<br>
+     Argumento 2 = Indice do Pino<br>
+     Argumento 3 = Status do Pino<br>
+
 # Arrays para controle de execução de rotinas (não são salvos).
 
 
