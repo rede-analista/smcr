@@ -1,5 +1,5 @@
-# Retorno de Funções (Serial)
-     Função f_enviaModulo: Usada para enviar informações entre os módulos de status dos pinos e enviuo de handshake.
+# Retorno Serial da Função f_enviaModulo()
+     Usada para enviar informações entre os módulos de status dos pinos e enviuo de handshake.
               "int f_enviaModulo(uint8_t idmodulo, String acao, String pino, String valor)"
     HTTPC_ERROR_CONNECTION_REFUSED  (-1)
     HTTPC_ERROR_SEND_HEADER_FAILED  (-2)
@@ -13,48 +13,48 @@
     HTTPC_ERROR_STREAM_WRITE        (-10)
     HTTPC_ERROR_READ_TIMEOUT        (-11)
 
-       Função f_reconnectMQTT: Usada para conexão com servidor broker mqtt.<br>
-                "void f_reconnectMQTT()"<br>
+# Retorno Serial da Função f_reconnectMQTT()
+       Usada para conexão com servidor broker mqtt.
+                "void f_reconnectMQTT()"
 
-    MQTT_CONNECTION_TIMEOUT     -4<br>
-    MQTT_CONNECTION_LOST        -3<br>
-    MQTT_CONNECT_FAILED         -2<br>
-    MQTT_DISCONNECTED           -1<br>
-    MQTT_CONNECTED               0<br>
-    MQTT_CONNECT_BAD_PROTOCOL    1<br>
-    MQTT_CONNECT_BAD_CLIENT_ID   2<br>
-    MQTT_CONNECT_UNAVAILABLE     3<br>
-    MQTT_CONNECT_BAD_CREDENTIALS 4<br>
-    MQTT_CONNECT_UNAUTHORIZED    5<br>
-    MQTTCONNECT     1 << 4  // Client request to connect to Server<br>
-    MQTTCONNACK     2 << 4  // Connect Acknowledgment<br>
-    MQTTPUBLISH     3 << 4  // Publish message<br>
-    MQTTPUBACK      4 << 4  // Publish Acknowledgment<br>
-    MQTTPUBREC      5 << 4  // Publish Received (assured delivery part 1)<br>
-    MQTTPUBREL      6 << 4  // Publish Release (assured delivery part 2)<br>
-    MQTTPUBCOMP     7 << 4  // Publish Complete (assured delivery part 3)<br>
-    MQTTSUBSCRIBE   8 << 4  // Client Subscribe request<br>
-    MQTTSUBACK      9 << 4  // Subscribe Acknowledgment<br>
-    MQTTUNSUBSCRIBE 10 << 4 // Client Unsubscribe request<br>
-    MQTTUNSUBACK    11 << 4 // Unsubscribe Acknowledgment<br>
-    MQTTPINGREQ     12 << 4 // PING Request<br>
-    MQTTPINGRESP    13 << 4 // PING Response<br>
-    MQTTDISCONNECT  14 << 4 // Client is Disconnecting<br>
-    MQTTReserved    15 << 4 // Reserved<br>
+    MQTT_CONNECTION_TIMEOUT     -4
+    MQTT_CONNECTION_LOST        -3
+    MQTT_CONNECT_FAILED         -2
+    MQTT_DISCONNECTED           -1
+    MQTT_CONNECTED               0
+    MQTT_CONNECT_BAD_PROTOCOL    1
+    MQTT_CONNECT_BAD_CLIENT_ID   2
+    MQTT_CONNECT_UNAVAILABLE     3
+    MQTT_CONNECT_BAD_CREDENTIALS 4
+    MQTT_CONNECT_UNAUTHORIZED    5
+    MQTTCONNECT     1 << 4  // Client request to connect to Server
+    MQTTCONNACK     2 << 4  // Connect Acknowledgment
+    MQTTPUBLISH     3 << 4  // Publish message
+    MQTTPUBACK      4 << 4  // Publish Acknowledgment
+    MQTTPUBREC      5 << 4  // Publish Received (assured delivery part 1)
+    MQTTPUBREL      6 << 4  // Publish Release (assured delivery part 2)
+    MQTTPUBCOMP     7 << 4  // Publish Complete (assured delivery part 3)
+    MQTTSUBSCRIBE   8 << 4  // Client Subscribe request
+    MQTTSUBACK      9 << 4  // Subscribe Acknowledgment
+    MQTTUNSUBSCRIBE 10 << 4 // Client Unsubscribe request
+    MQTTUNSUBACK    11 << 4 // Unsubscribe Acknowledgment
+    MQTTPINGREQ     12 << 4 // PING Request
+    MQTTPINGRESP    13 << 4 // PING Response
+    MQTTDISCONNECT  14 << 4 // Client is Disconnecting
+    MQTTReserved    15 << 4 // Reserved
 
-
-  - Função f_configuraWIFI: Usada para conexão com wifi<br>
-                "uint8_t  f_configuraWIFI()"<br>
+# Retorno Serial da Função f_configuraWIFI()
+         Usada para conexão com wifi
+                "uint8_t  f_configuraWIFI()"
   
-    WL_NO_SHIELD        = 255   // for compatibility with WiFi Shield library<br>
-    WL_IDLE_STATUS      = 0<br>
-    WL_NO_SSID_AVAIL    = 1<br>
-    WL_SCAN_COMPLETED   = 2<br>
-    WL_CONNECTED        = 3<br>
-    WL_CONNECT_FAILED   = 4<br>
-    WL_CONNECTION_LOST  = 5<br>
-    WL_DISCONNECTED     = 6<br>
-
+    WL_NO_SHIELD        = 255   // for compatibility with WiFi Shield library
+    WL_IDLE_STATUS      = 0
+    WL_NO_SSID_AVAIL    = 1
+    WL_SCAN_COMPLETED   = 2
+    WL_CONNECTED        = 3
+    WL_CONNECT_FAILED   = 4
+    WL_CONNECTION_LOST  = 5
+    WL_DISCONNECTED     = 6
 
 # Parâmetros Recebidos Servidor WEB
      Argumento 0 = Nome do Dispositivo
