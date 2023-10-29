@@ -56,10 +56,8 @@
     WL_CONNECTION_LOST  = 5<br>
     WL_DISCONNECTED     = 6<br>
 
-  # Arrays
 
-
-- //---- Arrays para controle de execucao de rotinas ----//<br>
+# Arrays para controle de execucao de rotinas.
 
 
 /* -----------------------------------------------------------<br>
@@ -114,7 +112,7 @@ uint16_t aU16_ControlHS[vI8_aU16_InterModHA][vU8_totPinos];<br>
 
 
 
-- //---- Arrays de dados em tempo de execução (foram carregados da flash) ----//<br>
+# Arrays de dados em tempo de execução (foram carregados da flash)
 
 
 /* -----------------------------------------------------------<br>
