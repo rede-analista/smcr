@@ -161,3 +161,43 @@
      aS8_Pinos[0][x] = Nome/descricao
 
      String aS8_Pinos[vI8_aS8_Pinos][vU8_totPinos]
+
+
+# Array de dados aU16_AcaoX (carregado da flash)
+     Usado para cadastro de acoes, eventos quando uma porta(pino) e acionada
+
+     aU16_Acao[Propriedade][Pino]
+     aU16_Acao[0][x] = Relacao (Pino Origem) 0=Nenhum
+     aU16_Acao[1][x] = Relacao (Pino Destino) 0=Nenhum
+     aU16_Acao[2][x] = Acao 0=Nenhuma / 1=Liga / 2=Liga Delay / 3=Pisca / 4=Pulso / 5=Pulso Delay
+     aU16_Acao[3][x] = Tempo Acao ON (LIGA DELAY=2 / PISCA=3 / PULSO=4 / PULSO DELAY ON=5)
+     aU16_Acao[4][x] = Tempo Acao OFF (LIGA DELAY=2 / PISCA=3 / PULSO=4 / PULSO DELAY ON=5)
+     aU16_Acao[5][x] = Acionamento Alto=1 / Baixo=0
+
+     uint16_t aU16_Acao1[vI8_aU16_Acao][vU8_totPinos]
+     uint16_t aU16_Acao2[vI8_aU16_Acao][vU8_totPinos]
+     uint16_t aU16_Acao3[vI8_aU16_Acao][vU8_totPinos]
+     
+# Array de dados aU16_AcaoRedeX (carregado da flash)
+     Usado para cadastro de acoes, eventos de rede quando uma porta(pino) e acionada
+
+     aU16_AcaoRede[Propriedade][Pino]
+     aU16_AcaoRede[0][x] = Envia ao Modulo 0=Nao / 1 a 254=Sim, ID do módulo
+     aU16_AcaoRede[1][x] = Envia ao Telegram 0=Nao / 1=Sim
+     aU16_AcaoRede[2][x] = Envia ao MqTT 0=Nao / 1=Sim
+     aU16_AcaoRede[3][x] = Notifica Assitente 0=Nao / 1=Sim
+
+     uint16_t aU16_AcaoRede1[vI8_aU16_AcaoRede][vU8_totPinos]
+     uint16_t aU16_AcaoRede2[vI8_aU16_AcaoRede][vU8_totPinos]
+     uint16_t aU16_AcaoRede3[vI8_aU16_AcaoRede][vU8_totPinos]
+
+# Array de dados aS8_Acao1X (carregado da flash)
+     Usado para cadastro de acoes, eventos quando uma porta(pino) e acionada
+
+     aS8_Acao[Propriedade][Pino]
+     aS8_Acao[0][x] = Classe da acao para o MqTT
+     aS8_Acao[1][x] = Icone da acao para o MqTT
+
+     String aS8_Acao1[vI8_aS8_Acao][vU8_totPinos]
+     String aS8_Acao2[vI8_aS8_Acao][vU8_totPinos]
+     String aS8_Acao3[vI8_aS8_Acao][vU8_totPinos]
