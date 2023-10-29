@@ -1,5 +1,5 @@
 # Retorno de Funções (Serial)
-  - Função f_enviaModulo: Usada para enviar informações entre os módulos de status dos pinos e enviuo de handshake.<br>
+     Função f_enviaModulo: Usada para enviar informações entre os módulos de status dos pinos e enviuo de handshake.<br>
               "int f_enviaModulo(uint8_t idmodulo, String acao, String pino, String valor)"<br>
     HTTPC_ERROR_CONNECTION_REFUSED  (-1)<br>
     HTTPC_ERROR_SEND_HEADER_FAILED  (-2)<br>
