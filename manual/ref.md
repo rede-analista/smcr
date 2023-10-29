@@ -1,19 +1,19 @@
 # Retorno de Funções (Serial)
-     Função f_enviaModulo: Usada para enviar informações entre os módulos de status dos pinos e enviuo de handshake.<br>
-              "int f_enviaModulo(uint8_t idmodulo, String acao, String pino, String valor)"<br>
-    HTTPC_ERROR_CONNECTION_REFUSED  (-1)<br>
-    HTTPC_ERROR_SEND_HEADER_FAILED  (-2)<br>
-    HTTPC_ERROR_SEND_PAYLOAD_FAILED (-3)<br>
-    HTTPC_ERROR_NOT_CONNECTED       (-4)<br>
-    HTTPC_ERROR_CONNECTION_LOST     (-5)<br>
-    HTTPC_ERROR_NO_STREAM           (-6)<br>
-    HTTPC_ERROR_NO_HTTP_SERVER      (-7)<br>
-    HTTPC_ERROR_TOO_LESS_RAM        (-8)<br>
-    HTTPC_ERROR_ENCODING            (-9)<br>
-    HTTPC_ERROR_STREAM_WRITE        (-10)<br>
-    HTTPC_ERROR_READ_TIMEOUT        (-11)<br>
+     Função f_enviaModulo: Usada para enviar informações entre os módulos de status dos pinos e enviuo de handshake.
+              "int f_enviaModulo(uint8_t idmodulo, String acao, String pino, String valor)"
+    HTTPC_ERROR_CONNECTION_REFUSED  (-1)
+    HTTPC_ERROR_SEND_HEADER_FAILED  (-2)
+    HTTPC_ERROR_SEND_PAYLOAD_FAILED (-3)
+    HTTPC_ERROR_NOT_CONNECTED       (-4)
+    HTTPC_ERROR_CONNECTION_LOST     (-5)
+    HTTPC_ERROR_NO_STREAM           (-6)
+    HTTPC_ERROR_NO_HTTP_SERVER      (-7)
+    HTTPC_ERROR_TOO_LESS_RAM        (-8)
+    HTTPC_ERROR_ENCODING            (-9)
+    HTTPC_ERROR_STREAM_WRITE        (-10)
+    HTTPC_ERROR_READ_TIMEOUT        (-11)
 
-  - Função f_reconnectMQTT: Usada para conexão com servidor broker mqtt.<br>
+       Função f_reconnectMQTT: Usada para conexão com servidor broker mqtt.<br>
                 "void f_reconnectMQTT()"<br>
 
     MQTT_CONNECTION_TIMEOUT     -4<br>
