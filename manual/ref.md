@@ -62,24 +62,23 @@
      Argumento 2 = Indice do Pino
      Argumento 3 = Status do Pino
 
-# Arrays para controle de execução de rotinas (não são salvos).
-/* -----------------------------------------------------------<br>
-Controle o envio de menssagens entre os modulos ESP<br>
-aU8_ControlMsgMod[Propriedade][Pino]<br>
-aU8_ControlMsgMod[0][x] = Enviar Receptor Array 1 Acao<br>
-aU8_ControlMsgMod[1][x] = Enviar Receptor Array 2 Acao<br>
-aU8_ControlMsgMod[2][x] = Enviar Receptor Array 3 Acao<br>
-*/<br>
-uint8_t aU8_ControlMsgMod[vI8_aU8_ControlMsg][vU8_totPinos];<br>
+# Array aU8_ControlMsgMod para controle de execução de rotinas (não são salvos).
+     Controle o envio de menssagens entre os modulos ESP
+aU8_ControlMsgMod[Propriedade][Pino]
+aU8_ControlMsgMod[0][x] = Enviar Receptor Array 1 Acao
+aU8_ControlMsgMod[1][x] = Enviar Receptor Array 2 Acao
+aU8_ControlMsgMod[2][x] = Enviar Receptor Array 3 Acao
+*/
+uint8_t aU8_ControlMsgMod[vI8_aU8_ControlMsg][vU8_totPinos]
 
-/* -----------------------------------------------------------<br>
-Controle o envio de menssagens para assistentes<br>
-aU8_ControlMsgAss[Propriedade][Pino]<br>
-aU8_ControlMsgAss[0][x] = Enviar Assistentes Array 1 Acao<br>
-aU8_ControlMsgAss[1][x] = Enviar Assistentes Array 2 Acao<br>
-aU8_ControlMsgAss[2][x] = Enviar Assistentes Array 3 Acao<br>
-*/<br>
-uint8_t aU8_ControlMsgAss[vI8_aU8_ControlMsg][vU8_totPinos];<br>
+# Array aU8_ControlMsgAss para controle de execução de rotinas (não são salvos).
+     Controle o envio de menssagens para assistentes
+aU8_ControlMsgAss[Propriedade][Pino]
+aU8_ControlMsgAss[0][x] = Enviar Assistentes Array 1 Acao
+aU8_ControlMsgAss[1][x] = Enviar Assistentes Array 2 Acao
+aU8_ControlMsgAss[2][x] = Enviar Assistentes Array 3 Acao
+*/
+uint8_t aU8_ControlMsgAss[vI8_aU8_ControlMsg][vU8_totPinos]
 
 /* -----------------------------------------------------------<br>
 Controle o envio de menssagens para telegram<br>
