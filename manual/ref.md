@@ -139,24 +139,24 @@
 
      uint8_t aU8_InterMod[vI8_aU8_InterMod][vU8_totPinos]
 
-/* -----------------------------------------------------------<br>
-Usado para cadastro de porta (pinos fisicos)<br>
-aU8_Pinos[Propriedade][Pino]<br>
-aU8_Pinos[0][x] = Fisico - Mapeamento dos pinos fisicos<br>
-aU8_Pinos[1][x] = Tipo 1=DIGITAL / 0=ANALOGICO / 254=REMOTO<br>
-aU8_Pinos[2][x] = Modo INPUT=1 / OUTPUT=3 / PULLUP=4 / INPUT_PULLUP=5 / PULLDOWN=8 / INPUT_PULLDOWN=9 / OPEN_DRAIN=10 / OUTPUT_OPEN_DRAIN=12 / ANALOG=0<br>
-aU8_Pinos[3][x] = Invertido(XOR) 1=SIM / 0=NAO<br>
-aU8_Pinos[4][x] = Status 0=LOW / 1=HIGH<br>
-aU8_Pinos[5][x] = Retencao 0=NAO / 1=SIM<br>
-aU8_Pinos[6][x] = Tempo Retencao 0 a 255<br>
-/*<br>
-uint8_t aU8_Pinos[vI8_aU8_Pinos][vU8_totPinos];<br>
+# Array de dados aU8_Pinos (carregado da flash)
+     Usado para cadastro de porta (pinos fisicos)
 
-/* -----------------------------------------------------------<br>
-Usado para cadastro do nome(descricao) dos pinos<br>
-aS8_Pinos[Propriedade][Pino]<br>
-aS8_Pinos[0][x] = Nome/descricao<br>
-*/<br>
-String aS8_Pinos[vI8_aS8_Pinos][vU8_totPinos];<br>
+     aU8_Pinos[Propriedade][Pino]
+     aU8_Pinos[0][x] = Fisico - Mapeamento dos pinos fisicos
+     aU8_Pinos[1][x] = Tipo 1=DIGITAL / 0=ANALOGICO / 254=REMOTO
+     aU8_Pinos[2][x] = Modo INPUT=1 / OUTPUT=3 / PULLUP=4 / INPUT_PULLUP=5 / PULLDOWN=8 / INPUT_PULLDOWN=9 / OPEN_DRAIN=10 / OUTPUT_OPEN_DRAIN=12 / REMOTO=254
+     aU8_Pinos[3][x] = Invertido(XOR) 1=SIM / 0=NAO
+     aU8_Pinos[4][x] = Status 0=LOW / 1=HIGH
+     aU8_Pinos[5][x] = Retencao 0=NAO / 1=SIM
+     aU8_Pinos[6][x] = Tempo Retencao 0 a 255
 
-  
+     uint8_t aU8_Pinos[vI8_aU8_Pinos][vU8_totPinos]
+
+# Array de dados aS8_Pinos (carregado da flash)
+     Usado para cadastro do nome(descricao) dos pinos
+
+     aS8_Pinos[Propriedade][Pino]
+     aS8_Pinos[0][x] = Nome/descricao
+
+     String aS8_Pinos[vI8_aS8_Pinos][vU8_totPinos]
