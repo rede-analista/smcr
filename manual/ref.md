@@ -66,7 +66,7 @@
      Argumento 2 = Indice do Pino
      Argumento 3 = Status do Pino
 
-# Array aU8_ControlMsgMod para controle de execução de rotinas (não são salvos).
+# Array aU8_ControlMsgMod para controle de execução de rotinas (não salvo).
      Controle o envio de menssagens entre os modulos ESP
 
      aU8_ControlMsgMod[Propriedade][Pino]
@@ -76,7 +76,7 @@
 
      uint8_t aU8_ControlMsgMod[vI8_aU8_ControlMsg][vU8_totPinos]
 
-# Array aU8_ControlMsgAss para controle de execução de rotinas (não são salvos).
+# Array aU8_ControlMsgAss para controle de execução de rotinas (não salvo).
      Controle o envio de menssagens para assistentes
 
      aU8_ControlMsgAss[Propriedade][Pino]
@@ -86,55 +86,58 @@
 
      uint8_t aU8_ControlMsgAss[vI8_aU8_ControlMsg][vU8_totPinos]
 
-# Array aU8_ControlMsgTelegram para controle de execução de rotinas (não são salvos).
-Controle o envio de menssagens para telegram<br>
-aU8_ControlMsgTelegram[Propriedade][Pino]<br>
-aU8_ControlMsgTelegram[0][x] = Enviar Telegram Array 1 Acao<br>
-aU8_ControlMsgTelegram[1][x] = Enviar Telegram Array 2 Acao<br>
-aU8_ControlMsgTelegram[2][x] = Enviar Telegram Array 3 Acao<br>
-/*<br>
-uint8_t aU8_ControlMsgTelegram[vI8_aU8_ControlMsg][vU8_totPinos];<br>
+# Array aU8_ControlMsgTelegram para controle de execução de rotinas (não salvo).
+     Controle o envio de menssagens para telegram
 
-/* -----------------------------------------------------------<br>
-Controle o envio de menssagens para broker mqtt<br>
-aU8_ControlMsgMqTT[0][x] = Enviar Telegram Array 1 Acao<br>
-aU8_ControlMsgMqTT[1][x] = Enviar Telegram Array 2 Acao<br>
-aU8_ControlMsgMqTT[2][x] = Enviar Telegram Array 3 Acao<br>
-/*<br>
-uint8_t aU8_ControlMsgMqTT[vI8_aU8_ControlMsg][vU8_totPinos];<br>
+     aU8_ControlMsgTelegram[Propriedade][Pino]
+     aU8_ControlMsgTelegram[0][x] = Enviar Telegram Array 1 Acao
+     aU8_ControlMsgTelegram[1][x] = Enviar Telegram Array 2 Acao
+     aU8_ControlMsgTelegram[2][x] = Enviar Telegram Array 3 Acao
 
-/* -----------------------------------------------------------<br>
-Controle de acoes para mesmo pino destino (Grupo)<br>
-aU16_ControlAcoesGroups[0][vU8_totPinos] = Pino (que vai sofrer a acao)<br>
-aU16_ControlAcoesGroups[1][vU8_totPinos] = Referencia pinos de origem (que vão disparar a acao)<br>
-/*<br>
-uint16_t aU16_ControlAcoesGroups[vI8_ControlAcoesGroups][vU8_totPinos] = {};<br>
+     uint8_t aU8_ControlMsgTelegram[vI8_aU8_ControlMsg][vU8_totPinos]
 
-/* -----------------------------------------------------------<br>
-Controle de alerta de handshake para inter modulos<br>
-aU16_ControlHS[0][vU8_totPinos] = Controle do Tempo de Handshake<br>
-aU16_ControlHS[1][vU8_totPinos] = Status handshake<br>
-aU16_ControlHS[2][vU8_totPinos] = Controle de Resposta de Handshake<br>
-/*<br>
-uint16_t aU16_ControlHS[vI8_aU16_InterModHA][vU8_totPinos];<br>
+# Array aU8_ControlMsgMqTT para controle de execução de rotinas (não salvo).
+     Controle o envio de menssagens para broker mqtt
 
+     aU8_ControlMsgMqTT[0][x] = Enviar Telegram Array 1 Acao
+     aU8_ControlMsgMqTT[1][x] = Enviar Telegram Array 2 Acao
+     aU8_ControlMsgMqTT[2][x] = Enviar Telegram Array 3 Acao
 
+     uint8_t aU8_ControlMsgMqTT[vI8_aU8_ControlMsg][vU8_totPinos]
 
-# Arrays de dados em tempo de execução (foram carregados da flash)
-/* -----------------------------------------------------------<br>
-Usado para cadastro dos modulos (Inter Modulos)<br>
-aS_InterMod[Propriedade][Modulo]<br>
-aS_InterMod[0][x] = Nome Modulo<br>
-aS_InterMod[1][x] = IP Modulo<br>
-/*<br>
-String aS_InterMod[vI8_aS_InterMod][vU8_totPinos];<br>
+# Array aU16_ControlAcoesGroups para controle de execução de rotinas (não salvo).
+     Controle de acoes para mesmo pino destino (Grupo)
 
-/* -----------------------------------------------------------<br>
-Usado para cadastro dos pinos de handhsake e habilitar envio de handshake (Inter Modulos)<br>
-aU8_InterMod[0][x] = Pino HandShake<br>
-aU8_InterMod[1][x] = Envia HandShake<br>
-*/<br>
-uint8_t aU8_InterMod[vI8_aU8_InterMod][vU8_totPinos];<br>
+     aU16_ControlAcoesGroups[0][vU8_totPinos] = Pino (que vai sofrer a acao)
+     aU16_ControlAcoesGroups[1][vU8_totPinos] = Referencia pinos de origem (que vão disparar a acao)
+
+     uint16_t aU16_ControlAcoesGroups[vI8_ControlAcoesGroups][vU8_totPinos]
+
+# Array aU16_ControlHS para controle de execução de rotinas (não salvo).
+     Controle de alerta de handshake para inter modulos
+
+     aU16_ControlHS[0][vU8_totPinos] = Controle do Tempo de Handshake
+     aU16_ControlHS[1][vU8_totPinos] = Status handshake
+     aU16_ControlHS[2][vU8_totPinos] = Controle de Resposta de Handshake
+
+     uint16_t aU16_ControlHS[vI8_aU16_InterModHA][vU8_totPinos]
+
+# Array de dados aS_InterMod (carregado da flash)
+     Usado para cadastro dos modulos (Inter Modulos)
+     
+     aS_InterMod[Propriedade][Modulo]
+     aS_InterMod[0][x] = Nome Modulo
+     aS_InterMod[1][x] = IP Modulo
+
+     String aS_InterMod[vI8_aS_InterMod][vU8_totPinos]
+
+# Array de dados aS_InterMod (carregado da flash)
+     Usado para cadastro dos pinos de handhsake e habilitar envio de handshake (Inter Modulos)
+
+     aU8_InterMod[0][x] = Pino HandShake
+     aU8_InterMod[1][x] = Envia HandShake
+
+     uint8_t aU8_InterMod[vI8_aU8_InterMod][vU8_totPinos]
 
 /* -----------------------------------------------------------<br>
 Usado para cadastro de porta (pinos fisicos)<br>
