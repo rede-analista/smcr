@@ -1,14 +1,8 @@
 //========================================
 uint8_t f_retornaIndiceHS(String modulo) {
-  /*
-  aS_ControlInterMod[0][x] = ID Modulo
-  aS_ControlInterMod[1][x] = Nome Modulo
-  aS_ControlInterMod[2][x] = IP Modulo
-  aS_ControlInterMod[3][x] = Pino HandShake
-  */
   uint8_t resultado = 0;
   for (uint8_t x=0; x<vU8_totPinos; x++) {
-    if (aS_InterMod[1][x] == modulo) {
+    if (aS_InterMod[0][x] == modulo) {
       resultado = x;
     }
   }
@@ -79,14 +73,6 @@ uint8_t f_retornaIndicePino(uint8_t pino) {
 
 //========================================
 void f_iniciaInterModulos() {
-/*
-Usado para cadastro dos modulos (Inter Modulos)
-aS_InterMod[Propriedade][Modulo]
-aS_InterMod[0][x] = Nome Modulo
-aS_InterMod[1][x] = IP Modulo
---------------------------------------------------------------------
-aU_InterMod[0][x] = Pino HandShake
-*/
   Serial.print("Iniciando configuracao inter modulos... ");
   CONFIG_FLASH.begin("confiGeral", true);
   String aSBuffer[vI8_aS_InterMod][vU8_totPinos];
@@ -114,13 +100,12 @@ aU_InterMod[0][x] = Pino HandShake
 
 //========================================
 void f_recebeDados() {
-  /*
-   GET_SERVIDOR
-   Argumento 0 = Nome do Dispositivo
-   Argumento 1 = Acao
-   Argumento 2 = Indice do Pino
-   Argumento 3 = Status do Pino
-  */
+/*
+ Argumento 0 = Nome do Dispositivo
+ Argumento 1 = Acao
+ Argumento 2 = Indice do Pino
+ Argumento 3 = Status do Pino
+*/
   vS_uri = SERVIDOR_WEB.uri();
   if (SERVIDOR_WEB.args() == 4) {
 
@@ -129,34 +114,33 @@ void f_recebeDados() {
     }
     ULTIMOS_GET_RECEBIDOS += vS_uri + "?" + SERVIDOR_WEB.argName(0) + "=" + SERVIDOR_WEB.arg(0) + "&" + SERVIDOR_WEB.argName(1) + "=" + SERVIDOR_WEB.arg(1) + "&" + SERVIDOR_WEB.argName(2) + "=" + SERVIDOR_WEB.arg(2) + "&" + SERVIDOR_WEB.argName(3) + "=" + SERVIDOR_WEB.arg(3);
     ULTIMOS_GET_RECEBIDOS += "<br><br>";
-
-    if (f_retornaIndiceModulo(SERVIDOR_WEB.arg(0)) > 0) {
-      String validacao = "_SEM_DADOS_";
+    String validacao = "_SEM_DADOS_";
+    if (f_retornaModulo(SERVIDOR_WEB.arg(0)) > 0) {
       Serial.println("Recebido dados da placa " + SERVIDOR_WEB.arg(0));
       switch (SERVIDOR_WEB.arg(1).toInt()) {
         case 0: // Parametro acao = 0(Nenhuma)
           aU16_ControlHS[0][f_retornaIndiceHS(SERVIDOR_WEB.arg(0))] = vI_cicloHandshake;
-          aU8_Pinos[4][SERVIDOR_WEB.arg(2).toInt()] = SERVIDOR_WEB.arg(3).toInt();
+          aU8_Pinos[4][f_retornaIndicePino(SERVIDOR_WEB.arg(2).toInt())] = SERVIDOR_WEB.arg(3).toInt();
           validacao = "OK_DADO_RECEBIDO";
           break;
         case 255: // Parametro acao = 255(sincronismo)
           aU16_ControlHS[0][f_retornaIndiceHS(SERVIDOR_WEB.arg(0))] = vI_cicloHandshake;
-          aU16_ControlHS[1][f_retornaIndiceHS(SERVIDOR_WEB.arg(1))] = SERVIDOR_WEB.arg(3).toInt();
-          aU8_Pinos[4][SERVIDOR_WEB.arg(2).toInt()] = aU16_ControlHS[1][f_retornaIndiceHS(SERVIDOR_WEB.arg(1))];
+          aU16_ControlHS[1][f_retornaIndiceHS(SERVIDOR_WEB.arg(0))] = SERVIDOR_WEB.arg(3).toInt();
+          aU8_Pinos[4][f_retornaIndicePino(SERVIDOR_WEB.arg(2).toInt())] = aU16_ControlHS[1][f_retornaIndiceHS(SERVIDOR_WEB.arg(0))];
           validacao = "OK_DADO_RECEBIDO";
           break;
         default:
           aU16_ControlHS[0][f_retornaIndiceHS(SERVIDOR_WEB.arg(0))] = vI_cicloHandshake;
-          aU8_Pinos[4][SERVIDOR_WEB.arg(2).toInt()] = SERVIDOR_WEB.arg(3).toInt();
+          aU8_Pinos[4][f_retornaIndicePino(SERVIDOR_WEB.arg(2).toInt())] = SERVIDOR_WEB.arg(3).toInt();
           validacao = "OK_DADO_RECEBIDO";
           break;
       }
       Serial.println("Acao/Indice/Status " + SERVIDOR_WEB.arg(1) + " " + SERVIDOR_WEB.arg(2) + " " + SERVIDOR_WEB.arg(3));
       SERVIDOR_WEB.send(200, "text/plain", validacao);
     } else {
-      Serial.println("Falha dados da placa " + SERVIDOR_WEB.arg(0));
+      Serial.println("Rejeite dados da placa " + SERVIDOR_WEB.arg(0));
       Serial.println("Acao/Indice/Status " + SERVIDOR_WEB.arg(1) + " " + SERVIDOR_WEB.arg(2) + " " + SERVIDOR_WEB.arg(3));
-      SERVIDOR_WEB.send(409, "text/plain", "FALHA - INDICE INVALIDO\n");
+      SERVIDOR_WEB.send(401, "text/plain", "ERRO - PLACA NAO CADASTRADA\n");
     }
   } else {
     Serial.println("Erro dados da placa " + SERVIDOR_WEB.arg(0));
@@ -166,18 +150,39 @@ void f_recebeDados() {
 }
 
 //========================================
-int8_t f_retornaIndiceModulo(String modulo) {
-  // Recebe o nome e retorna o indice
-  /*
-  aS_ControlInterMod[0][x] = ID Modulo
-  aS_ControlInterMod[1][x] = Nome Modulo
-  aS_ControlInterMod[2][x] = IP Modulo
-  aS_ControlInterMod[3][x] = Pino HandShake
-  */  
-  int8_t resultado = 0;
-  if (modulo.length() > 3) {
+int f_retornaIndiceModulo(uint8_t modulo) {
+  int resultado = 0;
+  if (modulo > 0) {
     for (int x=0; x<vU8_totPinos; x++) {
-      if (modulo == aS_InterMod[1][x]) {
+      if (modulo == aU8_InterMod[0][x]) {
+        resultado = x;
+        break;
+      }
+    }
+  }
+  return resultado;
+}
+
+//========================================
+String f_retornaIpModulo(uint8_t modulo) {
+  String resultado = "";
+  if (modulo > 0) {
+    for (int x=0; x<vU8_totPinos; x++) {
+      if (modulo == aU8_InterMod[0][x]) {
+        resultado = aS_InterMod[1][x];
+        break;
+      }
+    }
+  }
+  return resultado;
+}
+
+//========================================
+int f_retornaModulo(String modulo) {
+  int resultado = 256;
+  if (modulo.length() > 0) {
+    for (int x=0; x<vU8_totPinos; x++) {
+      if (modulo == aS_InterMod[0][x]) {
         resultado = x;
         break;
       }
@@ -202,29 +207,29 @@ void f_checkAcoesModulos() {
   if ((agora - check_acoes_mod_lasttime) > vU16_modulos_MTBS) {
     for (uint8_t x=0; x<vU8_totPinos; x++) {
       if ((aU16_AcaoRede1[0][x] >0 ) && aU8_Pinos[4][x] && !aU8_ControlMsgMod[0][x]) {
-        if (f_enviaModulo(aU16_AcaoRede1[0][x],String(aU16_Acao1[2][x]), String(x), String(aU8_Pinos[4][x])) == 200) {
+        if (f_enviaModulo(aU16_AcaoRede1[0][x],String(aU16_Acao1[2][x]), String(aU8_Pinos[0][x]), String(aU8_Pinos[4][x])) == 200) { // String(x)
           aU8_ControlMsgMod[0][x] = 1;
         }
       } else if ((aU16_AcaoRede1[0][x] >0 ) && !aU8_Pinos[4][x] && aU8_ControlMsgMod[0][x]){
-        if (f_enviaModulo(aU16_AcaoRede1[0][x],String(aU16_Acao1[2][x]), String(x), String(aU8_Pinos[4][x])) == 200) {
+        if (f_enviaModulo(aU16_AcaoRede1[0][x],String(aU16_Acao1[2][x]), String(aU8_Pinos[0][x]), String(aU8_Pinos[4][x])) == 200) {
           aU8_ControlMsgMod[0][x] = 0;
         }
       }
       if ((aU16_AcaoRede2[0][x] >0 ) && aU8_Pinos[4][x] && !aU8_ControlMsgMod[1][x]) {
-        if (f_enviaModulo(aU16_AcaoRede2[0][x],String(aU16_Acao2[2][x]), String(x), String(aU8_Pinos[4][x])) == 200) {
+        if (f_enviaModulo(aU16_AcaoRede2[0][x],String(aU16_Acao2[2][x]), String(aU8_Pinos[0][x]), String(aU8_Pinos[4][x])) == 200) {
           aU8_ControlMsgMod[1][x] = 1;
         }
       } else if ((aU16_AcaoRede2[0][x] >0 ) && !aU8_Pinos[4][x] && aU8_ControlMsgMod[1][x]){
-        if (f_enviaModulo(aU16_AcaoRede2[0][x],String(aU16_Acao2[2][x]), String(x), String(aU8_Pinos[4][x])) == 200) {
+        if (f_enviaModulo(aU16_AcaoRede2[0][x],String(aU16_Acao2[2][x]), String(aU8_Pinos[0][x]), String(aU8_Pinos[4][x])) == 200) {
           aU8_ControlMsgMod[1][x] = 0;
         }
       }
       if ((aU16_AcaoRede3[0][x] >0 ) && aU8_Pinos[4][x] && !aU8_ControlMsgMod[2][x]) {
-        if (f_enviaModulo(aU16_AcaoRede3[0][x],String(aU16_Acao3[2][x]), String(x), String(aU8_Pinos[4][x])) == 200) {
+        if (f_enviaModulo(aU16_AcaoRede3[0][x],String(aU16_Acao3[2][x]), String(aU8_Pinos[0][x]), String(aU8_Pinos[4][x])) == 200) {
           aU8_ControlMsgMod[2][x] = 1;
         }
       } else if ((aU16_AcaoRede3[0][x] >0 ) && !aU8_Pinos[4][x] && aU8_ControlMsgMod[2][x]){
-        if (f_enviaModulo(aU16_AcaoRede3[0][x],String(aU16_Acao3[2][x]), String(x), String(aU8_Pinos[4][x])) == 200) {
+        if (f_enviaModulo(aU16_AcaoRede3[0][x],String(aU16_Acao3[2][x]), String(aU8_Pinos[0][x]), String(aU8_Pinos[4][x])) == 200) {
           aU8_ControlMsgMod[2][x] = 0;
         }
       }
@@ -236,28 +241,33 @@ void f_checkAcoesModulos() {
 
 //========================================
 void f_checkHandShake() {
-  /*
-  aS_ControlInterMod[0][x] = ID Modulo
-  aS_ControlInterMod[1][x] = Nome Modulo
-  aS_ControlInterMod[2][x] = IP Modulo
-  aS_ControlInterMod[3][x] = Pino HandShake
-  */
   for (uint8_t y=0; y<vU8_totPinos; y++) {
     if (aU16_ControlHS[0][y] < 1) {
       aU16_ControlHS[1][y] = 1;
     } else {
       aU16_ControlHS[0][y]--;
     }
-    if (aU16_ControlHS[0][y] < 2 && aS_InterMod[3][y].toInt() > 0) { 
-      Serial.print("Modulo:");
-      Serial.print(aS_InterMod[1][y]);
-      Serial.print(" Indice:");
-      Serial.println(f_retornaIndiceModulo(aS_InterMod[1][y]));
-      if (f_enviaModulo(f_retornaIndiceModulo(aS_InterMod[1][y]),"255", String(f_retornaIndicePino(aS_InterMod[3][y].toInt())), "0") == 200) {
-        aU16_ControlHS[1][y] = 0;
+    if (aU8_InterMod[1][y] == 1) {
+      if (aU16_ControlHS[0][y] < 2 && aU8_InterMod[0][y] > 0) { 
+        Serial.print("SEND Modulo:");
+        Serial.print(aS_InterMod[0][y]);
+        Serial.print(" IP:");
+        Serial.print(f_retornaIpModulo(aU8_InterMod[0][y]));
+        Serial.print(" Pino:");
+        Serial.print(aU8_InterMod[0][y]);
+        Serial.print(" da Origem Pino ID:");
+        Serial.print(f_retornaIndicePino(aU8_InterMod[0][f_retornaIndiceHS(vS_nomeDispositivo)]));
+        Serial.print(" Status:");
+        Serial.println(aU16_ControlHS[1][y]);        
+        if (f_enviaModulo(aU8_InterMod[0][y],"255", String(aU8_InterMod[0][f_retornaIndiceHS(vS_nomeDispositivo)]), "0") == 200) {
+          aU16_ControlHS[0][y] = vI_cicloHandshake;
+          aU16_ControlHS[1][y] = 0;
+          aU16_ControlHS[0][f_retornaModulo(vS_nomeDispositivo)] = vI_cicloHandshake;
+          aU16_ControlHS[1][f_retornaModulo(vS_nomeDispositivo)] = 0;
+        }
       }
     }
-    aU8_Pinos[4][f_retornaIndicePino(aS_InterMod[3][y].toInt())] = aU16_ControlHS[1][y];
+    aU8_Pinos[4][f_retornaIndicePino(aU8_InterMod[0][y])] = aU16_ControlHS[1][y];
   }
 }
 
@@ -278,31 +288,12 @@ bool f_checkAcaoCadastrada() {
 
 //========================================
 int f_enviaModulo(uint8_t idmodulo, String acao, String pino, String valor){
-  /*
-   GET_SERVIDOR
-   Argumento 0 = Nome do Dispositivo
-   Argumento 1 = Acao
-   Argumento 2 = Indice do Pino
-   Argumento 3 = Status do Pino
-
-   /// HTTP client errors
-   HTTPC_ERROR_CONNECTION_REFUSED  (-1)
-   HTTPC_ERROR_SEND_HEADER_FAILED  (-2)
-   HTTPC_ERROR_SEND_PAYLOAD_FAILED (-3)
-   HTTPC_ERROR_NOT_CONNECTED       (-4)
-   HTTPC_ERROR_CONNECTION_LOST     (-5)
-   HTTPC_ERROR_NO_STREAM           (-6)
-   HTTPC_ERROR_NO_HTTP_SERVER      (-7)
-   HTTPC_ERROR_TOO_LESS_RAM        (-8)
-   HTTPC_ERROR_ENCODING            (-9)
-   HTTPC_ERROR_STREAM_WRITE        (-10)
-   HTTPC_ERROR_READ_TIMEOUT        (-11)
-  */
   vI_httpResponseCode = 0;
+  int resposta =  504;
   if (WiFi.status() != WL_CONNECTED) {
     f_configuraWIFI();
   } else {
-    GET_SERVIDOR = "http://" + aS_InterMod[2][idmodulo] + ":" + vU16_portaWebModulos + "/dados?pl=" + vS_nomeDispositivo + "&ac=" + acao + "&pn=" + pino + "&vl=" + valor;
+    GET_SERVIDOR = "http://" + f_retornaIpModulo(idmodulo) + ":" + vU16_portaWebModulos + "/dados?pl=" + vS_nomeDispositivo + "&ac=" + acao + "&pn=" + pino + "&vl=" + valor; //aS_InterMod[1][idmodulo]
     if (ULTIMOS_GET_SERVIDOR.length() > 260) {
       ULTIMOS_GET_SERVIDOR = "";
     }
@@ -311,6 +302,7 @@ int f_enviaModulo(uint8_t idmodulo, String acao, String pino, String valor){
     if (!CLIENTE_WEB.connected()) {
       CLIENTE_WEB.setTimeout(vU16_modulos_MTBS);
       CLIENTE_WEB.setConnectTimeout(vU16_modulos_MTBS);
+      CLIENTE_WEB.setReuse(true);
       CLIENTE_WEB.begin(GET_SERVIDOR.c_str());
     } else {
       CLIENTE_WEB.setURL(GET_SERVIDOR.c_str());
@@ -320,17 +312,18 @@ int f_enviaModulo(uint8_t idmodulo, String acao, String pino, String valor){
     vS_payload = payload;
     CLIENTE_WEB.end();
     if (vI_httpResponseCode == 200) {
-      vI_controleCicloHandshake = vI_cicloHandshake;
       if (vS_payload == "OK_DADO_RECEBIDO") {
+        resposta = 200;
         vU8_ultimoModEnviado = idmodulo;
-        aU16_ControlHS[1][idmodulo] == 0;
+        aU16_ControlHS[0][f_retornaIndiceModulo(idmodulo)] = vI_cicloHandshake;
+        aU16_ControlHS[1][f_retornaIndiceModulo(idmodulo)] == 0;
       }
     }
     Serial.println("\nEnviado: "+GET_SERVIDOR);
     Serial.println("HTTP Response code: " + String(vI_httpResponseCode));
     Serial.println(payload);    
   }
-  return vI_httpResponseCode;
+  return resposta;
 }
 
 //========================================
@@ -656,34 +649,6 @@ bool f_comunicaMQTT() {
 
 //========================================
 void f_reconnectMQTT() {
-/*
-//Possible values for client.state()
-MQTT_CONNECTION_TIMEOUT     -4
-MQTT_CONNECTION_LOST        -3
-MQTT_CONNECT_FAILED         -2
-MQTT_DISCONNECTED           -1
-MQTT_CONNECTED               0
-MQTT_CONNECT_BAD_PROTOCOL    1
-MQTT_CONNECT_BAD_CLIENT_ID   2
-MQTT_CONNECT_UNAVAILABLE     3
-MQTT_CONNECT_BAD_CREDENTIALS 4
-MQTT_CONNECT_UNAUTHORIZED    5
-MQTTCONNECT     1 << 4  // Client request to connect to Server
-MQTTCONNACK     2 << 4  // Connect Acknowledgment
-MQTTPUBLISH     3 << 4  // Publish message
-MQTTPUBACK      4 << 4  // Publish Acknowledgment
-MQTTPUBREC      5 << 4  // Publish Received (assured delivery part 1)
-MQTTPUBREL      6 << 4  // Publish Release (assured delivery part 2)
-MQTTPUBCOMP     7 << 4  // Publish Complete (assured delivery part 3)
-MQTTSUBSCRIBE   8 << 4  // Client Subscribe request
-MQTTSUBACK      9 << 4  // Subscribe Acknowledgment
-MQTTUNSUBSCRIBE 10 << 4 // Client Unsubscribe request
-MQTTUNSUBACK    11 << 4 // Unsubscribe Acknowledgment
-MQTTPINGREQ     12 << 4 // PING Request
-MQTTPINGRESP    13 << 4 // PING Response
-MQTTDISCONNECT  14 << 4 // Client is Disconnecting
-MQTTReserved    15 << 4 // Reserved
-*/
   if (WiFi.status() == 3) {
     Serial.print("Conectando ao MQTT, status... ");
     if (CLIENT_MQTT.connect(vS_nomeDispositivo.c_str(),vS_mqttUser.c_str(),vS_mqttSenha.c_str())) {
@@ -1329,7 +1294,8 @@ bool f_configuraWEB() {
     SERVIDOR_WEB.on("/acoes3pg2", f_handle_ConfiguraAcoes3pg2);
     SERVIDOR_WEB.on("/salvaflash", f_handle_SalvaFlash);
     SERVIDOR_WEB.on("/recarrega", f_handle_RecarregarFuncoes);
-    SERVIDOR_WEB.on("/lsprefpin", f_listaPreferences);
+    SERVIDOR_WEB.on("/lsprefpin", f_listaPreferencesMEM);
+    SERVIDOR_WEB.on("/lsprefflash", f_listaPreferencesFLASH);
     SERVIDOR_WEB.on("/dados", f_recebeDados);
     SERVIDOR_WEB.on("/intermod", f_handle_InterModulos);
     SERVIDOR_WEB.on("/expimp", f_ExportImport);

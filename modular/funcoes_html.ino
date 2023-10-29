@@ -148,7 +148,7 @@ void f_handle_RecarregarFuncoes() {
   html += "<div style='border-style:inset; width:700px; background-color: rgb(148, 187, 242)' id='divDoForm'>";
   html += "<form action='/recarrega' method='POST' style='margin:5px'>";
   html += "<label for='id_recarrega'>Você confirma recarregar as funções do setup? </label>";
-  html += "<br>Tudo, PINOS, ACOES, GACOES, TELEGRAM, MQTT, RECEPTOR ou ASSISTENTES";
+  html += "<br>Tudo, PINOS, ACOES, GACOES, TELEGRAM, MQTT, MODULOS ou ASSISTENTES";
   html += "<input type='text' name='RECRG' id='id_recarrega' value='Não' required>";
   html += "<br>";
   html += "<br>";
@@ -849,7 +849,7 @@ aU8_InterMod[0][x] = Pino HandShake
 }
 
 //========================================
-void f_listaPreferences() {
+void f_listaPreferencesMEM() {
   String html;
   html += "<!DOCTYPE html>";
   html += "<html lang='pt-br'>";
@@ -859,9 +859,10 @@ void f_listaPreferences() {
   html += "<title>"+vS_nomeDispositivo+"</title>";
   html += "</head>";
   html += "<body>";
-  html += "<h1>Informações de Parâmetros do Sistema e Flash</h1>";
+  html += "<h1>Informações de Parâmetros do Sistema Executando em Memória</h1>";
   html += "<div id='mensagens'></div>";
   html += "<a href=\"/\">Página Inicial</a><br>";
+  html += "<a href='/lsprefflash'>Listar Flash</a><br>";
   html += "<a href=\"/expimp\">Configuração em Massa</a><br>";
   html += "<a href=\"/salvaflash\">Salvar na Flash</a><br>";
   html += "<h1>EXECUTANDO NA MEMÓRIA</h1>";
@@ -1102,7 +1103,32 @@ void f_listaPreferences() {
   html += vS_ass_Alerta;
   html += "<br>Início Frase Normalização Assistentes: ";
   html += vS_ass_Normal;
-  //----------------------------------------------------------------//
+  html += "<br><a href='/salvaflash'>Salvar na Flash</a><br>";
+  html += "<a href='/expimp'>Configuração em Massa</a><br>";
+  html += "<a href='/lsprefflash'>Listar Flash</a><br>";
+  html += "<a href='/'>Página Inicial</a><br>";
+  html += "</body>";
+  html += "</html>";
+  SERVIDOR_WEB.send(200, "text/html", html);
+}
+
+//========================================
+void f_listaPreferencesFLASH() {
+  String html;
+  html += "<!DOCTYPE html>";
+  html += "<html lang='pt-br'>";
+  html += "<head>";
+  html += "<meta charset='UTF-8'>";
+  html += "<meta name='viewport' content='width=device-width, initial-scale=1.0' />";
+  html += "<title>"+vS_nomeDispositivo+"</title>";
+  html += "</head>";
+  html += "<body>";
+  html += "<h1>Informações de Parâmetros do Sistema Salvas na Flash</h1>";
+  html += "<div id='mensagens'></div>";
+  html += "<a href=\"/\">Página Inicial</a><br>";
+  html += "<a href='/lsprefpin'>Listar Memória</a><br>";
+  html += "<a href=\"/expimp\">Configuração em Massa</a><br>";
+  html += "<a href=\"/salvaflash\">Salvar na Flash</a><br>";  
   html += "<h1>SALVAS NA FLASH</h1>";
   
   html += "<h3>PINOS</h3>"; 
@@ -1172,6 +1198,7 @@ void f_listaPreferences() {
 
   html += "<br><a href='/salvaflash'>Salvar na Flash</a><br>";
   html += "<a href='/expimp'>Configuração em Massa</a><br>";
+  html += "<a href='/lsprefpin'>Listar Memória</a><br>";
   html += "<a href='/'>Página Inicial</a><br>";
   html += "</body>";
   html += "</html>";

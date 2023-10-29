@@ -43,10 +43,10 @@ String aS8_AcoesStringMenu[1][vI8_aS8_Acao] = {"Classe_MqTT"}; // ,"Ícone_MqTT"
 //--------------------------------------------------------------------
 const uint8_t vI8_aS_InterMod = 2; // Total de "linhas" do array de inter modulos (String)
 String aS_InterModMenu[1][vI8_aS_InterMod] = {"Nome","IP"};
-const uint8_t  vI8_aU8_InterMod = 1; // Total de "linhas" do array de inter modulos (uint8_t)
-String aU8_InterModMenu[1][vI8_aU8_InterMod] = {"Pino_HandShake"};
-const uint8_t vI8_aU16_InterModHA = 2; // Total de "linhas" do array de inter modulos controle handshake e status handshake
-String aS16_InterModHA[1][vI8_aU16_InterModHA] = {"Ciclo","Status"};
+const uint8_t  vI8_aU8_InterMod = 2; // Total de "linhas" do array de inter modulos (uint8_t)
+String aU8_InterModMenu[1][vI8_aU8_InterMod] = {"Pino_HandShake","Envia_HandShake"};
+const uint8_t vI8_aU16_InterModHA = 3; // Total de "linhas" do array de inter modulos controle handshake e status handshake
+String aS16_InterModHA[1][vI8_aU16_InterModHA] = {"Ciclo","Status","CTRL_Resposta"};
 //--------------------------------------------------------------------
 const uint8_t vI8_aU8_ControlMsg = 3; // Total de "linhas" dos arrays de controle de envio de menssagens
 const uint8_t vI8_ControlAcoesGroups = (vU8_totPinos*3)+1; // Total de "linhas" do array de grupos de acos mesmo destino
@@ -106,6 +106,7 @@ uint16_t aU16_ControlAcoesGroups[vI8_ControlAcoesGroups][vU8_totPinos] = {};
 Controle de alerta de handshake para inter modulos
 aU16_ControlHS[0][vU8_totPinos] = Controle tempo
 aU16_ControlHS[1][vU8_totPinos] = Status handshake
+aU16_ControlHS[2][vU8_totPinos] = Controle de Resposta HS
 /* -----------------------------------------------------------
 */
 uint16_t aU16_ControlHS[vI8_aU16_InterModHA][vU8_totPinos];
@@ -122,6 +123,7 @@ aS_InterMod[0][x] = Nome Modulo
 aS_InterMod[1][x] = IP Modulo
 --------------------------------------------------------------------
 aU8_InterMod[0][x] = Pino HandShake
+aU8_InterMod[1][x] = Envia HandShake
 */
 String aS_InterMod[vI8_aS_InterMod][vU8_totPinos];
 uint8_t aU8_InterMod[vI8_aU8_InterMod][vU8_totPinos];

@@ -50,7 +50,7 @@ void f_handle_InterModulos() {
       html += "<tr>";
       html += "<td style='background-color: LightGrey'><center>"+aU8_InterModMenu[0][xM]+"</center></td>";
       for (x=colINICIO; x<colFIM; x++){
-        html += "<td><input type='text' name='PINHS"+String(x)+"' maxlength='14' size='14' value='"+String(aU8_InterMod[xM][x])+"'></td>";
+        html += "<td><input type='text' name='"+aU8_InterModMenu[0][xM]+String(x)+"' maxlength='14' size='14' value='"+String(aU8_InterMod[xM][x])+"'></td>";
       }
       html += "</tr>";
     }
@@ -75,9 +75,9 @@ void f_handle_InterModulos() {
   if (SERVIDOR_WEB.arg("SUBMIT_SALVAR").length() > 0) {
     Serial.print("Atualizando Informacoes: ");
     for (x=0; x<vU8_totPinos; x++){
-      aU8_InterMod[0][x] = SERVIDOR_WEB.arg(("PINHS"+String(x))).toInt();
       for (uint8_t xM = 0; xM<vI8_aS_InterMod;xM++) {
         aS_InterMod[xM][x] = SERVIDOR_WEB.arg((aS_InterModMenu[0][xM]+String(x)));
+        aU8_InterMod[xM][x] = SERVIDOR_WEB.arg((aU8_InterModMenu[0][xM]+String(x))).toInt();
       }
     }
     vB_exec_Modulos = SERVIDOR_WEB.arg("ENVIAREC").toInt();
