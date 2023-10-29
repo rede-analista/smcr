@@ -57,10 +57,10 @@
 
 
 # Parâmetros Recebidos Servidor WEB
-     Argumento 0 = Nome do Dispositivo<br>
-     Argumento 1 = Acao<br>
-     Argumento 2 = Indice do Pino<br>
-     Argumento 3 = Status do Pino<br>
+     Argumento 0 = Nome do Dispositivo
+     Argumento 1 = Acao
+     Argumento 2 = Indice do Pino
+     Argumento 3 = Status do Pino
 
 # Arrays para controle de execução de rotinas (não são salvos).
 /* -----------------------------------------------------------<br>
