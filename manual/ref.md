@@ -58,9 +58,9 @@
 
   # Arrays
 
-/////////////////////////////////////////////////////////<br>
-//---- Arrays para controle de execucao de rotinas ----//<br>
-/////////////////////////////////////////////////////////<br>
+
+- //---- Arrays para controle de execucao de rotinas ----//<br>
+
 
 /* -----------------------------------------------------------<br>
 Controle o envio de menssagens entre os modulos ESP<br>
@@ -113,9 +113,9 @@ aU16_ControlHS[2][vU8_totPinos] = Controle de Resposta de Handshake<br>
 uint16_t aU16_ControlHS[vI8_aU16_InterModHA][vU8_totPinos];<br>
 
 
-//////////////////////////////////////////////////////////////////////////////<br>
-//---- Arrays de dados em tempo de execução (foram carregados da flash) ----//<br>
-//////////////////////////////////////////////////////////////////////////////<br>
+
+- //---- Arrays de dados em tempo de execução (foram carregados da flash) ----//<br>
+
 
 /* -----------------------------------------------------------<br>
 Usado para cadastro dos modulos (Inter Modulos)<br>
