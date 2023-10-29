@@ -57,7 +57,7 @@
     WL_DISCONNECTED     = 6<br>
 
 
-# Arrays para controle de execucao de rotinas.
+# Arrays para controle de execução de rotinas (não são salvos).
 
 
 /* -----------------------------------------------------------<br>
