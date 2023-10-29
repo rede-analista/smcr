@@ -1,5 +1,4 @@
 # Retorno de Funções (Serial)
-
   - Função f_enviaModulo: Usada para enviar informações entre os módulos de status dos pinos e enviuo de handshake.<br>
               "int f_enviaModulo(uint8_t idmodulo, String acao, String pino, String valor)"<br>
     HTTPC_ERROR_CONNECTION_REFUSED  (-1)<br>
@@ -64,8 +63,6 @@
      Argumento 3 = Status do Pino<br>
 
 # Arrays para controle de execução de rotinas (não são salvos).
-
-
 /* -----------------------------------------------------------<br>
 Controle o envio de menssagens entre os modulos ESP<br>
 aU8_ControlMsgMod[Propriedade][Pino]<br>
@@ -119,8 +116,6 @@ uint16_t aU16_ControlHS[vI8_aU16_InterModHA][vU8_totPinos];<br>
 
 
 # Arrays de dados em tempo de execução (foram carregados da flash)
-
-
 /* -----------------------------------------------------------<br>
 Usado para cadastro dos modulos (Inter Modulos)<br>
 aS_InterMod[Propriedade][Modulo]<br>
