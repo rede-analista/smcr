@@ -134,6 +134,7 @@
 # Array de dados aS_InterMod (carregado da flash)
      Usado para cadastro dos pinos de handhsake e habilitar envio de handshake (Inter Modulos)
 
+     aU8_InterMod[Propriedade][Modulo]
      aU8_InterMod[0][x] = Pino HandShake
      aU8_InterMod[1][x] = Envia HandShake
 
