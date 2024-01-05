@@ -191,7 +191,7 @@
      uint16_t aU16_AcaoRede2[vI8_aU16_AcaoRede][vU8_totPinos]
      uint16_t aU16_AcaoRede3[vI8_aU16_AcaoRede][vU8_totPinos]
 
-# Array de dados aS8_Acao1X (carregado da flash)
+# Array de dados aS8_AcaoX (carregado da flash)
      Usado para cadastro de acoes, eventos quando uma porta(pino) e acionada
 
      aS8_Acao[Propriedade][Pino]
