@@ -41,6 +41,7 @@ A interface web pode disponibilizar até 52 posições de configurações de pin
     5. Denifir informações dos assistentes.
     6. Visualizar configurações em memória e na flash.
     7. Atualização em massa de pinos, ações e Intermódulos.
+    8. Exportar e importar configurações salvas.
   - [Funções de Manutenção](manual/funmanu.md):
     1. Reiniciar módulo ESP32.
     2. Limpeza de configurações ou Formatação da flash.
@@ -51,7 +52,6 @@ A interface web pode disponibilizar até 52 posições de configurações de pin
   - Comando de voz por assistentes.
   - Tratar informações/configurações antes de aplicar/salvar no módulo.
   - Detalhar comentários no código fonte.
-  - Exportar e importar configurações salvas.
 
 - Atividades/Recursos não previstos:
   - Não é previso comunicação usando ssl (somente para uso interno), não deve ser usado em uma rede pública ou redes desprotegidas, não usa acesso https.
