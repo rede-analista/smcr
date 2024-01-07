@@ -29,7 +29,7 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
   - Informa o status UP ou DOWN da última leitura do pino.Esta informação será LOW=0 / HIGH=1 para pinos digitais<br>
   
 - Parâmetro TIPO
-  - É o tipo que o pino será configurado na função pinMode(), esta informação pode ser 1=Digital / 254=Remoto<br>
+  - É o tipo que o pino será configurado na função pinMode(), esta informação pode ser 0=Sem Uso / 1=Digital / 192=Digital / 254=Remoto<br>
     Se o valor 254 for configurado, o módulo não irá realizar a atualização de status do pino, esta configuração deve ser usada quando for habilitado o recurso de "Inter Módulos".<br>
     O recurso de Inter Módulos ativa a comunicação entre dois ou mais módulos ESP32 onde um módulo transmissor iŕa atualizar o status de um pino no módulo receptor.<br>
     O cadastro de um pino como tipo 254 deve ser usado quando o módulo vai receber o status deste pino de forma remota, o status será enviado de outro módulo ESP para este módulo que terá o pino cadastrado como tipo 254. Quando for cadastrar um pino como 254 pode ser usado qualquer númeração de pino entre 1 e 255 pois um pino do tipo 254 será considerado um pino virtual(não físico) e servirá apenas para disparar ações no módulo que recebe os dados de status de outros módulos. este recurso pode ser usado para não inutilizar um pino físico em uma ação que não teŕa leitura de sensor localmente. 
