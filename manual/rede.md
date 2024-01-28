@@ -28,7 +28,7 @@ Se a configuração default não foi alterada o nome da rede própria do ESP ser
       
   O módulo usa o serviço de mDNS para que o acesso por nome funcione na sua rede local.
 
-  NOTA 1: Como sugestão voce pode identificar qual é o IP que o módulo está usando na sua rede atraves do seu roteador ou apenas executando o comando "ping esp32modularx.local", esta  informação pode ser usada para acessar o módulo caso a resolução de nomes não funcione corretamente.<br><br>
+  NOTA 1: Como sugestão voce pode identificar qual é o IP que o módulo está usando na sua rede atraves do seu roteador ou apenas executando o comando "ping esp32modularx.local", a informação de IP pode ser usada para acessar o módulo caso a resolução de nomes não funcione corretamente.<br><br>
   NOTA 2: Ao ativar o recurso de notificação por assistentes o serviço de mDNS não resolve o nome do módulo, sendo assim a informação de IP da "NOTA 1" deve ser usado para acessar o módulo.
 
   - Parâmetro Porta do Servidor WEB
