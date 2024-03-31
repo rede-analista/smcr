@@ -65,7 +65,8 @@
      static const uint8_t DAC2 = 26;
 
 # Retorno Serial da Função f_enviaModulo()
-     Usada para enviar informações entre os módulos de status dos pinos e enviuo de handshake.
+     Usada para enviar informações entre os módulos de status dos pinos e enviuo de handshake.<br>
+     Valor do campo CTRL_Resposta.
      
      "int f_enviaModulo(uint8_t idmodulo, String acao, String pino, String valor)"
      
