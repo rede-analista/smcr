@@ -47,10 +47,13 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
   - Imagine que também possui um segundo módulo que fica dentro de casa para receber a informação que a campainha foi acionada.<br>
 
 
-
-  ##Exemplo de funcionamento sem usar o recurso de pino virtual.
+- Exemplo de funcionamento sem usar o recurso de pino virtual.<br>
     ![image](https://github.com/rede-analista/smcr/assets/66534023/934d0583-e531-4661-a6f8-821a851c7319)
-    - Veja que o pino de origem precisa se o mesmo nas duas placas.<br>
+  - Veja que o pino de origem precisa se o mesmo nas duas placas. Considerando que uma placa esp possui em média 25 pinos GPIO, poderíamos ter no máximo 12 pinos de entrada e 12 pinos de saída póis para cada saída precisamos de uma entrada.<br>
+    - Pino Origem == Pino de entrada == Pino de sensor (botão, reed switch, etc.).<br>
+    - Pino Destino == Pino de saída == Pino de controle (buzzer, led, relé, etc.).<br>
+  - Para acionar uma saída(pino destino) é preciso ter uma entrada(pino origem).<br>
+  
 
 
 
