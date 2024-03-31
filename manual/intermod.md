@@ -9,6 +9,9 @@
       Normalmente o módulo que irá receber as informações é considerado receptor.<br>
       Um módulo pode enviar e receber informações silmuntâneamente.<br>
 
+      ![image](https://github.com/rede-analista/smcr/assets/66534023/dad9435f-d5d1-4067-8ddc-a44d8a553e3c)
+
+
   - Parâmetro TEMPO HANDSHAKE
     - Informe o tempo em milisegundos que a função f_checkHandShake() será executada.
       Esta função enviar informações de handshake para outro(s) módulo(s), pode ser usada para identificar perda de comunicação entre módulos.
