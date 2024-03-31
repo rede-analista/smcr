@@ -44,8 +44,8 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
 - Parâmetro XOR
   - Indica se deve ser aplicado a operação XoR quando realizar a leitura do status do pino, esta informação pode ser 0=Valor igual a leitura do pino / 1=Valor inverso a leitura do pino<br>
 
-- Parâmetro XOR
-  - Indica se deve ser aplicado a operação XoR quando realizar a leitura do status do pino, esta informação pode ser 0=Valor igual a leitura do pino / 1=Valor inverso a leitura do pino<br>
+- Parâmetro NÍVEL_ACIONAMENTO
+  - Informa se a ação cadastrada para este pino será executada quando o pino estiver em nível 0=LOW ou 1=HIGH.
 
 - Parâmetro RETENÇÃO
   - Informa se após a leitura de status de um pino a task irá ignorar a leitura do pino nos próximos X ciclos mantendo a última leitura do pino, esta informação pode ser 0=Não / 1=Sim<br>
@@ -57,19 +57,21 @@ Parâmetro TEMPO RETENÇÃO
 
 [Exemplo Cadastro](excadpino.md)
 
+
+
 # Tarefa de leitura do status dos pinos
 
 - A leitura de status dos pinos é executada pela task "TaskLeituraPinos" o código desta task está no arquivo "tarefas.ino".<br>
-  Essa task é iniciada no final da função "setup()" do módulo ESP, basicamente ela realiza a leitura do status dos pinos e atualiza o array "aU8_Pinos[4][x]" com o status atual de cada pino.<br>
+  Essa task é iniciada no final da função "setup()" do módulo ESP, basicamente ela realiza a leitura do status dos pinos e atualiza o array "aU16_Pinos_Status[1][x]" com o status atual de cada pino.<br>
 
   NOTA 6: Se um pino for cadastrado como TIPO = 254 a task não irá realizar a leitura deste pino e portanto seu status não será atualizado por esta função.
 
-  NOTA 7: Essa task é executada continuamente aplicando apenas uma pausa pela função "vTaskDelay(9/portTICK_PERIOD_MS)" isto que dizer que o período de leitura de cada pino é feita no tempo de 9 dividido por portTICK_PERIOD_MS, isto está ligado diretamente a frequência do processador.<br>
+  NOTA 7: Essa task é executada continuamente aplicando apenas uma pausa pela função "vTaskDelay(4/portTICK_PERIOD_MS);" isto que dizer que o período de leitura de cada pino é feita no tempo de 4 dividido por portTICK_PERIOD_MS, isto está ligado diretamente a frequência do processador.<br>
           #define portTICK_PERIOD_MS ((TickType_t)1000 / configTICK_RATE_HZ)
 
-- São usados 2 arrays com as informações dos pinos o array aU8_Pinos do tipo uint8_t e o array aS8_Pinos do tipo string.<br>
+- São usados 3 arrays com as informações dos pinos o array aU8_Pinos, aS8_Pinos e aU16_Pinos_Status.<br>
 
-  - aU8_Pinos[7][43] = Array de 7 linhas e 43 colunas.
+  - aU8_Pinos[7][x] = Array de 7 linhas.
     - aU8_Pinos[Propriedade][Pino]
     - aU8_Pinos[0][x] Índice 0 = PINO           = Guarda número do pino físico.
     - aU8_Pinos[1][x] Índice 1 = TIPO           = Guarda o tipo do pino. 1=DIGITAL / 0=ANALOGICO
@@ -79,6 +81,12 @@ Parâmetro TEMPO RETENÇÃO
     - aU8_Pinos[5][x] Índice 5 = RETENÇÃO       = Guarda se deve aplicar retenção na leitura do pino. 0=NAO / 1=SIM
     - aU8_Pinos[6][x] Índice 6 = TEMPO RETENÇÃO = Guarda o tempo de retenção da leitura do pino, 0 a 254
 
-  - aS8_Pinos[1][43] = Array de 1 linha e 43 colunas.
+
+  - aS8_Pinos[1][x] = Array de 1 linha.
     - aS8_Pinos[Propriedade][Pino]
     - aS8_Pinos[0][x] = Nome/descricao do pino.
+
+
+  - aU16_Pinos_Status[1][x] = Array de 1 linha.
+    - aU16_Pinos_Status[Propriedade][Pino]
+    - aU16_Pinos_Status[0][x] = Valor do pino.
