@@ -15,7 +15,8 @@
     - Informe o nome do módulo remoto, esta informação é usada apenas para validação quando receber dados de outro ESP. Se o nome do módulo que enviou a informação não for igual a um desses campos os dados serão descartados.<br>
     NOTA 2: Observe que em cada nome/ip de um módulo há um número de "ID", esse ID será usado na configuração das ações no campo "Envia_Módulo" no cadastro de ações que deve ser informado o ID correspondente ao módulo que irá receber a informação.<br>
     
-    ![image](https://github.com/rede-analista/smcr/assets/66534023/36ed98f7-db92-4eed-8a08-e9e3062f0b47)
+    ![image](https://github.com/rede-analista/smcr/assets/66534023/738abb75-3fd9-4049-a72f-443d5e67d776)
+
 
     No exemplo acima o módulo está configurado para aceitar informações de outros módulos que tenham os hostname "Medidor", "Aquario" ou "Gerador".<br>
     Estas informações tambem serão usadas caso queira enviar informações para outros módulos.<br><br>
@@ -27,9 +28,9 @@
       NOTA 4: Deve ser usado o IP da sua rede usado pela placa que vai recebar a informação.
 
       O IP deve ser informado no seguinte formato: zzzzzzzzzzzz onde z são os valores em decimais de cada octeto que compõe o IP.<br>
-      Quando for informado um IP deve sempre ser ter 3 dígitos em cada octeto sem digitar o .(ponto decimal), por exemplo, para o IP 10.10.1.7 o valor informado no campo deverá ser 010010001007 (010.010.001.007)
+      Quando for informado um IP deve sempre ser ter 3 dígitos em cada octeto sem digitar o .(ponto decimal), por exemplo, para o IP 10.10.1.7 (010.010.001.007) o valor informado no campo deverá ser 010010001007
 
-      Outro exemplo, se quiser informar o IP 192.168.100.7 deve ser difitado 192168100007
+      Outro exemplo, se quiser informar o IP 192.168.100.7 (192.168.100.007) deve ser digitado 192168100007
 
 
   - Parâmetro ID-Pino_HandShake
