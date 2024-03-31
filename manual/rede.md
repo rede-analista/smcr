@@ -44,12 +44,12 @@ Se a configuração default não foi alterada o nome da rede própria do ESP ser
   NOTA 2: Como sugestão voce pode identificar qual é o IP que o módulo está usando na sua rede atraves do seu roteador ou apenas executando o comando "ping esp32modularx.local", a informação de IP pode ser usada para acessar o módulo caso a resolução de nomes não funcione corretamente.<br><br>
   NOTA 3: Ao ativar o recurso de notificação por assistentes o serviço de mDNS não resolve o nome do módulo, sendo assim a informação de IP da "NOTA 1" deve ser usado para acessar o módulo.
 
-  - Parâmetro Porta do Servidor WEB
-    - É a informação de qual porta tcp será usada para que voce consiga acessar o módulo ESP, o padrão é a porta 8080.<br>
+- Parâmetro Porta do Servidor WEB
+  - É a informação de qual porta tcp será usada para que voce consiga acessar o módulo ESP, o padrão é a porta 8080.<br>
 
-  - Parâmetro Tentativas de Conexão
-    - É a informação de quantas tentativas o módulo vai executar para se conectar a serviços remotos durante o boot, por exemplo, conectar no wifi, conectar no MqTT, conectar em um assistente, etc. <br>
-      Após essa quantidade de tentativas o módulo continua a carregar as configurações deixando o serviço que falhou sem ser utilizado.<br>
+- Parâmetro Tentativas de Conexão
+  - É a informação de quantas tentativas o módulo vai executar para se conectar a serviços remotos durante o boot, por exemplo, conectar no wifi, conectar no MqTT, conectar em um assistente, etc. <br>
+  - Após essa quantidade de tentativas o módulo continua a carregar as configurações deixando o serviço que falhou sem ser utilizado.<br>
 
     NOTA 4: Este parâmetro foi implementado para que o módulo não fique "preso" durante o boot por falta de conexão com algum serviço externo que o impeça de iniciar o funcionamento local do módulo.
 
