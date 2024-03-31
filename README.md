@@ -54,7 +54,7 @@ A interface web pode disponibilizar até 52 posições de configurações de pin
   - Detalhar comentários no código fonte.
 
 - Atividades/Recursos não previstos:
-  - Não é previso comunicação usando ssl (somente para uso interno), não deve ser usado em uma rede pública ou redes desprotegidas, não usa acesso https.
+  - Não é previso comunicação usando ssl, não deve ser usado em uma rede pública ou redes desprotegidas, não usa acesso https.
 
 # Ambiente Desenvolvimento:
 - O desenvolvimento foi realizado na interface IDE do Arduíno 2.2.1 com sistema operacional Debian 12.1 Bookworm. Para compilação do sketch algumas bibliotecas precisam ser instaladas. Em meu ambiente tenho bibliotecas adicionais que não são necessárias para este sketch, vou listar aqui as que precisei instalar, porém, algumas já estavam instaladas em meu ambiente. Como cada ambiente tem sua peculiaridade acredito que vai precisar de algumas pesquisas para ajustar sua IDE para compilação.
