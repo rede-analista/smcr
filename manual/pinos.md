@@ -42,6 +42,7 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
 - Considere um ambiente em que tem vários módulos com várias funções, neste tipo de ambiente facilmente voce pode se impedido de usar pinos iguais entre módulos devido a conflito de identificação de pinos, ou ainda ter poucos pinos disponíveis para realizar suas configurações.<br>
       ![image](https://github.com/rede-analista/smcr/assets/66534023/dad9435f-d5d1-4067-8ddc-a44d8a553e3c)
 
+
   - Imagine de voce possui um módulo que tem um botão e um buzzer como se fosse uma campainha no portão.<br>
   - Imagine que também possui um segundo módulo que fica dentro de casa para receber a informação que a campainha foi acionada.<br>
 
@@ -52,6 +53,8 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
     - Pino Origem == Pino de entrada == Pino de sensor (botão, reed switch, etc.).<br>
     - Pino Destino == Pino de saída == Pino de controle (buzzer, led, relé, etc.).<br>
   - Para acionar uma saída(pino destino) é preciso ter uma entrada(pino origem).<br>
+  - Quando o botão for acionado, o transmissor vai enviar a informação que o pino 4 foi acionado para o receptor. O receptor recbe a informação do piono 4 acionado e também aciona o pino 23.
+  - Neste caso o pino 4 do módulo receptor não poderá mais ser usado para outra função mesmo que não tenha nehum sensor físico associado ao pino 4.
   
 
 
