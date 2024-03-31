@@ -10,25 +10,25 @@ Se a configuração default não foi alterada o nome da rede própria do ESP ser
 ![image](https://github.com/rede-analista/smcr/assets/66534023/50d66af1-0918-4cfd-87c9-e04728b089dc)
 
 - Conecte-se na rede wifi.<br>
-  Abra o browser e digite o endereço "http://192.168.4.1:8080/wifiinicio".<br>
-  Ao abrir a página informe o nome e senha da sua rede wifi, logo após salve as informações.<br>
+  - Abra o browser e digite o endereço "http://192.168.4.1:8080/wifiinicio".<br>
+  - Ao abrir a página informe o nome e senha da sua rede wifi, logo após salve as informações.<br>
 ![image](https://github.com/rede-analista/smcr/assets/66534023/bb87e3e0-50be-4dfb-96fe-4497856e6943)
 
 - Depois de salvar as informações o módulo irá reiniciar e conectar na sua rede wifi.<br>
 
-  NOTA 1: Após configurare o wifi o módulo irá conectar na sua rede wifi, a partir deste ponto voce deve acessar o módulo pelo IP que foi atribuído à placa esp pelo seu roteador.<br>
-          A programação configura o recurso de mDNS, voce pode tentar descobrir o IP da placa esp com o comando "ping esp32modularx.local".<br>
-          É recomendado realizar o recurso de reserva de IP do seu roteador para que a placa esp sempre recebe o mesmo endereço IP. Isso é importante pois caso voce configure comunicação entre módulos e o IP de uma das placas altere a comunicação entre módulo pode não funcionar.
+  NOTA 1: - Após configurare o wifi o módulo irá conectar na sua rede wifi, a partir deste ponto voce deve acessar o módulo pelo IP que foi atribuído à placa esp pelo seu roteador.<br>
+          - A programação configura o recurso de mDNS, voce pode tentar descobrir o IP da placa esp com o comando "ping esp32modularx.local".<br>
+          - É recomendado realizar o recurso de reserva de IP do seu roteador para que a placa esp sempre recebe o mesmo endereço IP. Isso é importante pois caso voce configure comunicação entre módulos e o IP de uma das placas altere a comunicação entre módulo pode não funcionar.
 
 
 
 ## Configurações de Rede
 - Parâmetro SSID
   - É a informação do nome da rede wifi que o módulo vai usar para se conectar durante o funcionamento normal(rede de trabalho/nome do seu wifi).
-  - 
+    
 - Parâmetro SENHA
   - É a informação da senha da rede wifi que o módulo vai usar para se conectar durante o funcionamento normal(rede de trabalho/nome do seu wifi).
-  - 
+    
 - Parâmetro HOSTNAME
   - É a informação de nome que o módulo vai usar para configuração de rede, este nome deve ser único na sua rede para não gerar conflito. O Hostname pode ser usado para acessar o módulo sem que voce saiba qual foi o IP que o módulo recebeu da sua rede wifi.<br>
   Voce pode acessar o módulo pelo navegador usando o seguinte formato "http://" + "hostname" + ".local" + ":" + "porta"<br>
