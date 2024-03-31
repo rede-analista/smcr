@@ -79,14 +79,14 @@ Após realizar a gravação do programa no ESP32 e rebootar o módulo ele irá g
 ![image](https://github.com/rede-analista/smcr/assets/66534023/50d66af1-0918-4cfd-87c9-e04728b089dc)
 
 Conecte-se na rede e pelo navegador você deve acessar o endereço "http://192.168.4.1:8080/wifiinicio". ao abrir a página informe o nome e senha da sua rede wifi, logo após salve as informações.<br>
-![image](https://github.com/rede-analista/smcr/assets/66534023/b9916154-7022-4b81-8bec-21aed7f1cd27)
+
 
 
 Depois de salvar as informações o módulo irá reiniciar e conectar na sua rede wifi.<br>
 
 
 Pelo navegador acesse o endereço "http://esp32modularx.local:8080", irá abrir a página inicial do módulo ESP32 e voce terá acesso as demais páginas de configuração.
-![image](https://github.com/rede-analista/smcr/assets/66534023/bef8b6ad-f5d6-4871-af47-56c5cb108311)
+![image](https://github.com/rede-analista/smcr/assets/66534023/b9916154-7022-4b81-8bec-21aed7f1cd27)
 
 
 
