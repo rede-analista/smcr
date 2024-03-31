@@ -1,9 +1,9 @@
 # Funcionamento e Configurações de Rede
 
-No momento inicial o módulo vem com a função "Modo AP" ativada, está função proporciona uma facilidade de conectar e configurar o wifi básico para que o módulo consiga se conectar na rede wifi que ele irá funcionar.<br>
+No momento inicial(primeiro boot) após a gravação do firmware, o módulo vem com a função "Modo AP" ativada, esta função proporciona uma facilidade de conectar e configurar o ssid e senha para que o módulo consiga se conectar na rede wifi que ele irá funcionar.<br>
 
 ## Funcionamento no Modo AP (quando ativado)
-- Ao ligar o módulo ele carrega as informações de rede que estão na flash e tenta se conectar na rede widi de trabalho, caso não consiga em 4 tentativas, ele aciona o modo AP onde o ESP vai gerar uma rede wifi própria para que voce possa se conectar nesta rede e realizar a configuração básica de wifi.<br>
+- Ao ligar o módulo ele carrega as informações de rede que estão na flash e tenta se conectar na rede wifi que foi configurada, caso não consiga em 4 tentativas, ele aciona o modo AP onde o ESP vai gerar uma rede wifi própria para que voce possa se conectar nesta rede e realizar a configuração básica do wifi.<br>
 Se a configuração default não foi alterada o nome da rede própria do ESP será "esp32modularx Ponto de Acesso" e a senha para se conectar nesta rede será "senha12345678".<br>
 ![image](https://github.com/rede-analista/smcr/assets/66534023/50d66af1-0918-4cfd-87c9-e04728b089dc)
 
