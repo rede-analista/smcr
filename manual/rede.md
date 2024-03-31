@@ -16,9 +16,10 @@ Se a configuração default não foi alterada o nome da rede própria do ESP ser
 
 - Depois de salvar as informações o módulo irá reiniciar e conectar na sua rede wifi.<br>
 
-  NOTA 1: - Após configurare o wifi o módulo irá conectar na sua rede wifi, a partir deste ponto voce deve acessar o módulo pelo IP que foi atribuído à placa esp pelo seu roteador.<br>
-          - A programação configura o recurso de mDNS, voce pode tentar descobrir o IP da placa esp com o comando "ping esp32modularx.local".<br>
-          - É recomendado realizar o recurso de reserva de IP do seu roteador para que a placa esp sempre recebe o mesmo endereço IP. Isso é importante pois caso voce configure comunicação entre módulos e o IP de uma das placas altere a comunicação entre módulo pode não funcionar.
+  NOTA 1:
+  - Após configurare o wifi o módulo irá conectar na sua rede wifi, a partir deste ponto voce deve acessar o módulo pelo IP que foi atribuído à placa esp pelo seu roteador.<br>
+  - A programação configura o recurso de mDNS, voce pode tentar descobrir o IP da placa esp com o comando "ping esp32modularx.local".<br>
+  - É recomendado realizar o recurso de reserva de IP do seu roteador para que a placa esp sempre recebe o mesmo endereço IP. Isso é importante pois caso voce configure comunicação entre módulos e o IP de uma das placas altere a comunicação entre módulo pode não funcionar.
 
 
 
