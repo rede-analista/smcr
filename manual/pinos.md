@@ -90,7 +90,22 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
 <br>
 <br>
 <br>
-<br>  
+<br>
+- Exemplo de funcionamento USANDO o recurso de pino virtual com 2 módulos transmissores.<br>
+
+![image](https://github.com/rede-analista/smcr/assets/66534023/ebadafb4-0aee-42b0-b6cc-a2fd2a51c9ec)
+
+  - Veja que o pino de origem precisa se o mesmo nas duas placas, porém, voce bão está usando um número de pino físico válido. Neste caso as 25 GPIO poderão ser usadas como saídas (destinos) para informar alertas.<br>
+    - Pino Origem == Pino de entrada == Pino de sensor (botão, reed switch, etc.).<br>
+    - Pino Destino == Pino de saída == Pino de controle (buzzer, led, relé, etc.).<br>
+  - Para acionar uma saída(pino destino) é preciso ter uma entrada(pino origem).<br>
+  - Note que não precisa haver relação entre os pinos das placas transmissores e receptoras. Precisa apenas ficar atento ao conflito de pinos em ums mesma placa.
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 </details>
     
 
