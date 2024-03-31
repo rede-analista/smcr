@@ -9,7 +9,7 @@
 ![image](https://github.com/rede-analista/smcr/assets/66534023/537f07d3-bd48-4e98-aa6d-bde9fd904c28)
 
 
-O total de pinos pode ser ajustado na variável "vU8_totPinos" no código antes da compilação que fica no arquivo SMCR_Modular_vXX.ino.
+O total de pinos pode ser ajustado na variável "vU8_totPinos" no código antes da compilação que fica no arquivo SMCR_Modular_vXX.ino. Em testes o valor máximo atingido foi 52 pinos
 
 NOTA 1: Para não limitar a configuração dos pinos não há uma validação de quais pinos podem ser usados, consulte a informações de pinout do ESP32 para identificar pinos reservados e que não devem ser usados nas configurações nesta página.<br>
 
