@@ -50,7 +50,7 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
 
   - Exemplo de funcionamento sem usar o recurso de pino virtual.
     ![image](https://github.com/rede-analista/smcr/assets/66534023/934d0583-e531-4661-a6f8-821a851c7319)
-  - Veja que o pino de origem precisa se o mesmo nas duas placas. 
+    - Veja que o pino de origem precisa se o mesmo nas duas placas. 
 
 
 
