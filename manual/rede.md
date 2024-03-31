@@ -53,6 +53,10 @@ Se a configuração default não foi alterada o nome da rede própria do ESP ser
 
     NOTA 4: Este parâmetro foi implementado para que o módulo não fique "preso" durante o boot por falta de conexão com algum serviço externo que o impeça de iniciar o funcionamento local do módulo.
 
+
+
+## Se o módulor for reiniciado antes de salvar as informações na flash as configurações realizadas serão perdidas.
+
 - Se quiser salvar as informações na memória flash do ESP, Vá para tela inicial clique em "Parâmetros", despois clique em "Salvar na Flash".<br>
   Responda "Sim" à pergunta e clique em "Salvar na Flash".<br>
   
