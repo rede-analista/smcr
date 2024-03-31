@@ -28,14 +28,16 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
     NOTA 5: O Pino 255 é reservado para controle de status de comunicação entre módulos. [Veja CICLOS HANDSHAKE](intermod.md)
 
 <details>
-<summary>- Parâmetro TIPO</summary>
+<summary>- Parâmetro TIPO
   - É o tipo do pino, esta informação pode ser 0=Sem Uso / 1=Digital / 192=Digital / 254=Remoto<br>
   
     - Se o valor 254 for configurado significa que é um pino virtual(ver conceito). O módulo não irá realizar a atualização de status do pino, esta configuração pode ser usada quando for habilitado o recurso de "Inter Módulos".<br>
 
     - O recurso de Inter Módulos ativa a comunicação entre dois ou mais módulos ESP32 onde um módulo transmissor iŕa atualizar o status de um pino(físico ou virtual) no módulo receptor.<br>
     
-    - O cadastro de um pino como tipo 254 deve ser usado quando o módulo vai receber o status deste pino de forma remota, o status será recebido de outro módulo ESP para este módulo que terá o pino cadastrado como tipo 254. Quando for cadastrar um pino como 254 pode ser usado qualquer númeração de pino entre 1 e 254 pois um pino do tipo 254 será considerado um pino virtual(não físico) e servirá apenas para disparar ações no módulo que recebe os dados de status de outros módulos. este recurso pode ser usado para não inutilizar um pino físico em uma ação que não teŕa leitura de sensor localmente. 
+    - O cadastro de um pino como tipo 254 deve ser usado quando o módulo vai receber o status deste pino de forma remota, o status será recebido de outro módulo ESP para este módulo que terá o pino cadastrado como tipo 254. Quando for cadastrar um pino como 254 pode ser usado qualquer númeração de pino entre 1 e 254 pois um pino do tipo 254 será considerado um pino virtual(não físico) e servirá apenas para disparar ações no módulo que recebe os dados de status de outros módulos. este recurso pode ser usado para não inutilizar um pino físico em uma ação que não teŕa leitura de sensor localmente.</summary>
+
+ - Coneito de pino virtual.    
 </details>
     
 
