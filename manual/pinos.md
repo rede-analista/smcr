@@ -40,7 +40,7 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
 <summary>- O conceito de pino virtual foi introduzido com a intenção de aumentar a quantidade de configurações possíveis e tambem evitar "gastar" o uso de um pino físico em configurações que o pino físico não seŕa útil.</summary>
 
 - Considere um ambiente em que tem vários módulos com várias funções, neste tipo de ambiente facilmente voce pode se impedido de usar pinos iguais entre módulos devido a conflito de identificação de pinos, ou ainda ter poucos pinos disponíveis para realizar suas configurações.<br>
-      ![image](https://github.com/rede-analista/smcr/assets/66534023/dad9435f-d5d1-4067-8ddc-a44d8a553e3c)
+![image](https://github.com/rede-analista/smcr/assets/66534023/dad9435f-d5d1-4067-8ddc-a44d8a553e3c)
 <br>
 <br>
 <br>
@@ -54,7 +54,7 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
 <br>
 <br>
 - Exemplo de funcionamento SEM USAR o recurso de pino virtual.<br>
-    ![image](https://github.com/rede-analista/smcr/assets/66534023/c41a5e6b-5faf-4cc5-8c66-535c29aee0b3)
+![image](https://github.com/rede-analista/smcr/assets/66534023/c41a5e6b-5faf-4cc5-8c66-535c29aee0b3)
 <br>
 <br>  
   - Veja que o pino de origem precisa se o mesmo nas duas placas. Considerando que uma placa esp possui em média 25 pinos GPIO, poderíamos ter no máximo 12 pinos de entrada e 12 pinos de saída póis para cada saída precisamos de uma entrada.<br>
