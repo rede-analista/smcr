@@ -50,7 +50,12 @@
 
       Para que a placa transmissora envie requisições de handshake o número da porta deve ser informado.<br<
       Para que a placa transmissora não envie requisições de handshake o número da porta deve ser 0 (zero).
-      
+
+
+
+- Não esqueça de aplicar as configurações antes de mudar de página cliancado em "Aplicar (sem salvar)".<br>
+  ![image](https://github.com/rede-analista/smcr/assets/66534023/abacbd7c-fa5c-4005-b678-06e97bc20cff)
+
 
 - Se quiser salvar as informações na memória flash do ESP, na tela inicial clique em "Parâmetros", despois clique em "Salvar na Flash".<br>
   Responda "Sim" à pergunta e clique em "Salvar na Flash".<br>
