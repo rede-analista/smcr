@@ -20,11 +20,13 @@ A interface web pode disponibilizar até 52 posições de configurações de pin
     5. Configuração tentativas de conexões.
     6. Atualização firmware por wifi.
   - [Recursos Pinagem](manual/pinos.md):
-    1. Nomear os pinos (colocar descrição).
-    2. Configuração tipo digital.
-    3. Configuração modo entrada/saída.
-    4. Configuração operador XOR.
-    5. Configuração retenção.
+    1. Nome dos pinos (colocar descrição).
+    2. Números dos pinos.
+    3. Configuração tipo digital/analógico/virtual.
+    4. Configuração modo entrada/saída.
+    5. Configuração operador XOR.
+    6. Configuração do nível de acionamento.
+    7. Configuração retenção.
   - [Recursos Ações](manual/acoes.md):
     1. Associar pinos e definir ações.
     2. Definir nível acionamento.
