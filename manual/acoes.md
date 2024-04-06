@@ -110,7 +110,13 @@ Pino que irá sofrer uma ação.<br>
     - aU16_Acao[2][x] = Acao 0=Nenhuma / 1=Liga / 2=Liga Delay / 3=Pisca / 4=Pulso / 5=Pulso Delay
     - aU16_Acao[3][x] = Tempo Acao ON (LIGA DELAY=2 / PISCA=3 / PULSO=4 / PULSO DELAY ON=5)
     - aU16_Acao[4][x] = Tempo Acao OFF (LIGA DELAY=2 / PISCA=3 / PULSO=4 / PULSO DELAY ON=5)
-    - aU16_Acao[5][x] = Acionamento Alto=1 / Baixo=0
+    - aU16_Acao[5][x] = Mask Pino Destino
+
+  - aU16_AcaoRede[Propriedade][Pino]
+    - aU16_AcaoRede[0][x] = Envia ao Modulo 0=Nao / 1=Sim
+    - aU16_AcaoRede[1][x] = Envia ao Telegram 0=Nao / 1=Sim
+    - aU16_AcaoRede[2][x] = Envia ao MqTT 0=Nao / 1=Sim
+    - aU16_AcaoRede[3][x] = Notifica Assitente 0=Nao / 1=Sim
 
   - aS8_Acao1[2][43] = Array de 2 linhas e 52 colunas. (cada array)
     - aS8_Acao1[Propriedade][Pino]
