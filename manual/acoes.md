@@ -39,7 +39,8 @@ Pino que irá sofrer uma ação.<br>
 
   NOTA 4: <strong>Se o módulo for reiniciado antes de salvar as informações na flash todas as configurações serão perdidas</strong>.
   
-![image](https://github.com/rede-analista/smcr/assets/66534023/941a35e8-41c7-427b-add3-d153d209bcb3)
+![image](https://github.com/rede-analista/smcr/assets/66534023/4ddfc001-cf6a-4e3b-b00c-35ef9b8aa63c)
+
 
 - Parâmetro PINO ORIGEM
   - É o pino que irá iniciar a execução da ação com base no seu status.
