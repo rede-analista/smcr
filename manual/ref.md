@@ -1,9 +1,10 @@
 # Conceitos e termos do sistema SMCR.
 - SMCR == Sistema de Monitoramento e Controle Remoto.<br>
-- Pino Origem == Pino de entrada == Pino de sensor (botão, reed switch, etc.).<br>
-- Pino Destino == Pino de saída == Pino de controle (buzzer, led, relé, etc.).<br>
-- Cadastro de Pino
-  - Tipo do Pino
+- Pino == Porta
+- Pino Origem == Porta Origem == Pino de Entrada == Porta de Entrada == Pino de Sensor (botão, reed switch, etc.).<br>
+- Pino Destino == Porta Destino == Pino de Saída == Portga de Saída == Pino de Controle (buzzer, led, relé, etc.).<br>
+- Cadastro de Pino == Cadastro de Porta
+  - Tipo do Pino == Tipo de Porta
     - 0=Sem Uso
     - 1=Digital
     - 192=Digital
