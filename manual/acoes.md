@@ -15,14 +15,21 @@
 <br>
 <br>
 <br>  
-- Você pode configurar as ações, para isto clique na opção "Configurar Ações"na página inicial.<br>
+- Para configurar ações, clique na opção "Configurar Ações"na página inicial.<br>
   ![image](https://github.com/rede-analista/smcr/assets/66534023/958fc6ce-0156-463d-8f22-1f67ae2545e8)
 [Exemplo Cadastro](excadacao.md)
 
 
-- Será aberta a página com todas as informações de ações mas para cadastrar uma ação é necessário que já tenha pelo menos um pino cadastrado. Nesta página tem um total de 43 posições para configurações das ações, o cadastro das ações pode ser realizada considerando a informação do "Pino Origem".<br>
-
-  NOTA 1: Oberse que para cadastro de Ações existem 3 páginas no total e cada página 43 posições de ações conforme o pino que foi cadastrado anteriormente.<br>
+- Será aberta a página com todas as informações de ações mas para cadastrar uma ação é necessário que já tenha pelo menos um pino cadastrado. Em cada camada tem um total de 52 posições para configurações das ações, o cadastro das ações pode ser realizada considerando a informação do "Pino Origem".<br>
+<br>
+- Pino Origem == Pino de entrada == Pino de sensor (botão, reed switch, etc.).<br>
+Pino que irá disparar uma ação.<br>
+<br>
+- Pino Destino == Pino de saída == Pino de controle (buzzer, led, relé, etc.).<br>
+Pino que irá sofrer uma ação.<br>
+<br>
+<br>
+  NOTA 1: Observe que para cadastro de Ações existem várias páginas, antes de alterar entre as páginas você deve aplicar as configurações.<br>
 
   NOTA 2: Após configurar e clicar no botão "Aplicar" as configurações já estarão sendo usadas pelo módulo mas não estarão salvas na flash. Isto pode ser usado para testar uma configuração sem alterar a configuração que está salva na flash.
 
