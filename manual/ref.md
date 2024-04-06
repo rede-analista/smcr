@@ -135,7 +135,7 @@
 # Parâmetros Recebidos Servidor WEB
      Argumento 0 = Nome do Dispositivo
      Argumento 1 = Acao
-     Argumento 2 = Indice do Pino
+     Argumento 2 = Pino (pino prigem do módulo transmissor)
      Argumento 3 = Status do Pino
 
 # Array aU8_ControlMsgMod para controle de execução de rotinas (não salvo).
