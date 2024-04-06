@@ -57,8 +57,7 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
 <br>
 - Exemplo de funcionamento SEM USAR o recurso de pino virtual.<br>
 
-![image](https://github.com/rede-analista/smcr/assets/66534023/c6184ace-807a-441d-ba82-b1add2abfd3e)
-
+![image](https://github.com/rede-analista/smcr/assets/66534023/03f72273-b3f5-430e-bd5b-9b980666265d)
 
 
 <br>
