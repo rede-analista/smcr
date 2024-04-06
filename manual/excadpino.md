@@ -22,7 +22,8 @@
     - Tipo: 1 (digital)
     - Modo: 5 (input_pullup)
     - 
-  ![image](https://github.com/rede-analista/smcr/assets/66534023/d03310b3-59b5-4cf5-beaa-2a889c3a1f59)
+  ![image](https://github.com/rede-analista/smcr/assets/66534023/d97e59e7-be15-4acc-9695-e164870d3bbc)
+
 
 - Depois de preencher as informações clique em "Aplicar(sem salvar)".<br>
   Este exemplo cadastra os dois pinos porém não salva as informações da flash do ESP. Se o módulo for reiniciado antes de salvar as informações serão perdidas.<br>
