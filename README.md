@@ -29,14 +29,13 @@ A interface web pode disponibilizar até 52 posições de configurações de pin
     7. Configuração retenção.
   - [Recursos Ações](manual/acoes.md):
     1. Associar pinos e definir ações.
-    2. Definir nível acionamento.
-    3. Definir tempo ON/OFF conforme ação.
-    4. Deninir envio dados para outro módulo ESP32.
-    5. Definir envio ao telegram.
-    6. Definir envio ao MqTT.
-    7. Definir envio assistentes.
+    2. Definir tempo ON/OFF conforme ação.
+    3. Deninir envio dados para outro módulo ESP32.
+    4. Definir envio ao telegram.
+    5. Definir envio ao MqTT.
+    6. Definir envio assistentes.
   - [Recursos Gerais](manual/configgeral.md):
-    1. Habilidat/desabilitar modo AP.
+    1. Habilitar/Desabilitar modo AP.
     2. Denifir informações de Inter Módulos.
     3. Denifir informações do bot Telegram.
     4. Denifir informações do broker MqTT.
