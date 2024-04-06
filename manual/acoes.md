@@ -88,25 +88,22 @@ Pino que irá sofrer uma ação.<br>
   - É a informação de qual classe esta ação será informada ao servidor mqtt<br>
     Deve ser usado uma clase suportado pelo MqTT, mais informações podem ser consultadas em [MQTT](https://www.home-assistant.io/integrations/mqtt/)
     
-- Parâmetro ÍCONE MQTT
-  - É a informação de qual ícone esta ação será informada ao servidor mqtt<br>
-    
    
 [Exemplo Cadastro](excadacao.md)
 
 # Tarefa de execução de ações
 
-- As ações são executadas pelas tasks "TaskAcoesPinos", "TaskAcoesPg2Pinos" e "TaskAcoesPg3Pinos" o código destas tasks está no arquivo "tarefas.ino".<br>
-  Essas tasks são iniciadas no final da função "setup()" do módulo ESP, basicamente ela consulta o array onde tem o status dos pinos e executa a ação conforma foi configurado.<br>
+- As ações são executadas pelas tasks "TaskAcoes1Pinos", "TaskAcoes2Pinos" e "TaskAcoes3Pinos" o código destas tasks está no arquivo "tarefas.ino".<br>
+  Essas tasks são iniciadas no final da função "setup()" do módulo ESP, basicamente ela consulta o array onde tem o status dos pinos e executa a ação conforme foi configurado.<br>
 
   NOTA 11: Essa task é executada continuamente aplicando apenas uma pausa pela função "vTaskDelay(8/portTICK_PERIOD_MS)" isto que dizer que o período de verificação e execução de cada ação é feita no tempo de 8 dividido por portTICK_PERIOD_MS, isto está ligado diretamente a frequência do processador.<br>
           #define portTICK_PERIOD_MS ((TickType_t)1000 / configTICK_RATE_HZ)
 
 
-- São usados 6 arrays com as informações das ações aU16_Acao1 do tipo uint16_t, aU16_Acao2 do tipo uint16_t e aU16_Acao3 do tipo uint16_t, os 3 array tem a mesma função sendo que cada um gerencia as ações de cada página de configuração.<br>
+- São usados 6 arrays com as informações das ações aU16_Acao1 do tipo uint16_t, aU16_Acao2 do tipo uint16_t e aU16_Acao3 do tipo uint16_t, os 3 array tem a mesma função sendo que cada um gerencia as ações de cada camada de configuração.<br>
   Outros 3 arrays são usados para dados do tipo string que são aS8_Acao1, aS8_Acao2 e aS8_Acao3.<br>
 
-  - aU16_Acao[6][43] = Array de 6 linhas e 43 colunas. (cada array)
+  - aU16_Acao[6][43] = Array de 6 linhas e 52 colunas. (cada array)
     - aU16_Acao[Propriedade][Pino]
     - U16_Acao[0][x] = Relacao (Pino Origem) 0=Nenhum
     - aU16_Acao[1][x] = Relacao (Pino Destino) 0=Nenhum
@@ -115,7 +112,7 @@ Pino que irá sofrer uma ação.<br>
     - aU16_Acao[4][x] = Tempo Acao OFF (LIGA DELAY=2 / PISCA=3 / PULSO=4 / PULSO DELAY ON=5)
     - aU16_Acao[5][x] = Acionamento Alto=1 / Baixo=0
 
-  - aS8_Acao1[2][43] = Array de 2 linhas e 43 colunas. (cada array)
+  - aS8_Acao1[2][43] = Array de 2 linhas e 52 colunas. (cada array)
     - aS8_Acao1[Propriedade][Pino]
     - aS8_Acao1[0][x] Índice 0 = Classe da ação para o MqTT
     - aS8_Acao1[1][x] Índice 1 = Icone da ação para o MqTT
