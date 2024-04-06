@@ -1,11 +1,11 @@
 # Funcionamento e Configurações de Rede
 
-No momento inicial(primeiro boot) após a gravação do firmware, o módulo vem com a função "Modo AP" ativada, esta função proporciona uma facilidade de conectar e configurar o ssid e senha para que o módulo consiga se conectar na rede wifi que ele irá funcionar.<br>
+No momento inicial(primeiro boot) após a gravação do firmware, o módulo vem com a função "Modo AP" ativada, esta função proporciona uma facilidade de conectar e configurar o ssid e senha para que o módulo consiga se conectar na rede wifi que o módulo vai usar.<br>
 
 
 
 ## Funcionamento no Modo AP (quando ativado)
-- Ao ligar o módulo ele carrega as informações de rede que estão na flash e tenta se conectar na rede wifi que foi configurada, caso não consiga em 4 tentativas, ele aciona o modo AP onde o ESP vai gerar uma rede wifi própria para que voce possa se conectar nesta rede e realizar a configuração básica do wifi.<br>
+- Ao ligar o módulo ele carrega as informações de rede que estão na flash e tenta se conectar na rede wifi que foi configurada, caso não consiga em 4 tentativas, ele aciona o modo AP onde o ESP vai gerar uma rede wifi própria para que voce possa se conectar no módulo e realizar a configuração básica do wifi.<br>
 Se a configuração default não foi alterada o nome da rede própria do ESP será "esp32modularx Ponto de Acesso" e a senha para se conectar nesta rede será "senha12345678".<br>
 ![image](https://github.com/rede-analista/smcr/assets/66534023/50d66af1-0918-4cfd-87c9-e04728b089dc)
 
@@ -17,9 +17,9 @@ Se a configuração default não foi alterada o nome da rede própria do ESP ser
 - Depois de salvar as informações o módulo irá reiniciar e conectar na sua rede wifi.<br>
 
   NOTA 1:
-  - Após configurare o wifi o módulo irá conectar na sua rede wifi, a partir deste ponto voce deve acessar o módulo pelo IP que foi atribuído à placa esp pelo seu roteador.<br>
+  - Após configurar o wifi o módulo irá conectar na rede wifi que você acabou de informar, a partir deste ponto voce deve acessar o módulo pelo IP que foi atribuído à placa esp pelo seu roteador.<br>
   - A programação configura o recurso de mDNS, voce pode tentar descobrir o IP da placa esp com o comando "ping esp32modularx.local".<br>
-  - É recomendado realizar o recurso de reserva de IP do seu roteador para que a placa esp sempre recebe o mesmo endereço IP. Isso é importante pois caso voce configure comunicação entre módulos e o IP de uma das placas altere a comunicação entre módulo pode não funcionar.
+  - É recomendado realizar o recurso de reserva de IP do seu roteador para que a placa esp sempre recebe o mesmo endereço IP. Isso é importante pois caso voce configure comunicação entre módulos e o IP de uma das placas for alterado, a comunicação entre módulos pode não funcionar.
 
 
 
