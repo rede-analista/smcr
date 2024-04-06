@@ -9,7 +9,7 @@
     - 192=Digital
     - 254=Remoto
   - Pino Mode()
-    - 0=Sem uso ou Pino Virtual
+    - 0=SEM USO ou PINO VIRTUAL
     - 1=INPUT
     - 3=OUTPUT
     - 4=PULLUP
@@ -17,7 +17,16 @@
     - 8=PULLDOWN
     - 9=INPUT_PULLDOWN
     - 10=OPEN_DRAIN
-    - 12=OUTPUT_OPEN_DRAIN
+    - 12=OUTPUT_OPEN_DRAIN<br>
+- Cadastro de Ações
+  - Ação
+    - 0= NENHUMA
+    - 1=LIGA
+    - 2=LIGA DELAY
+    - 3=PISCA
+    - 4=PULSO
+    - 5=PULSO DELAY
+    - 254=SÓ ENVIO DE STATUS
 
 # Definição em esp32-hal-gpio.h
      //GPIO FUNCTIONS
