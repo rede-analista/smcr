@@ -8,7 +8,6 @@
     - 1=Digital
     - 192=Digital
     - 254=Remoto
-<br>
   - Pino Mode()
     - 0=Sem uso ou Pino Virtual
     - 1=INPUT
