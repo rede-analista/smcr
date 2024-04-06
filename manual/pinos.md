@@ -157,7 +157,7 @@ Parâmetro TEMPO RETENÇÃO
     - aU8_Pinos[1][x] Índice 1 = TIPO           = Guarda o tipo do pino. 1=DIGITAL / 0=ANALOGICO
     - aU8_Pinos[2][x] Índice 2 = MODO           = Guarda o modo do pino. INPUT=1 / OUTPUT=3 / PULLUP=4 / INPUT_PULLUP=5 / PULLDOWN=8 / INPUT_PULLDOWN=9 / OPEN_DRAIN=10 / OUTPUT_OPEN_DRAIN=12 / ANALOG=0
     - aU8_Pinos[3][x] Índice 3 = XOR            = Guarda se deve aplicar operação xor no status do pino.  1=SIM / 0=NAO
-    - aU8_Pinos[4][x] Índice 4 = STATUS         = Guarda o valor da última leitura do pino.  0=LOW / 1=HIGH
+    - aU8_Pinos[4][x] Índice 4 = STATUS         = Guarda o valor da última leitura do pino.  0=LOW / 4095=HIGH
     - aU8_Pinos[5][x] Índice 5 = RETENÇÃO       = Guarda se deve aplicar retenção na leitura do pino. 0=NAO / 1=SIM
     - aU8_Pinos[6][x] Índice 6 = TEMPO RETENÇÃO = Guarda o tempo de retenção da leitura do pino, 0 a 254
 
