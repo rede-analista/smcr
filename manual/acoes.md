@@ -17,7 +17,8 @@
 <br>
 <br>  
 - Para configurar ações, clique na opção "Configurar Ações"na página inicial.<br>
-  ![image](https://github.com/rede-analista/smcr/assets/66534023/958fc6ce-0156-463d-8f22-1f67ae2545e8)
+
+![image](https://github.com/rede-analista/smcr/assets/66534023/958fc6ce-0156-463d-8f22-1f67ae2545e8)
 .[Exemplo Cadastro](excadacao.md).
 
 
