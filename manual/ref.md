@@ -2,6 +2,23 @@
 - SMCR == Sistema de Monitoramento e Controle Remoto.<br>
 - Pino Origem == Pino de entrada == Pino de sensor (botão, reed switch, etc.).<br>
 - Pino Destino == Pino de saída == Pino de controle (buzzer, led, relé, etc.).<br>
+- Cadastro de Pino
+  - Tipo do Pino
+    - 0=Sem Uso
+    - 1=Digital
+    - 192=Digital
+    - 254=Remoto
+<br>
+  - Pino Mode()
+    - 0=Sem uso ou Pino Virtual
+    - 1=INPUT
+    - 3=OUTPUT
+    - 4=PULLUP
+    - 5=INPUT_PULLUP
+    - 8=PULLDOWN
+    - 9=INPUT_PULLDOWN
+    - 10=OPEN_DRAIN
+    - 12=OUTPUT_OPEN_DRAIN
 
 # Definição em esp32-hal-gpio.h
      //GPIO FUNCTIONS
