@@ -18,7 +18,7 @@
 <br>  
 - Para configurar ações, clique na opção "Configurar Ações"na página inicial.<br>
   ![image](https://github.com/rede-analista/smcr/assets/66534023/958fc6ce-0156-463d-8f22-1f67ae2545e8)
-[Exemplo Cadastro](excadacao.md)
+.[Exemplo Cadastro](excadacao.md).
 
 
 - Será aberta a página com todas as informações de ações mas para cadastrar uma ação é necessário que já tenha pelo menos um pino cadastrado. Em cada camada tem um total de 52 posições para configurações das ações, o cadastro das ações pode ser realizada considerando a informação do "Pino Origem".<br>
