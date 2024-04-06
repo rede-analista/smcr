@@ -2,7 +2,7 @@
 - SMCR == Sistema de Monitoramento e Controle Remoto.<br>
 - Pino == Porta
 - Pino Origem == Porta Origem == Pino de Entrada == Porta de Entrada == Pino de Sensor (botão, reed switch, etc.).<br>
-- Pino Destino == Porta Destino == Pino de Saída == Portga de Saída == Pino de Controle (buzzer, led, relé, etc.).<br>
+- Pino Destino == Porta Destino == Pino de Saída == Porta de Saída == Pino de Controle (buzzer, led, relé, etc.).<br>
 - Cadastro de Pino == Cadastro de Porta
   - Tipo do Pino == Tipo de Porta
     - 0=Sem Uso
