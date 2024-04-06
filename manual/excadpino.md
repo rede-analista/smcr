@@ -4,6 +4,7 @@
    NOTA 1: O Pino 255 é reservado para controle de status de comunicação entre módulos. [Veja CICLOS HANDSHAKE](intermod.md)<br>
  - TIPO: 0=Sem Uso / 1=Digital / 192=Digital / 254=Remoto
  - MODO: 1=INPUT / 3=OUTPUT / 4=PULLUP / 5=INPUT_PULLUP / 8=PULLDOWN / 9=INPUT_PULLDOWN / 10=OPEN_DRAIN / 12=OUTPUT_OPEN_DRAIN
+ - NÍVEL_ACIONAMENTO: De 0 a 4095
  - XOR: 0=Não / 1=Sim
  - RETENÇÃO: 0=Não / 1=Sim
  - TEMPO RETENÇÃO: 0 a 255
