@@ -19,7 +19,8 @@
     - Ação: 3 (pisca)
 
 
-    ![image](https://github.com/rede-analista/smcr/assets/66534023/162a5396-82de-4a6c-b253-5a29b13b7516)
+    ![image](https://github.com/rede-analista/smcr/assets/66534023/30be4695-dd1e-4df3-90c1-545e41302ec2)
+
 
 
 - Depois de preencher as informações clique em "Aplicar(sem salvar)".<br>
