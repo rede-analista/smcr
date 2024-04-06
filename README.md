@@ -48,7 +48,7 @@ A interface web pode disponibilizar até 52 posições de configurações de pin
     1. Reiniciar módulo ESP32.
     2. Limpeza de configurações ou Formatação da flash.
     3. Recarregar Funções do Setup.
-  - [Definições e Códigos para Referências](manual/ref.md):
+  - [Conceitos, Definições e Códigos para Referências](manual/ref.md):
 
 - Atividades/Recursos previstos:
   - Comando de voz por assistentes.
