@@ -62,11 +62,11 @@ Pino que irá sofrer uma ação.<br>
     1. Se a ação for PISCA=3 será a contagem de "Tempo OFF" quando a saída(Pino Destino) ficara desligada.
     2. Se a ação for PULSO DELAY ON=5 será o tempo que vai aguardar antes de desligar a saída(Pino Destino).(veja Tempo ON)
 
-- Parâmetro NÍVEL ACIONAMENTO
-  - Informa se a ação será executada quando o pino estiver em nível 0=LOW ou 1=HIGH.
+- Parâmetro PINO_DEST_REM_(MASK)
+  - Informa qual pino será informado ao módulo remoto. Server como uma máscara, você pode usar em um módulo o pino 4 e em outro o pino 23. Normalmente usado com recurso de pino virtuao. ([Veja](pinos.md).
 
-- Parâmetro ENVIA MÓDULO
-  - Ativa o envio de informação de status do pino a outro módulo ESP32, esta informaçẽo pode ser NÃO=0 / 1 a 43 esta numeração corresponde ao ID do módulo que será enviado o status do pino(receptor) <br>
+- Parâmetro ENVIA PARA MÓDULO
+  - Ativa o envio de informação de status do pino a outro módulo ESP32, esta informaçẽo pode ser NÃO=0 / 1 a 254 esta numeração corresponde ao ID do módulo que será enviado o status dos pinos<br>
     NOTA 7: Antes de habilitar este item você deve ser configurar as informações do módulo receptor.[Veja Configurações Gerais](configgeral.md)
 
 - Parâmetro ENVIA TELEGRAM
