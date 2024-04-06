@@ -29,7 +29,8 @@
 
 - Observe na páfgina inicial que já mostra as informações dos pinos cadastrados.
   
-  ![image](https://github.com/rede-analista/smcr/assets/66534023/4a6c5b21-e935-4351-a6a8-fbbf604964a9)
+  ![image](https://github.com/rede-analista/smcr/assets/66534023/ba1d3432-ff64-4ca0-a7ca-e615f803849d)
+
 
   Se houver mudança do status do pino 4 (cadastrado como entrada) poderá ser visto na linha Status da tabela na página inicial.<br>
 
