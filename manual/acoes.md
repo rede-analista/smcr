@@ -1,6 +1,11 @@
 # Configuração de Ações
 
-- Ações podem ser configuradas para que o múdulo execute uma funcionalidade como acionar um led, notificar quando um sensor for acionado, comunicar com um broker mqtt, etc.
+- Ações podem ser configuradas para que o múdulo execute uma funcionalidade como acionar um led, notificar quando um sensor for acionado, comunicar com um broker mqtt, etc.<br>
+
+- O cadastro de ações está dividido em 3, primeira ações, segunda ação e terceira ação.<br>
+![image](https://github.com/rede-analista/smcr/assets/66534023/9f65db23-6085-49b4-958d-8288a3c7ddca)
+
+
   
 - Você pode configurar as ações, para isto clique na opção "Configurar Ações"na página inicial.<br>
   ![image](https://github.com/rede-analista/smcr/assets/66534023/958fc6ce-0156-463d-8f22-1f67ae2545e8)
