@@ -37,7 +37,7 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
     - O cadastro de um pino como tipo 254 deve ser usado quando o módulo vai receber o status deste pino de forma remota, o status será recebido de outro módulo ESP para este módulo que terá o pino cadastrado como tipo 254. Quando for cadastrar um pino como 254 pode ser usado qualquer númeração de pino entre 1 e 254 pois um pino do tipo 254 será considerado um pino virtual(não físico) e servirá apenas para disparar ações no módulo que recebe os dados de status de outros módulos. este recurso pode ser usado para não inutilizar um pino físico em uma ação que não teŕa leitura de sensor localmente.
 
 <details>
-<summary>- O conceito de pino virtual foi introduzido com a intenção de aumentar a quantidade de configurações possíveis e tambem evitar "gastar" o uso de um pino físico em configurações que o pino físico não seŕa útil.</summary>
+<summary>- **O conceito de pino virtual** foi introduzido com a intenção de aumentar a quantidade de configurações possíveis e tambem evitar "gastar" o uso de um pino físico em configurações que o pino físico não seŕa útil.</summary>
 
 - Considere um ambiente em que tem vários módulos com várias funções, neste tipo de ambiente facilmente voce pode se impedido de usar pinos iguais entre módulos devido a conflito de identificação de pinos, ou ainda ter poucos pinos disponíveis para realizar suas configurações.<br>
 
