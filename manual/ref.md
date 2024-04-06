@@ -1,3 +1,8 @@
+# Conceitos e termos do sistema SMCR.
+- SMCR == Sistema de Monitoramento e Controle Remoto.<br>
+- Pino Origem == Pino de entrada == Pino de sensor (botão, reed switch, etc.).<br>
+- Pino Destino == Pino de saída == Pino de controle (buzzer, led, relé, etc.).<br>
+
 # Definição em esp32-hal-gpio.h
      //GPIO FUNCTIONS
      #define INPUT             0x01
