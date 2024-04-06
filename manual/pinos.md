@@ -122,7 +122,7 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
   - Indica se deve ser aplicado a operação XoR quando realizar a leitura do status do pino, esta informação pode ser 0=Valor igual a leitura do pino / 1=Valor inverso a leitura do pino<br>
 
 - Parâmetro NÍVEL_ACIONAMENTO
-  - Informa se a ação cadastrada para este pino será executada quando o pino estiver em nível 0=LOW ou 1=HIGH.
+  - Informa se a ação cadastrada para este pino será executada quando o pino estiver acima ou igual ao nível cadastrado. 0 a 4095.
 
 - Parâmetro RETENÇÃO
   - Informa se após a leitura de status de um pino a task irá ignorar a leitura do pino nos próximos X ciclos mantendo a última leitura do pino, esta informação pode ser 0=Não / 1=Sim<br>
