@@ -7,7 +7,8 @@
 <br>
 
 - Cada camada está subdividida em duas páginas, onde a primeira página tem metade dos pinos (do pino 1 ao pino 26) e a segunda página tem a outra metade dos pinos (do pino 27 ao pino 52).<br>
-![image](https://github.com/rede-analista/smcr/assets/66534023/b033ffbd-88d5-4c5c-9aac-6a0a23b0c3ca)
+![image](https://github.com/rede-analista/smcr/assets/66534023/2166a16d-3a01-4f8e-b3a3-015470d90a32)
+
 
 
 
