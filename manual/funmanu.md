@@ -11,7 +11,8 @@
 - Esta opção apaga configurações que já estão salvas na memória flash do módulo ESP32.
   
   Na página inicial clique em "Limpar Flash", responda a pergunta com a opção que lhe atenda em clique em "!!EXECUTAR!!"<br>
-  ![image](https://github.com/rede-analista/smcr/assets/66534023/60eb7028-1086-4979-bc79-a4a1d1425f93)
+  ![image](https://github.com/rede-analista/smcr/assets/66534023/1e2164c8-8969-4179-b022-38e492a1e3c3)
+
 
   - Você pode escolher qual conteúdo será apagado da memória flash.
     1. "Acoes" = Apagar configurações das ações.
@@ -24,4 +25,7 @@
 
  - Esta opção executa as funções que são executadas somente durante o setup() do ESP32.
    Pode ser usada para aplicar as configurações gerais e testar o funcionamento antes de salvar na flash.
-   ![image](https://github.com/rede-analista/smcr/assets/66534023/df47a98f-7b8a-45a0-aff5-40710a81e9ad)
+   ![image](https://github.com/rede-analista/smcr/assets/66534023/55d07ec3-88a2-40aa-abf5-41ddfbb9f115)
+<br>
+NOTA 2: Ao configurar mais de uma ação para um mesmo pino destino a função GACOES deve ser executada.<br>
+
