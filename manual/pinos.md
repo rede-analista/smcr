@@ -24,18 +24,18 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
 - Parâmetro PINO
   - É a informação do pino físico do ESP32, aqui será feito a associação do pino físico na placa ESP.<br>
     Esta informação será usada na configuração de Ações(eventos).<br>
-    Pode ser um número que corresponde ao pino físico do ESP, por exemplo, este número pode ser 2,4,5,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33,34,35,36,39 ou pode ser um número que não corresponda ao pino físico do ESP, por exemplo, ...251,253,254<br>
+    Pode ser um número que corresponde ao pino físico do ESP, por exemplo, este número pode ser 2,4,5,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33,34,35,36,39 ou pode ser um número que não corresponda ao pino físico do ESP, por exemplo, ...251,253,65534<br>
     NOTA 4: Número de pinos que não são reconhecidos pelo ESP são chamados de pinos virtuais.<br>
-    NOTA 5: O Pino 255 é reservado para controle de status de comunicação entre módulos. [Veja CICLOS HANDSHAKE](intermod.md)
+    NOTA 5: O Pino 65535 é reservado para controle de status de comunicação entre módulos. [Veja CICLOS HANDSHAKE](intermod.md)
 
 - Parâmetro TIPO
-  - É o tipo do pino, esta informação pode ser 0=Sem Uso / 1=Digital / 192=Digital / 254=Remoto<br>
+  - É o tipo do pino, esta informação pode ser 0=Sem Uso / 1=Digital / 192=Analógico / 65534=Remoto<br>
   
-    - Se o valor 254 for configurado significa que é um pino virtual(ver conceito). O módulo não irá realizar a atualização de status do pino, esta configuração pode ser usada quando for habilitado o recurso de "Inter Módulos".<br>
+    - Se o valor 65534 for configurado significa que é um pino virtual(ver conceito). O módulo não irá realizar a atualização de status do pino, esta configuração pode ser usada quando for habilitado o recurso de "Inter Módulos".<br>
 
     - O recurso de Inter Módulos ativa a comunicação entre dois ou mais módulos ESP32 onde um módulo transmissor iŕa atualizar o status de um pino(físico ou virtual) no módulo receptor.<br>
     
-    - O cadastro de um pino como tipo 254 deve ser usado quando o módulo vai receber o status deste pino de forma remota, o status será recebido de outro módulo ESP para este módulo que terá o pino cadastrado como tipo 254. Quando for cadastrar um pino como 254 pode ser usado qualquer númeração de pino entre 1 e 254 pois um pino do tipo 254 será considerado um pino virtual(não físico) e servirá apenas para disparar ações no módulo que recebe os dados de status de outros módulos. Este recurso pode ser usado para não inutilizar um pino físico em uma ação que não teŕa leitura de sensor localmente.
+    - O cadastro de um pino como tipo 65534 deve ser usado quando o módulo vai receber o status deste pino de forma remota, o status será recebido de outro módulo ESP para este módulo que terá o pino cadastrado como tipo 65534. Quando for cadastrar um pino como 65534 pode ser usado qualquer númeração de pino entre 1 e 65534 pois um pino do tipo 254 será considerado um pino virtual(não físico) e servirá apenas para disparar ações no módulo que recebe os dados de status de outros módulos. Este recurso pode ser usado para não inutilizar um pino físico em uma ação que não teŕa leitura de sensor localmente.
 
 **Pino virtual (clique na seta abaixo para mais detalhes)**
 <details>
@@ -115,8 +115,8 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
     
 
 - Parâmetro PINMODE()
-  - É o modo que o pino será configurado na função pinMode(), esta informação pode ser INPUT=1 / OUTPUT=3 / PULLUP=4 / INPUT_PULLUP=5 / PULLDOWN=8 / INPUT_PULLDOWN=9 / OPEN_DRAIN=10 / OUTPUT_OPEN_DRAIN=12<br>
-    - Se o pino for do tipo 254 este valor não será considerado, pode ser 0(zero).
+  - É o modo que o pino será configurado na função pinMode(), esta informação pode ser INPUT=1 / OUTPUT=3 / PULLUP=4 / INPUT_PULLUP=5 / PULLDOWN=8 / INPUT_PULLDOWN=9 / OPEN_DRAIN=10 / OUTPUT_OPEN_DRAIN=12 / ANALOG=192<br>
+    - Se o pino for do tipo 65534 este valor não será considerado, pode ser 0(zero).
 
 - Parâmetro XOR
   - Indica se deve ser aplicado a operação XoR quando realizar a leitura do status do pino, esta informação pode ser 0=Valor igual a leitura do pino / 1=Valor inverso a leitura do pino<br>
@@ -144,7 +144,7 @@ Parâmetro TEMPO RETENÇÃO
 - A leitura de status dos pinos é executada pela task "TaskLeituraPinos" o código desta task está no arquivo "tarefas.ino".<br>
   Essa task é iniciada no final da função "setup()" do módulo ESP, basicamente ela realiza a leitura do status dos pinos e atualiza o array "aU16_Pinos_Status[1][x]" com o status atual de cada pino.<br>
 
-  NOTA 6: Se um pino for cadastrado como TIPO = 254 a task não irá realizar a leitura deste pino e portanto seu status não será atualizado por esta função.
+  NOTA 6: Se um pino for cadastrado como TIPO = 65534 a task não irá realizar a leitura deste pino e portanto seu status não será atualizado por esta função.
 
   NOTA 7: Essa task é executada continuamente aplicando apenas uma pausa pela função "vTaskDelay(4/portTICK_PERIOD_MS);" isto que dizer que o período de leitura de cada pino é feita no tempo de 4 dividido por portTICK_PERIOD_MS, isto está ligado diretamente a frequência do processador.<br>
           #define portTICK_PERIOD_MS ((TickType_t)1000 / configTICK_RATE_HZ)
