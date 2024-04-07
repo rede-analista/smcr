@@ -7,8 +7,8 @@
   - Tipo do Pino == Tipo de Porta
     - 0=Sem Uso
     - 1=Digital
-    - 192=Digital
-    - 254=Remoto
+    - 192=Analógico
+    - 65534=Remoto
   - Pino Mode()
     - 0=SEM USO ou PINO VIRTUAL
     - 1=INPUT
@@ -18,7 +18,8 @@
     - 8=PULLDOWN
     - 9=INPUT_PULLDOWN
     - 10=OPEN_DRAIN
-    - 12=OUTPUT_OPEN_DRAIN<br>
+    - 12=OUTPUT_OPEN_DRAIN
+    - 192=ANALOG<br>
 - Cadastro de Ações
   - Ação
     - 0= NENHUMA
