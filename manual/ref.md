@@ -28,7 +28,7 @@
     - 3=PISCA
     - 4=PULSO
     - 5=PULSO DELAY
-    - 254=SÓ ENVIO DE STATUS
+    - 65534=SÓ ENVIO DE STATUS
 
 # Definição em esp32-hal-gpio.h
      //GPIO FUNCTIONS
