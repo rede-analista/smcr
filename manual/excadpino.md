@@ -1,13 +1,13 @@
 # Parâmetros
  - NOME: Caracteres (evitar acentuação, nã há tratamento para caracteres especiais);
- - PINO: 2,4,5,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33,34,35,36,39,231,242,255 etc. (aceita valor entre 0 a 255)<br>
-   NOTA 1: O Pino 255 é reservado para controle de status de comunicação entre módulos. [Veja CICLOS HANDSHAKE](intermod.md)<br>
- - TIPO: 0=Sem Uso / 1=Digital / 192=Digital / 254=Remoto
- - MODO: 1=INPUT / 3=OUTPUT / 4=PULLUP / 5=INPUT_PULLUP / 8=PULLDOWN / 9=INPUT_PULLDOWN / 10=OPEN_DRAIN / 12=OUTPUT_OPEN_DRAIN
+ - PINO: 2,4,5,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33,34,35,36,39,231,242,255 etc. (aceita valor entre 0 a 65534)<br>
+   NOTA 1: O Pino 65535 é reservado para controle de status de comunicação entre módulos. [Veja CICLOS HANDSHAKE](intermod.md)<br>
+ - TIPO: 0=Sem Uso / 1=Digital / 192=Analógico / 65534=Remoto
+ - MODO: 1=INPUT / 3=OUTPUT / 4=PULLUP / 5=INPUT_PULLUP / 8=PULLDOWN / 9=INPUT_PULLDOWN / 10=OPEN_DRAIN / 12=OUTPUT_OPEN_DRAIN / 192=ANALOG
  - NÍVEL_ACIONAMENTO: De 0 a 4095
  - XOR: 0=Não / 1=Sim
  - RETENÇÃO: 0=Não / 1=Sim
- - TEMPO RETENÇÃO: 0 a 255
+ - TEMPO RETENÇÃO: 0 a 65535
 
 # Exemplo de Cadastro de Pinos
 
