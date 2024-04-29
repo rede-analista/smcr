@@ -12,9 +12,13 @@ void setup() {
   Serial.print("As preferencias estao sendo limpas, todas as configuracoes serão perdidas... ");
   CONFIG_FLASH.begin("confiGeral", false);
       CONFIG_FLASH.remove("paS_InterMod");
+      CONFIG_FLASH.remove("paU16_InterMod");
+      CONFIG_FLASH.remove("paB_InterMod");
+      CONFIG_FLASH.remove("bits_proc");
+      CONFIG_FLASH.remove("cicl_samp");
 
-      CONFIG_FLASH.remove("paU8_Pinos");
       CONFIG_FLASH.remove("paS8_Pinos");
+      CONFIG_FLASH.remove("paU16_Pinos");
 
       CONFIG_FLASH.remove("paU16_Acao1");
       CONFIG_FLASH.remove("paU16_AcaoRede1");
