@@ -3,6 +3,32 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# Customizado
+
+# Ignorar tudo na pasta .pio
+.pio/
+
+# Permitir build e subpastas específicas
+!.
+!.pio/build/
+!.pio/build/upesy_wroom/
+
+# Ignorar tudo dentro de upesy_wroom
+.pio/build/upesy_wroom/*
+
+# Permitir apenas os arquivos específicos
+!.pio/build/upesy_wroom/firmware.bin
+!.pio/build/upesy_wroom/firmware.elf
+!.pio/build/upesy_wroom/partitions.bin
+
+# Ignorar arquivos e pastas específicas
+# Ignorar tudo na pasta .vscode
+.vscode/
+
+.git/
+.gitignore
+.gitattributes
+
 # User-specific files
 *.rsuser
 *.suo
