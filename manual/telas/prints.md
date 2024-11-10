@@ -1,5 +1,5 @@
 #Tela Inicial
-![image](![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_principal.png))
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_principal.png)
 
 #Cadastro de Pinos
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_pinos_t1.png)
