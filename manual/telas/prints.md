@@ -1,4 +1,4 @@
-#Tela Inicial
+#Tela Inicial<br>
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_principal.png)
 
 #Cadastro de Pinos
@@ -6,20 +6,18 @@
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_pinos_t2.png)
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_pinos_t3.png)
 
-#Cadastrode Ações
+#Cadastro de Ações<br>
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_acoes_t1.png)
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_acoes_t2.png)
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_acoes_t3.png)
 
-#Cadastro Geral
-![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_geral.png)
+#Cadastro Geral<br>
 
-#Cadastro de Rede(Wifi)
-![image](https://github.com/rede-analista/smcr/assets/66534023/a350cc9c-e4a7-4e52-af43-34e72724db2f)
 
-#Cadastro Inter Módulos
-![image](https://github.com/rede-analista/smcr/assets/66534023/7898e76a-0904-4533-82eb-a38af1226635)
+#Cadastro de Rede<br>
 
-#Parâmetros
-![image](https://github.com/rede-analista/smcr/assets/66534023/91463051-3484-4f31-b8e7-df00d7e477eb)
-![image](https://github.com/rede-analista/smcr/assets/66534023/48560e73-e257-4078-8c2e-2864e61c69e9)
+
+#Cadastro Inter Módulos<br>
+
+
+#Parâmetros<br>
