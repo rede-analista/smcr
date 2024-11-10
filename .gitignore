@@ -20,6 +20,7 @@
 !.pio/build/upesy_wroom/firmware.bin
 !.pio/build/upesy_wroom/firmware.elf
 !.pio/build/upesy_wroom/partitions.bin
+!.pio/build/upesy_wroom/bootloader.bin
 
 # Ignorar arquivos e pastas específicas
 # Ignorar tudo na pasta .vscode
