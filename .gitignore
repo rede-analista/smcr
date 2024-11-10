@@ -28,6 +28,7 @@
 .git/
 .gitignore
 .gitattributes
+*.iss
 
 # User-specific files
 *.rsuser
