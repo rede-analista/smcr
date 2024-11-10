@@ -1,8 +1,10 @@
 #Tela Inicial
-![image](https://github.com/rede-analista/smcr/assets/66534023/7763fe3f-f596-43fb-a590-fc83ade2d145)
+![image](![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_principal.png))
 
-#Cadastro de Portas (Pinos Físicos)
-![image](https://github.com/rede-analista/smcr/assets/66534023/1f4e3f97-bc08-4e67-883d-78b2ec4ed6ce)
+#Cadastro de Pinos
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_pinos_t1.png)
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_pinos_t2.png)
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_pinos_t3.png)
 
 #Cadastrode Ações
 ![image](https://github.com/rede-analista/smcr/assets/66534023/dba299a4-9e12-415f-9551-1a32320d5226)
