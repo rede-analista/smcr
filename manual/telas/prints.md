@@ -7,10 +7,12 @@
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_pinos_t3.png)
 
 #Cadastrode Ações
-![image](https://github.com/rede-analista/smcr/assets/66534023/dba299a4-9e12-415f-9551-1a32320d5226)
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_acoes_t1.png)
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_acoes_t2.png)
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_acoes_t3.png)
 
 #Cadastro Geral
-![image](https://github.com/rede-analista/smcr/assets/66534023/16ca10ef-c18f-498b-a3cf-03cb9d7c2c34)
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_geral.png)
 
 #Cadastro de Rede(Wifi)
 ![image](https://github.com/rede-analista/smcr/assets/66534023/a350cc9c-e4a7-4e52-af43-34e72724db2f)
