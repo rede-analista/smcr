@@ -20,5 +20,7 @@
 # Cadastro Inter Módulos<br>
 
 
-# Parâmetros<br>
-
+# Salvar Configurações<br>
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_salvar_t1.png)
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_salvar_t2.png)
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_salvar_t3.png)

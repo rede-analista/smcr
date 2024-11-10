@@ -10,7 +10,7 @@ Algumas das características são proporcionar comunicação com outros módulos
 
 A interface web pode disponibilizar até 254 posições de configurações de pinos, ou seja, voce poderá configurar até 254 pinos como entrada ou saída. Tambem pela interface poderá configurar até 4 ações para cada pino, estas ações serão executadas quando por exemplo um sensor for acionado. Na configuração de ações é possível realizar uma configuração em cascata quando por exemplo o pino 2 aciona o pino 4, o pino 4 aciona o pino 5 e assim por diante, há várias formas de realizar as configurações de ações, depende um pouco da imaginação, espero que as quantidades sejam suficientes para atender uma boa parte das necessidades.
 
-**NOTA: Não sou programador e nem técnico em eletrônica, somente me interesso por programação, sendo assim, não espere uma programação "bonita" e/ou dentro das melhores práticas, mas fique a vontade para trocar informações ou sugerir alguma melhoria**
+**NOTA: Não sou programador e nem técnico em eletrônica, somente me interesso por programação, sendo assim, não espere uma programação "bonita" e/ou dentro das melhores práticas, mas fique a vontade para trocar informações ou sugerir alguma melhoria.**
 
 [Print de Telas](manual/telas/prints.md)
 
@@ -23,7 +23,7 @@ A interface web pode disponibilizar até 254 posições de configurações de pi
     3. Configuração hostname.
     4. Configuração porta tcp do servidor web.
     5. Configuração tentativas de conexões.
-    6. Atualização firmware por wifi.
+    6. Configuração servidor NTP.
 
   - [Recursos Pinagem](manual/pinos.md):
     1. Nome dos pinos (colocar descrição).
@@ -43,14 +43,12 @@ A interface web pode disponibilizar até 254 posições de configurações de pi
     6. Definir envio assistentes.
 
   - [Recursos Gerais](manual/configgeral.md):
-    1. Habilitar/Desabilitar modo AP.
-    2. Denifir informações de Inter Módulos.
-    3. Denifir informações do bot Telegram.
-    4. Denifir informações do broker MqTT.
-    5. Denifir informações dos assistentes.
-    6. Visualizar configurações em memória e na flash.
-    7. Atualização em massa de pinos, ações e Intermódulos.
-    8. Exportar e importar configurações salvas.
+    1. Denifir informações de Inter Módulos.
+    2. Denifir informações do bot Telegram.
+    3. Denifir informações do broker MqTT.
+    4. Denifir informações dos assistentes.
+    5. Atualização firmware por wifi.
+    6. Exportar e importar configurações salvas.
 
   - [Funções de Manutenção](manual/funmanu.md):
     1. Reiniciar módulo ESP32.
