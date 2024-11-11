@@ -48,13 +48,15 @@ A interface web pode disponibilizar até 254 posições de configurações de pi
 
   - Bibliotecas:
 
-    1. Arduino_JSON Library for Arduino.
+    1. ESP Async WebServer.
     2. ESP32MQTTClient.
     3. HttpClient.
     4. Universal Telegram Bot Library.
     5. esp8266-google-home-notifier.
     6. MQTTPubSubClient.
     7. Arduino_FreeRTOS_Library.
+    8. ESPAsyncHTTPUpdateServer.
+    9. asyncHTTPrequest.
      
   NOTA: Na pasta ["build"](https://github.com/rede-analista/smcr/tree/main/.pio/build/upesy_wroom) deixarei o arquivo de fimware .bin já compilado caso queiram simplesmente realizar a gravação no ESP32 sem precisar compilar. Para gravação sem compílar pode usar qualquer ferramenta como exemplo "esptools".
 

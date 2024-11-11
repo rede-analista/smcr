@@ -1,121 +1,52 @@
 # Configurações Gerais
 
-- Nas configurações gerais devem ser cadastrados informações diversas para uso de notificações e comunicação entre módulos.<br>
+- Nas configurações gerais devem ser cadastradas informações diversas para comportamento da interface web, watchdog, refresh, etc.<br>
 
-- Você pode configurar as ações, para isto clique na opção "Configurarões Gerais"na página inicial.<br>
-  ![image](https://github.com/rede-analista/smcr/assets/66534023/958fc6ce-0156-463d-8f22-1f67ae2545e8)
-
-
-## Informações do Modo AP
-
-- Parâmetro HABILITAR MODO AP
-  - Você pode desabilitar o modo AP. O modo AP é um recurso que o ESP32 gera uma rede wifi caso ele não consiga conexão no SSID de trabalho. [Veja Modo AP](rede.md)
-
-## Informações do Inter Módulos
-- Parâmetro HABILITAR INTER MÓDULOS
-  - Você pode habilitar a comunicação entre módulos. A comunicação entre módulos é um recurso que o ESP32 envia informações de status do pino para outro módulo usando a rede wifi. Com esta atualização remota de status do pino voce pode acionar um equipamento mesmo que o sensor esteja em outro módulo esp distante. [Veja Inter Módulos](intermod.md)
-   
-## Informações do Telegram
-
-- Parâmetro HABILITA TELEGRAM
-  - Habilita o envio de notificações para um grupo no Telegram.<br>
-    NOTA 1: Para habilitar esta opção os parâmetros referente ao Telegram precisam ser informados.
-
-- Parâmetro CHAVE API TELEGRAM
-  - Informe a chave da API do bot do Telegram.<br>
-    NOTA 2: Para cada módulo deve ser gerado uma chave, caso utilize a mesma chave pode gerar conflito onde um módulo recebe informações do Telegram e outro módulo com a mesma chave não receba as informações corretamente.
-
-- Parâmetro ID GRUPO TELEGRAM
-  - Informe o ID do grupo deo Telegram que será enviado as notificações.
-
-- Parâmetro NOME BOT TELEGRAM
-  - Informe o nome do bot do Telegram.
-
-- Parâmetro TEMPO TELEGRAM
-  - Informe o tem em milisegundos que a função de enviar notificações ao Telegram será executada.
+- Na página inicial clique em "Configurarões Gerais" e depois em "Configuração Geral".<br>
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_geral_t1.png)
 
 
-## Informações do MQTT
+- Parâmetro  Status na Página Inicial
+  - Habilita/desabilita as informações de status dos pinos na página inicial.
 
-- Parâmetro HABILITA MQTT
-  - Habilita o envio de informações para um broker mqtt.<br>
-    NOTA 3: Para habilitar esta opção os parâmetros referente ao mqtt precisam ser informados.
+- Parâmetro  Inter Módulos na Página Inicial
+  - Habilita/desabilita as informações de comunicação de intermódulos na página inicial.
 
-- Parâmetro IP MQTT
-  - Informe o IP do mqtt que irá receber as informações.
+- Parâmetro  Cor Status Com Alerta
+  - Informe a cor do status quando tiver um alerta. Deve usar nome de cor no padrão HTML.
 
-- Parâmetro USUÁRIO MQTT
-  - Informe o usuário que irá autenticar no mqtt.
+- Parâmetro  Cor Status Sem Alerta
+  - Informe a cor do status quando não tiver um alerta. Deve usar nome de cor no padrão HTML.
 
-- Parâmetro SENHA MQTT
-  - Informe a senha que irá autenticar no mqtt.
+- Parâmetro  Tempo de Refresh
+  - Informe o tempo de refresh em segundos. Tempo de refres da página inicial.
 
-- Parâmetro PORTA MQTT
-  - Informe a porta tcp que usada para conectar no mqtt.
+- Parâmetro  Executar WatchDog
+  - Habilita/desabilita execução do watchdog. deve ser configurados os demais parâmetros antes de habilitar.
 
-- Parâmetro TÓPICO MQTT
-  - Informe tópico que irá compor o subscribe para envio ao mqtt.
+- Parâmetro  Clock do ESP32
+  - Informe a velocidade em Megahertz do clock do ESP32. Esta informação é usada no watchdog.
 
-- Parâmetro TEMPO VERIFICAÇÃO MQTT
-  - Informe o tem em milisegundos que a função de enviar notificações ao mqtt será executada.
+- Parâmetro  Tempo para wathDog 
+  - Informe o tempo de reset do watchdog em microsegundos. Esta informação é usada decisão de reboot do esp em caso de falha/travamento.
 
-- Parâmetro TEMPO DISCOVERY MQTT
-  - Informe o tem em milisegundos que a função de enviar discovery ao mqtt será executada.
+- Parâmetro  Quantidade Total de Pinos
+  - Informe a quantidade total de pinos que será usado. Você pode configurar uma quantidade adequada a sua necessidade respeitando o máximo de 254 pinos. Uma quantidade maior irá consumir mais processamento do ESP32.
 
-## Informações dos Assistentes
+  NOTA 1: A quantidade de pinos irá influênciar na velocidade das rotinas que são executadas pelo módulo. Uma quantidade grande de pinos deixará o tempo das rotinas mais demorado.
 
-- Parâmetro HABILITA ASSISTENTES
-  - Habilita o envio de notificações para assistentes e o comando de voz por assistentes.>br>
-    NOTA 4: Para habilitar esta opção os parâmetros referente aos assistentes precisam ser informados.
+  NOTA2: Esta informação deve ser alterada antes de realizar cadastro de pinos e ações. A alteração desta informação depois que o módulo já estiver configurado e em uso pode ocasionar travamentos.
 
-- Parâmetro NOME GOOGLE
-  - Informe nome que o dispositivo Google Home está cadastrado no seu aplicativo.
+  NOTA 3: Para o funcionamento correto o ideal é realizar a formatação da flash (apagar todas as configurações) antes de alterar a quantidade de pinos. Após alterar a quantidade de pinos o módulo deve ser reconfigurado.
 
-- Parâmetro NOME ALEXA
-  - Informe nome que o dispositivo Alexa está cadastrado no seu aplicativo.
+  # Não esqueça de salvar as informações antes de reiniciar/desligar o módulo.
+## Se o módulor for reiniciado antes de salvar as informações na flash as configurações realizadas serão perdidas.
 
-- Parâmetro LINGUAGEM ASSISTENTES
-  - Informe a linguagem que será usada para enviar notificações aos assistentes.
-
-- Parâmetro TEMPO ASSISTENTES
-  - Informe o tem em milisegundos que a função de enviar notificações aos assistentes será executada.
-
-- Parâmetro INÍCIO FRASE ALERTA
-  - Informe o texto que irá compor o início da frase de notificação dos assistenes quando tiver um alerta.
-
-- Parâmetro INÍCIO FRASE NORMALIZAÇÃO
-  - Informe o texto que irá compor o início da frase de notificação dos assistenes quando um alerta for normalizado.
-
-
-- Depois de preencher as informações clique em "Aplicar(sem salvar)".<br>
-  Isto cadastra as informações porém não salva as informações da flash do ESP. Se o módulo for reiniciado antes de salvar as informações serão perdidas.<br>
-
-  NOTA 5: Algumas informações só serão usadas após recarregar as funções do setup() do ESP32, [Veja Recarregar Funçõẽs](funmanu.md)<br>
-  **Lembre-se que "Recarregar" as funções não salva as informações na flash, se o módulo for reiniciado antes de salvar na flash as informações serão perdidas**
-
-
-
-
-## Visualizar Parâmetros
-
-- Para visualizar os parâmetros que estão em execução da memória do ESP e também para visualizar as informações que estão salvas na memória flash, na página inicial clique em Parâmetros. Na tela uqe irá abri voce vera as informações. Lembre-se que a maioria das informações são tradas por arrays e é neste formato que são mostrados os dados.
-![image](https://github.com/rede-analista/smcr/assets/66534023/7bfcf06d-6510-4b78-8568-2e758a947b30)
-
-
-
-- Se quiser salvar as informações na memória flash do ESP clique em "Salvar na Flash".<br>
-  Responda "Sim" à pergunta e clique em "Salvar na Flash".<br>
+- Se quiser salvar as informações na memória flash do ESP32, Vá para tela inicial clique em "Gerenciar Arquivos", despois clique em "Salvar Configurações".<br>
+  Responda "Sim" à pergunta e clique em "Confirmar".<br>
   
-  ![image](https://github.com/rede-analista/smcr/assets/66534023/2c82afff-a3c7-4ba4-ab7e-398530c743da)
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_salvar_t1.png)
 
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_salvar_t2.png)
 
-
-  
-## Configuração em Massa
-
-- Alguns cadastros possuem uma quantidade maior de informações, por exemplo, cadastro dos pinos ou cadastro de ações, etc. Para facilitar a configuraçõa de uma nova placa ESP ou uma substituição, foi criado esta opção para que alguns desses cadastros possam ser realizada de forma massiva. Copiando as informações desses campos pode se feito tambem um backup parcial das configurações do módulo.<br>
-  
-
-![image](https://github.com/rede-analista/smcr/assets/66534023/c90bd2b8-e8c1-40d8-b1b0-e2051d1da8cb)
-
-  
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_salvar_t3.png)
