@@ -8,6 +8,7 @@ void fV_mapaFuncoes() {
     mapaFuncoesSemParam["fV_restart"] = fV_restart;
     mapaFuncoesSemParam["fV_mudaExec"] = fV_mudaExec;
     mapaFuncoesSemParam["fV_restartTasks"] = fV_restartTasks;
+    mapaFuncoesSemParam["fV_formataFLASH"] = fV_formataFLASH;
 
     // Mapeia função com AsyncWebServerRequest*
     mapaFuncoesComParam["f_handle_OTA"] = f_handle_OTA;
@@ -904,6 +905,7 @@ void fV_restart() {
 //========================================
 void fV_formataFLASH () {
     fV_imprimeSerial("Particao NVS sendo formatada, todas as informacoes serão perdidas...",false);
+    fV_apagaTodosArquivosSPIFFS();
     nvs_flash_erase(); //apague a partição NVS
     nvs_flash_init(); //inicializa a partição NVS
     fV_imprimeSerial(" OK");
