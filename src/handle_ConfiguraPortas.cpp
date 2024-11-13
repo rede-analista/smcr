@@ -211,7 +211,7 @@ size_t f_handle_ConfiguraPortas(unsigned char *data, size_t len, bool final) {
         if (vU16_linhaPagCad >= 0) {
             html += "<tr>";
             for (x = vU8_colINICIO; x < vU8_colFIM; x++) {
-                html += "<td><button type='submit' name='pino' value='" + String(0) + "-" + String(x) + "'> Índice " + String(0) + "-" + String(x) +"("+String(aU16_Pinos[0][x])+")<br>" + aS8_Pinos[0][x] + "</button></td>";
+                html += "<td><button type='submit' name='pino' value='" + String(0) + "-" + String(x) + "'> Índice " + String(0) + "-" + String(x) +"(Pino:"+String(aU16_Pinos[0][x])+")<br>" + aS8_Pinos[0][x] + "</button></td>";
             }
             html += "</tr>";
             html += "<tr>";

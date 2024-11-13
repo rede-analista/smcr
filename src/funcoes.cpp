@@ -740,7 +740,7 @@ uint16_t fU16_lePino(uint16_t tipo, uint16_t invert, uint16_t pino) {
 }
 
 //========================================
-String f_traduzAcoes(uint16_t cod) {
+String fS_traduzAcoes(uint16_t cod) {
   String resultado = "NULO";
   switch (cod) {
     case 0:

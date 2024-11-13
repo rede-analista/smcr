@@ -109,28 +109,28 @@ void fV_salvarAcoes(AsyncWebServerRequest *request) {
     // Envia uma resposta de sucesso
     switch (acaoID) {
         case 1:            
-            html += "Açao " + String(acaoID) +" "+f_traduzAcoes(aU16_Acao1[2][coluna])+" foi salva.<br>";
+            html += "Açao " + String(acaoID) +" "+fS_traduzAcoes(aU16_Acao1[2][coluna])+" foi salva.<br>";
             html += "Pino origem: " + String(aU16_Acao1[0][coluna])+" - ";
             html += "Nome: " + aS8_Pinos[0][fU16_retornaIndicePino(aU16_Acao1[0][coluna])] +"<br>";
             html += "Pino destino: " + String(aU16_Acao1[1][coluna])+" - ";
             html += "Nome: " + aS8_Pinos[0][fU16_retornaIndicePino(aU16_Acao1[1][coluna])] +"<br>";
             break;
         case 2:            
-            html += "Açao " + String(acaoID) +" "+f_traduzAcoes(aU16_Acao2[2][coluna])+" foi salva.<br>";
+            html += "Açao " + String(acaoID) +" "+fS_traduzAcoes(aU16_Acao2[2][coluna])+" foi salva.<br>";
             html += "Pino origem: " + String(aU16_Acao2[0][coluna])+" - ";
             html += "Nome: " + aS8_Pinos[0][fU16_retornaIndicePino(aU16_Acao2[0][coluna])] +"<br>";
             html += "Pino destino: " + String(aU16_Acao2[1][coluna])+" - ";
             html += "Nome: " + aS8_Pinos[0][fU16_retornaIndicePino(aU16_Acao2[1][coluna])] +"<br>";
             break;
         case 3:            
-            html += "Açao " + String(acaoID) +" "+f_traduzAcoes(aU16_Acao3[2][coluna])+" foi salva.<br>";
+            html += "Açao " + String(acaoID) +" "+fS_traduzAcoes(aU16_Acao3[2][coluna])+" foi salva.<br>";
             html += "Pino origem: " + String(aU16_Acao3[0][coluna])+" - ";
             html += "Nome: " + aS8_Pinos[0][fU16_retornaIndicePino(aU16_Acao3[0][coluna])] +"<br>";
             html += "Pino destino: " + String(aU16_Acao3[1][coluna])+" - ";
             html += "Nome: " + aS8_Pinos[0][fU16_retornaIndicePino(aU16_Acao3[1][coluna])] +"<br>";
             break;
         case 4:            
-            html += "Açao " + String(acaoID) +" "+f_traduzAcoes(aU16_Acao4[2][coluna])+" foi salva.<br>";
+            html += "Açao " + String(acaoID) +" "+fS_traduzAcoes(aU16_Acao4[2][coluna])+" foi salva.<br>";
             html += "Pino origem: " + String(aU16_Acao4[0][coluna])+" - ";
             html += "Nome: " + aS8_Pinos[0][fU16_retornaIndicePino(aU16_Acao4[0][coluna])] +"<br>";
             html += "Pino destino: " + String(aU16_Acao4[1][coluna])+" - ";
@@ -359,28 +359,28 @@ size_t f_handle_ConfiguraAcoes(unsigned char *data, size_t len, bool final) {
                 if (aS8_Pinos[0][x] == 0) {
                     html += "<label for='id_ac_pino'>Índice " + String(0) + "-" + String(x) +" Pino: (sem cadastro)</label><br>";
                 } else {
-                    html += "<label for='id_ac_pino'>Índice " + String(0) + "-" + String(x) +" Pino:"+String(aU16_Pinos[0][x])+"<br>" + aS8_Pinos[0][x] + "</label><br>";
+                    html += "<label for='id_ac_pino'>Índice " + String(0) + "-" + String(x) +" Pino:"+String(aU16_Pinos[0][x])+"(origem)<br>" + aS8_Pinos[0][x] + "</label><br>";
                 }
                 if (aU16_Pinos[0][x] > 0) {
                     if (aU16_Acao1[1][x] == 0 ) {
-                        html += "<button type='submit' name='acao1' value='" + String(0) + "-" + String(x) + "'> Ação 1(livre) " + String(0) + "-" + String(x);
+                        html += "<button type='submit' name='acao1' value='" + String(0) + "-" + String(x) + "'> Ação-1(livre)";
                     } else {
-                        html += "<button type='submit' name='acao1' value='" + String(0) + "-" + String(x) + "'> Ação 1(em uso) " + String(0) + "-" + String(x);
+                        html += "<button type='submit' name='acao1' value='" + String(0) + "-" + String(x) + "'> Ação-1<br>Destino:" + String(aU16_Acao1[1][x]) + "-" + fS_traduzAcoes(aU16_Acao1[2][x]);
                     }
                     if (aU16_Acao2[1][x] == 0 ) {
-                        html += "<button type='submit' name='acao2' value='" + String(0) + "-" + String(x) + "'> Ação 2(livre) " + String(0) + "-" + String(x);
+                        html += "<button type='submit' name='acao2' value='" + String(0) + "-" + String(x) + "'> Ação-2(livre)";
                     } else {
-                        html += "<button type='submit' name='acao2' value='" + String(0) + "-" + String(x) + "'> Ação 2(em uso) " + String(0) + "-" + String(x);
+                        html += "<button type='submit' name='acao1' value='" + String(0) + "-" + String(x) + "'> Ação-2<br>Destino:" + String(aU16_Acao2[1][x]) + "-" + fS_traduzAcoes(aU16_Acao2[2][x]);
                     }
                     if (aU16_Acao3[1][x] == 0 ) {
-                        html += "<button type='submit' name='acao3' value='" + String(0) + "-" + String(x) + "'> Ação 3(livre) " + String(0) + "-" + String(x);
+                        html += "<button type='submit' name='acao3' value='" + String(0) + "-" + String(x) + "'> Ação-3(livre)";
                     } else {
-                        html += "<button type='submit' name='acao3' value='" + String(0) + "-" + String(x) + "'> Ação 3(em uso) " + String(0) + "-" + String(x);
+                        html += "<button type='submit' name='acao1' value='" + String(0) + "-" + String(x) + "'> Ação-3<br>Destino:" + String(aU16_Acao3[1][x]) + "-" + fS_traduzAcoes(aU16_Acao3[2][x]);
                     }
                     if (aU16_Acao4[1][x] == 0 ) {
-                        html += "<button type='submit' name='acao4' value='" + String(0) + "-" + String(x) + "'> Ação 4(livre) " + String(0) + "-" + String(x);
+                        html += "<button type='submit' name='acao4' value='" + String(0) + "-" + String(x) + "'> Ação-4(livre)";
                     } else {
-                        html += "<button type='submit' name='acao4' value='" + String(0) + "-" + String(x) + "'> Ação 4(em uso) " + String(0) + "-" + String(x);
+                        html += "<button type='submit' name='acao1' value='" + String(0) + "-" + String(x) + "'> Ação-4<br>Destino:" + String(aU16_Acao3[1][x]) + "-" + fS_traduzAcoes(aU16_Acao4[2][x]);
                     }                    
                 }
                 html += "</center></td>";
