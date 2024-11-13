@@ -4,15 +4,12 @@
 
 - Cada pino pode ter configurado até 4 ações, primeira ação, segunda ação, terceira ação e quarta ação.<br>
 
-![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_acoes_t1.png)
-
-
 - Uma ação é algo que o ESP32 irá executar quando um evento ocorrer. Um evento ocorre quando a leitura de um pino cadastrado como entrada atingir ou ultrapassar o valor informado no cadastro de pinos. 
 - Existe uma task no ESP32 que fica lendo as informação dos pinos de entrada, e este valor é comparado com o nível de acionamento.
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_acoes_t4.png)<br>
 Quando o valor de um pino ṕe igual ou maior que o valor cadastrado no campo "Nível Acionamento:" o módulo entende que houve um alerta.
 
-<br><br><br><br><br><br>
+<br><br><br><br>
 
 - Para configurar ações, clique na opção "Configurar Ações"na página inicial.<br>
 
@@ -29,7 +26,7 @@ Pino que irá sofrer uma ação.<br>
 <br>
 <br>
 
-![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_acoes_t0.png)
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_acoes_t1.png)
 
 NOTA 2: <strong>Se o módulo for reiniciado antes de salvar as informações na flash todas as configurações serão perdidas</strong>.  
 
