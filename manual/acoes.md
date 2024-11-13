@@ -12,12 +12,7 @@
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_acoes_t4.png)<br>
 Quando o valor de um pino ṕe igual ou maior que o valor cadastrado no campo "Nível Acionamento:" o módulo entende que houve um alerta.
 
-
-
-
-
-
-
+<br><br><br><br><br><br>
 
 - Para configurar ações, clique na opção "Configurar Ações"na página inicial.<br>
 
