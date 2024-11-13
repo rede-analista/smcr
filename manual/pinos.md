@@ -122,10 +122,7 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
 <br>
 <br>
 <br>
-<br>
-<br>
 </details>
-    
 
 - Parâmetro PINMODE()
   - É o modo que o pino será configurado na função pinMode(), esta informação pode ser:
