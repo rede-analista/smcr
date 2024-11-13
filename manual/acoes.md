@@ -9,8 +9,12 @@
 
 - Uma ação é algo que o ESP32 irá executar quando um evento ocorrer. Um evento ocorre quando a leitura de um pino cadastrado como entrada atingir ou ultrapassar o valor informado no cadastro de pinos. 
 - Existe uma task no ESP32 que fica lendo as informação dos pinos de entrada, e este valor é comparado com o nível de acionamento.
-![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_acoes_t4.png)
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_acoes_t4.png)<br>
 Quando o valor de um pino ṕe igual ou maior que o valor cadastrado no campo "Nível Acionamento:" o módulo entende que houve um alerta.
+
+
+
+
 
 
 
