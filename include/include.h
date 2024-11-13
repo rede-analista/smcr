@@ -76,7 +76,7 @@ void fV_gravaPino(uint16_t tipo, uint16_t pino, uint16_t valor);
 bool fB_retornaStatusGrupoAcao(String pinos, uint8_t status);
 String fS_retornaGrupoAcao(uint16_t pino);
 uint16_t fU16_lePino(uint16_t tipo, uint16_t invert, uint16_t pino);
-String f_traduzAcoes(uint16_t cod);
+String fS_traduzAcoes(uint16_t cod);
 uint16_t fU16_retornaIndicePino(uint16_t pino);
 bool fB_atualizaHora();
 void fV_grupoAcoes(bool force);

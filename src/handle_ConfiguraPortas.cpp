@@ -23,12 +23,11 @@ void fV_salvarPinos(AsyncWebServerRequest *request) {
         String paramName = param->name();
         String paramValue = param->value();
         x++;
-        if (paramName == fS_limpaEspacoFimLinha(aS16_PinosMenu[0][i])){
+        if (paramName == fS_limpaEspacoFimLinha(aS16_PinosMenu[0][0])){
             y = paramValue.toInt();
         }
     }
-
-    if ( y == 0  ) {
+    if ( y == 0 || y == 65535 ) {
         html += "<br>O pino "+String(aU16_Pinos[linha][coluna])+" será descadastrado (excluído)<br>";
         html += "<br>Descadastrando todas as ações para o pino "+String(y)+"<br>";
         fV_imprimeSerial("O pino "+String(aU16_Pinos[linha][coluna])+" sera descadastrado (excluido)");
@@ -57,36 +56,67 @@ void fV_salvarPinos(AsyncWebServerRequest *request) {
             aS8_Acao3[i][coluna] = "";
             aS8_Acao4[i][coluna] = "";
         }
+
+        x = 2;
+        for (int i = 0; i < vI8_aS8_Pinos; i++) {
+            AsyncWebParameter* param = request->getParam(x);
+            String paramName = param->name();
+            String paramValue = param->value();
+            x++;
+            if (paramName == "nome"){
+                aS8_Pinos[i][coluna] = "";
+            } else {
+                fV_imprimeSerial("Erro:1 no parametro "+paramName);
+            }
+        }
+
+        x = 3;
+        for (int i = 0; i < vI8_aU16_Pinos; i++) {
+            AsyncWebParameter* param = request->getParam(x);
+            String paramName = param->name();
+            String paramValue = param->value();
+            x++;
+            if (paramName == fS_limpaEspacoFimLinha(aS16_PinosMenu[0][i])){
+                aU16_Pinos[i][coluna] = 0;
+            } else {
+                fV_imprimeSerial("Erro:2 no parametro "+paramName);
+            }
+        }
+        if (vU8_PinosCadastrados > 0 ) {
+            vU8_PinosCadastrados--;
+        }
         fV_imprimeSerial(" OK");
-    }
+    } else {
+        fV_imprimeSerial("Salvando pinos...", false);   
+        x = 2;
+        for (int i = 0; i < vI8_aS8_Pinos; i++) {
+            AsyncWebParameter* param = request->getParam(x);
+            String paramName = param->name();
+            String paramValue = param->value();
+            x++;
+            if (paramName == "nome"){
+                aS8_Pinos[i][coluna] = paramValue;
+            } else {
+                fV_imprimeSerial("Erro:1 no parametro "+paramName);
+            }
+        }
 
-    fV_imprimeSerial("Salvando pinos...", false);   
-    x = 2;
-    for (int i = 0; i < vI8_aS8_Pinos; i++) {
-        AsyncWebParameter* param = request->getParam(x);
-        String paramName = param->name();
-        String paramValue = param->value();
-        x++;
-        if (paramName == "nome"){
-            aS8_Pinos[i][coluna] = paramValue;
-        } else {
-            fV_imprimeSerial("Erro:1 no parametro "+paramName);
+        x = 3;
+        for (int i = 0; i < vI8_aU16_Pinos; i++) {
+            AsyncWebParameter* param = request->getParam(x);
+            String paramName = param->name();
+            String paramValue = param->value();
+            x++;
+            if (paramName == fS_limpaEspacoFimLinha(aS16_PinosMenu[0][i])){
+                aU16_Pinos[i][coluna] = paramValue.toInt();
+            } else {
+                fV_imprimeSerial("Erro:2 no parametro "+paramName);
+            }
+        }
+        if (vU8_PinosCadastrados <= vU8_totPinos ) {
+            vU8_PinosCadastrados++;
         }
     }
-
-    x = 3;
-    for (int i = 0; i < vI8_aU16_Pinos; i++) {
-        AsyncWebParameter* param = request->getParam(x);
-        String paramName = param->name();
-        String paramValue = param->value();
-        x++;
-        if (paramName == fS_limpaEspacoFimLinha(aS16_PinosMenu[0][i])){
-            aU16_Pinos[i][coluna] = paramValue.toInt();
-        } else {
-            fV_imprimeSerial("Erro:2 no parametro "+paramName);
-        }
-    }
-
     // Responde com uma página HTML
     html += "<br>Informação do índice: " + String(linha) + "-" + String(coluna);
     html += "<br> Nome: " + aS8_Pinos[linha][coluna];
@@ -181,7 +211,7 @@ size_t f_handle_ConfiguraPortas(unsigned char *data, size_t len, bool final) {
         if (vU16_linhaPagCad >= 0) {
             html += "<tr>";
             for (x = vU8_colINICIO; x < vU8_colFIM; x++) {
-                html += "<td><button type='submit' name='pino' value='" + String(0) + "-" + String(x) + "'> Índice " + String(0) + "-" + String(x) +"("+String(aU16_Pinos[0][x])+")<br>" + aS8_Pinos[0][x] + "</button></td>";
+                html += "<td><button type='submit' name='pino' value='" + String(0) + "-" + String(x) + "'> Índice " + String(0) + "-" + String(x) +"(Pino:"+String(aU16_Pinos[0][x])+")<br>" + aS8_Pinos[0][x] + "</button></td>";
             }
             html += "</tr>";
             html += "<tr>";
