@@ -44,7 +44,7 @@
 
 - Se quiser salvar as informações na memória flash do ESP32, Vá para tela inicial clique em "Gerenciar Arquivos", despois clique em "Salvar Configurações".<br>
   Responda "Sim" à pergunta e clique em "Confirmar".<br>
-  
+
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_salvar_t1.png)
 
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_salvar_t2.png)
