@@ -23,12 +23,11 @@ void fV_salvarPinos(AsyncWebServerRequest *request) {
         String paramName = param->name();
         String paramValue = param->value();
         x++;
-        if (paramName == fS_limpaEspacoFimLinha(aS16_PinosMenu[0][i])){
+        if (paramName == fS_limpaEspacoFimLinha(aS16_PinosMenu[0][0])){
             y = paramValue.toInt();
         }
     }
-
-    if ( y == 0  ) {
+    if ( y == 0 || y == 65535 ) {
         html += "<br>O pino "+String(aU16_Pinos[linha][coluna])+" será descadastrado (excluído)<br>";
         html += "<br>Descadastrando todas as ações para o pino "+String(y)+"<br>";
         fV_imprimeSerial("O pino "+String(aU16_Pinos[linha][coluna])+" sera descadastrado (excluido)");

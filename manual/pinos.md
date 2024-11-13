@@ -12,6 +12,8 @@
 
 O total de pinos pode ser ajustado no cadastro geral. Em testes realizados o valor máximo atingido com boa performance foi de 48 pinos, porém, o sistema aceita o valor até 254.<br>
 
+- Após inserir as informações clique em "Aplicar (sem salvar)".
+
 
 NOTA 1: Para não limitar a configuração dos pinos não há uma validação de quais pinos podem ser usados, consulte a informações de pinout do ESP32 para identificar pinos reservados e que não devem ser usados nas configurações nesta página.<br>
 
@@ -161,7 +163,7 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
 - Se quiser salvar as informações na memória flash do ESP32, Vá para tela inicial clique em "Gerenciar Arquivos", despois clique em "Salvar Configurações".<br>
   Responda "Sim" à pergunta e clique em "Confirmar".<br>
 
-![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_salvar_t1.png)
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_top_5.png)
 
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_salvar_t2.png)
 
