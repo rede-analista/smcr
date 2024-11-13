@@ -1,14 +1,16 @@
 # Configurações dos pinos
 
 - Você deve configurar os pinos do módulo como entrara ou saída, para isto, na página inicial clique na opção "Configurar Pinos".<br>
+
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_pinos_t0.png)
 
 
 - Será aberta a página com as informações de todos os pinos. Nesta página pode chegar a 254 posições para configurações dos pinos, o cadastro de um pino pode ser realizada em qualquer posição.<br>
+
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_pinos_t1.png)
 
 
-O total de pinos pode ser ajustado no cadastro geral. Em testes realizados o valor máximo atingido com boa performance foi de 48 pinos.<br>
+O total de pinos pode ser ajustado no cadastro geral. Em testes realizados o valor máximo atingido com boa performance foi de 48 pinos, porém, o sistema aceita o valor até 254.<br>
 
 
 NOTA 1: Para não limitar a configuração dos pinos não há uma validação de quais pinos podem ser usados, consulte a informações de pinout do ESP32 para identificar pinos reservados e que não devem ser usados nas configurações nesta página.<br>
@@ -18,7 +20,7 @@ NOTA 2: Após configurar e clicar no botão "Aplicar (sem salvar)" as configura�
 NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash todas as configurações serão perdidas.<br>
 
 - Parâmetro NOME
-  - É uma nomenclatura para facilitar na identificação dos pinos, um nome curto de 14 caracteres, este nome será usado na caso de notificações dos assistentes.
+  - É uma nomenclatura para facilitar na identificação dos pinos, este nome será usado na caso de notificações dos assistentes.
 
 - Parâmetro PINO
   - É a informação do pino físico do ESP32, aqui será feito a associação do pino físico na placa ESP.<br>
