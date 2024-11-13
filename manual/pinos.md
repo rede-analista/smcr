@@ -1,16 +1,15 @@
 # Configurações dos pinos
 
-- Você pode configurar os pinos do módulo, para isto clique na opção "Configurar Pinos"na página inicial.<br>
-  ![image](https://github.com/rede-analista/smcr/assets/66534023/958fc6ce-0156-463d-8f22-1f67ae2545e8)
-[Exemplo Cadastro](excadpino.md)
+- Você deve configurar os pinos do módulo como entrara ou saída, para isto, na página inicial clique na opção "Configurar Pinos".<br>
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_pinos_t0.png)
 
 
-- Será aberta a página com as informações de todos os pinos. Nesta página pode chegar a 52 posições para configurações dos pinos, o cadastro dos pinos pode ser realizada em qualquer posição.<br>
-![image](https://github.com/rede-analista/smcr/assets/66534023/5196d30c-3aa9-4d3f-95c6-5e10e6facab5)
+- Será aberta a página com as informações de todos os pinos. Nesta página pode chegar a 254 posições para configurações dos pinos, o cadastro de um pino pode ser realizada em qualquer posição.<br>
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_pinos_t1.png)
 
 
+O total de pinos pode ser ajustado no cadastro geral. Em testes realizados o valor máximo atingido com boa performance foi de 48 pinos.<br>
 
-O total de pinos pode ser ajustado na variável "vU8_totPinos" no código antes da compilação que fica no arquivo SMCR_Modular_vXX.ino. Em testes realizados o valor máximo atingido foi 52 pinos.<br>
 
 NOTA 1: Para não limitar a configuração dos pinos não há uma validação de quais pinos podem ser usados, consulte a informações de pinout do ESP32 para identificar pinos reservados e que não devem ser usados nas configurações nesta página.<br>
 
@@ -20,7 +19,7 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
 
 - Parâmetro NOME
   - É uma nomenclatura para facilitar na identificação dos pinos, um nome curto de 14 caracteres, este nome será usado na caso de notificações dos assistentes.
-  
+
 - Parâmetro PINO
   - É a informação do pino físico do ESP32, aqui será feito a associação do pino físico na placa ESP.<br>
     Esta informação será usada na configuração de Ações(eventos).<br>
