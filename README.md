@@ -12,7 +12,7 @@ A interface web pode disponibilizar até 254 posições de configurações de pi
 
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_top_0.png)
 
-**NOTA: Não sou programador e nem técnico em eletrônica, somente me interesso por programação, sendo assim, não espere uma programação "bonita" e/ou dentro das melhores práticas, mas fique a vontade para trocar informações ou sugerir alguma melhoria.**
+**NOTA 1: Não sou programador e nem técnico em eletrônica, somente me interesso por programação, sendo assim, não espere uma programação "bonita" e/ou dentro das melhores práticas, mas fique a vontade para trocar informações ou sugerir alguma melhoria.**
 
 [Print de Telas](manual/telas/prints.md)
 
@@ -74,3 +74,12 @@ Desta forma, uma configuração incorreta pode causar travamentos, falhas ou ain
 
 Conecte-se na rede e pelo navegador você deve acessar o endereço "http://192.168.4.1:8080/wifiinicio". ao abrir a página informe o nome e senha da sua rede wifi, logo após salve as informações.<br>
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_wifi_inicial_t2.png)
+
+
+  Voce pode acessar o módulo pelo navegador usando o seguinte formato "http://" + "hostname ou ip" + ".local" + ":" + "porta"<br>
+  - Por exemplo:
+    - http://esp32modularx.local:8080  (esp32modularx é o nome default do módulo)
+  
+  NOTA 2: Como sugestão voce pode identificar qual é o IP que o módulo está usando na sua rede atraves do seu roteador (se for o dhcp da rede) ou pode tentar execurar o comando "ping esp32modularx.local" para ver qual IP responde e usar a informação de IP para acessar o módulo.<br>
+    - Por exemplo:
+    - http://192.168.1.36:8080
