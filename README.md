@@ -76,10 +76,10 @@ Conecte-se na rede e pelo navegador você deve acessar o endereço "http://192.1
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_wifi_inicial_t2.png)
 
 
-  Voce pode acessar o módulo pelo navegador usando o seguinte formato "http://" + "hostname ou ip" + ".local" + ":" + "porta"<br>
-  - Por exemplo:
-    - http://esp32modularx.local:8080  (esp32modularx é o nome default do módulo)
-  
-  NOTA 2: Como sugestão voce pode identificar qual é o IP que o módulo está usando na sua rede atraves do seu roteador (se for o dhcp da rede) ou pode tentar execurar o comando "ping esp32modularx.local" para ver qual IP responde e usar a informação de IP para acessar o módulo.<br>
+  - Após configurar o wifi o módulo irá reiniciar e conectar na rede wifi que você acabou de informar, a partir deste ponto você deve acessar o módulo pelo IP que foi atribuído à placa esp pelo seu roteador (ou servidor DHCP).<br>
+
+  - A programação configura o recurso de mDNS, voce pode tentar descobrir o IP da placa esp com o comando "ping esp32modularx.local". Caso não tenha resultado você deverá conectar no seu roteador para identificar qual andereço IP o módulo recebeu.<br>
     - Por exemplo:
-    - http://192.168.1.36:8080
+    - http://esp32modularx.local:8080  (esp32modularx é o nome default do módulo)
+
+  - É recomendado realizar o recurso de reserva de IP do seu roteador para que a placa esp sempre recebe o mesmo endereço IP. Isso é importante pois caso voce configure comunicação entre módulos e o IP de uma das placas for alterado, a comunicação entre módulos pode não funcionar.
