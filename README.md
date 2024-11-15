@@ -12,7 +12,7 @@ A interface web pode disponibilizar até 254 posições de configurações de pi
 
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_top_0.png)
 
-**NOTA: Não sou programador e nem técnico em eletrônica, somente me interesso por programação, sendo assim, não espere uma programação "bonita" e/ou dentro das melhores práticas, mas fique a vontade para trocar informações ou sugerir alguma melhoria.**
+**NOTA 1: Não sou programador e nem técnico em eletrônica, somente me interesso por programação, sendo assim, não espere uma programação "bonita" e/ou dentro das melhores práticas, mas fique a vontade para trocar informações ou sugerir alguma melhoria.**
 
 [Print de Telas](manual/telas/prints.md)
 
@@ -74,3 +74,12 @@ Desta forma, uma configuração incorreta pode causar travamentos, falhas ou ain
 
 Conecte-se na rede e pelo navegador você deve acessar o endereço "http://192.168.4.1:8080/wifiinicio". ao abrir a página informe o nome e senha da sua rede wifi, logo após salve as informações.<br>
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_wifi_inicial_t2.png)
+
+
+  - Após configurar o wifi o módulo irá reiniciar e conectar na rede wifi que você acabou de informar, a partir deste ponto você deve acessar o módulo pelo IP que foi atribuído à placa esp pelo seu roteador (ou servidor DHCP).<br>
+
+  - A programação configura o recurso de mDNS, voce pode tentar descobrir o IP da placa esp com o comando "ping esp32modularx.local". Caso não tenha resultado você deverá conectar no seu roteador para identificar qual andereço IP o módulo recebeu.<br>
+    - Por exemplo:
+    - http://esp32modularx.local:8080  (esp32modularx é o nome default do módulo)
+
+  - É recomendado realizar o recurso de reserva de IP do seu roteador para que a placa esp sempre recebe o mesmo endereço IP. Isso é importante pois caso voce configure comunicação entre módulos e o IP de uma das placas for alterado, a comunicação entre módulos pode não funcionar.

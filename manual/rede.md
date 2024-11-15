@@ -31,11 +31,11 @@ Se a configuração default não foi alterada o nome da rede própria do ESP ser
     
 - Parâmetro SENHA
   - É a informação da senha da rede wifi que o módulo vai usar para se conectar durante o funcionamento normal(rede de trabalho/nome do seu wifi).
-    
+  
 - Parâmetro HOSTNAME  (mDNS)
   - É a informação de nome que o módulo vai usar para configuração de rede, este nome deve ser único na sua rede para não gerar conflito. O Hostname pode ser usado para acessar o módulo sem que voce saiba qual foi o IP que o módulo recebeu da sua rede wifi.<br>
 
-  Voce pode acessar o módulo pelo navegador usando o seguinte formato "http://" + "hostname ou ip" + ".local" + ":" + "porta"<br>
+  Voce pode acessar o módulo pelo navegador usando o seguinte formato "http://" + "hostname" + ".local" + ":" + "porta"<br>
   - Alguns exemplos:
     - http://esp32modularx.local:8080
     - http://192.168.50.10:8080
