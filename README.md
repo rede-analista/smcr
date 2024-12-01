@@ -1,5 +1,5 @@
 # SMCR
-Programação de um sistema modular de sensores e acionamentos para ESP32.
+Programação de um sistema modular de sensores e acionamentos para ESP32. 
 
 # Descrição:
 O objetivo é criar uma programação para ESP32, de forma que a definição os pinos não seja estática dentro do código fonte, proporcionando a possibilidade de alterar a definição dos pinos por interface web e configurar ações com base no status dos pinos.
