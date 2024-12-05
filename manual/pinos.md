@@ -1,11 +1,16 @@
 # Configurações dos pinos
 
-- Você deve configurar os pinos do módulo como entrara ou saída, para isto, na página inicial clique na opção "Configurar Pinos".<br>
+- Você deve configurar os pinos do módulo como entrada ou saída, para isto, na página inicial clique na opção "Configurar Pinos".<br>
 
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_pinos_t0.png)
 
 
-- Será aberta a página com as informações de todos os pinos. Nesta página pode chegar a 254 posições para configurações dos pinos, o cadastro de um pino pode ser realizada em qualquer posição.<br>
+- Será aberta a página com as informações de todos os pinos. Nesta página pode chegar a 254(uint8_t) posições para configurações dos pinos, o cadastro de um pino pode ser realizado em qualquer posição.<br>
+Por padrão o módulo vem configurado com 15 pinos.<br>
+
+![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_pinos_tm.png)
+
+- Escolha uma posição e clique para realizar o cadastro.<br>
 
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_pinos_t1.png)
 
@@ -27,15 +32,15 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
   - É uma nomenclatura para facilitar na identificação dos pinos, este nome será usado na caso de notificações dos assistentes.
 
 - Parâmetro PINO
-  - É a informação do pino físico do ESP32, aqui será feito a associação do pino físico na placa ESP.<br>
+  - É a informação do pino físico do chip, aqui será feito a associação do pino físico na placa ESP.<br>
     Esta informação será usada na configuração de Ações(eventos).<br>
-    Pode ser um número que corresponde ao pino físico do ESP, por exemplo, este número pode ser 2,4,5,12... ou pode ser um número que não corresponda ao pino físico do ESP, por exemplo, ...251,253,65534<br>
+    Pode ser um número que corresponde ao pino físico do chip, por exemplo, este número pode ser 2,4,5,12... ou pode ser um número que não corresponda (ver conceito de pino virtual)) ao pino físico do chip, por exemplo, ...251,253,65534<br>
 
-    NOTA 4: Número de pinos que não são reconhecidos pelo ESP são chamados de pinos virtuais.<br>
+    NOTA 4: Número de pinos que não são reconhecidos pelo chip são chamados de pinos virtuais.<br>
 
-    NOTA 5: O Pino 65535 é reservado para controle interno de status de comunicação entre módulos e não deve ser usado para cadastro de pino. [Veja CICLOS HANDSHAKE](intermod.md)
+    NOTA 5: O Pino 65535 é reservado para controle interno de status de comunicação entre módulos e não deve ser usado para cadastro de pino.
 
-    NOTA 6: O Pino 65534 deve ser usado para indicar im pino virtual (Pino que não existe no chip ESP32).<br>
+    NOTA 6: O Pino 65534 deve ser usado para indicar um pino virtual (Pino que não existe no chip).<br>
 
 - Parâmetro TIPO
   - É o tipo do pino, esta informação pode ser:
@@ -44,17 +49,17 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
     - 192 = Analógico
     - 65534 = Virtual
   
-    - Se o valor 65534 for configurado significa que é um pino virtual(ver conceito). O módulo não irá realizar a atualização de status do pino, esta configuração pode ser usada quando for habilitado o recurso de "Inter Módulos" por exemplo.<br>
+    - Se o valor 65534 for configurado significa que é um pino virtual(ver conceito). O módulo não irá realizar a atualização de status do pino(local) pela task, esta configuração pode ser usada quando for habilitado o recurso de "Inter Módulos" por exemplo.<br>
 
-    - O recurso de Inter Módulos ativa a comunicação entre dois ou mais módulos ESP32 onde um módulo transmissor irá atualizar o status de um pino(físico ou virtual) no módulo receptor.<br>
+    - O recurso de Inter Módulos ativa a comunicação entre dois ou mais módulos onde um módulo transmissor irá atualizar o status de um pino(físico ou virtual) no módulo receptor.<br>
     
-    - O cadastro de um pino como tipo 65534 deve ser usado quando o módulo vai receber o status deste pino de forma remota, o status será recebido de outro módulo ESP para este módulo que terá o pino cadastrado como tipo 65534. Quando for cadastrar um pino como 65534 pode ser usado qualquer númeração de pino entre 1 e 65534 pois um pino do tipo 65534 será considerado um pino virtual(não físico) e servirá para disparar ações no módulo que recebe os dados de status de outros módulos. Este recurso pode ser usado para não inutilizar um pino físico em uma ação que não teŕa leitura de sensor localmente.
+    - O cadastro de um pino como tipo 65534 deve ser usado quando o módulo vai receber o status deste pino de forma remota, o status será recebido de outro módulo para este módulo que terá o pino cadastrado como tipo 65534. Quando for cadastrar um pino como 65534 pode ser usado qualquer númeração de pino entre 1 e 65534 pois um pino do tipo 65534 será considerado um pino virtual(não físico do chip) e servirá para disparar ações no módulo que recebe os dados de status de outros módulos. Este recurso pode ser usado para não inutilizar um pino físico do chip em uma ação que não teŕa leitura de sensor localmente.
 
 **Pino virtual (clique na seta abaixo para mais detalhes)**
 <details>
-<summary>- O conceito de pino virtual foi introduzido com a intenção de aumentar a quantidade de configurações possíveis e tambem evitar "usar" um pino físico em configurações que o pino físico não será útil.</summary>
+<summary>- O conceito de pino virtual foi introduzido com a intenção de aumentar a quantidade de configurações possíveis e também evitar "usar" um pino físico em configurações que o pino físico não será útil.</summary>
 
-- Considere um ambiente em que tem vários módulos com várias funções, neste tipo de ambiente facilmente voce pode se impedido de usar pinos iguais entre módulos devido a conflito de identificação de pinos, ou ainda ter poucos pinos disponíveis para realizar suas configurações.<br>
+- Considere um ambiente em que tem vários módulos com várias funções, neste tipo de ambiente facilmente você pode se impedido de usar pinos iguais entre módulos devido a conflito de identificação de pinos, ou ainda ter poucos pinos disponíveis para realizar suas configurações.<br>
 
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_top_0.png)
 
@@ -62,7 +67,7 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
 <br>
 <br>
 <br>
-  - Imagine de voce possui um módulo que tem um botão e um buzzer como se fosse uma campainha no portão.<br>
+  - Imagine de você possui um módulo que tem um botão e um buzzer como se fosse uma campainha no portão.<br>
   - Imagine que também possui um segundo módulo que fica dentro de casa para receber a informação que a campainha foi acionada.<br>
 <br>
 <br>
@@ -95,7 +100,7 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_top_4.png)
 
  
-  - Veja agora que o pino de origem não precisa ser o mesmo nas duas placas, porém, voce não está usando um número de pino físico válido. Neste caso todas as GPIO poderão ser usadas como saídas (destinos) para informar alertas.<br>
+  - Veja agora que o pino de origem não precisa ser o mesmo nas duas placas, porém, você não está usando um número de pino físico válido. Neste caso todas as GPIO poderão ser usadas como saídas (destinos) para informar alertas.<br>
     - Pino Origem == Pino de entrada == Pino de sensor (botão, reed switch, etc.).<br>
     - Pino Destino == Pino de saída == Pino de controle (buzzer, led, relé, etc.).<br>
   - Para acionar uma saída(pino destino) é preciso ter uma entrada(pino origem).<br>
@@ -113,7 +118,7 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_top_5.png)
 
 
-  - Veja que o pino de origem pode ser o mesmo nas duas placas, porém, voce não está usando um número de pino físico válido. Neste caso todas as GPIO poderão ser usadas como saídas (destinos) para informar alertas.<br>
+  - Veja que o pino de origem pode ser o mesmo nas duas placas, porém, você não está usando um número de pino físico válido. Neste caso todas as GPIO poderão ser usadas como saídas (destinos) para informar alertas.<br>
     - Pino Origem == Pino de entrada == Pino de sensor (botão, reed switch, etc.).<br>
     - Pino Destino == Pino de saída == Pino de controle (buzzer, led, relé, etc.).<br>
   - Para acionar uma saída(pino destino) é preciso ter uma entrada(pino origem).<br>
@@ -149,7 +154,7 @@ NOTA 3: Se o módulo for reiniciado antes de salvar as informações na flash to
     - 0 a 4095
 
 - Parâmetro TEMPO RETENÇÃO
-  - Informa quantos clicos a task deixará de ler o status de um pino, esta informação pode ser:
+  - Informa quantos clicos a task deixará de ler o status de um pino após um acionamento, esta informação pode ser:
     - 0 = Sem retenção
     - 1 a 65535 = Com Retenção
 

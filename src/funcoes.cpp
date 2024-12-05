@@ -21,65 +21,10 @@ void fV_mapaFuncoes() {
 }
 
 //========================================
-void fV_recebeDados(AsyncWebServerRequest *request) {
-/*
- Argumento 0 = Nome do Dispositivo
- Argumento 1 = Acao
- Argumento 2 = Numero do Pino
- Argumento 3 = Status do Pino
-*/
-  vS_uri = request->url();
-  if (request->args() == 4) {
-    if (ULTIMOS_GET_RECEBIDOS.length() > 260) {
-      ULTIMOS_GET_RECEBIDOS = "";
-    }
-    vS_payrec = vS_uri + "?" + request->argName(0) + "=" + request->arg((size_t)0) + "&" + request->argName(1) + "=" + request->arg(1) + "&" + request->argName(2) + "=" + request->arg(2) + "&" + request->argName(3) + "=" + request->arg(3);
-    ULTIMOS_GET_RECEBIDOS += fS_DataHora();
-    ULTIMOS_GET_RECEBIDOS += " -> ";
-    ULTIMOS_GET_RECEBIDOS += vS_payrec;
-    ULTIMOS_GET_RECEBIDOS += "<br><br>";
-    String validacao = "_SEM_DADOS_";
-    vU16_ulimoModRecebido = fI_retornaModulo(request->arg((size_t)0));
-    if ( vU16_ulimoModRecebido < vU8_totModulos) {
-      Serial.println("Recebido dados da placa " + request->arg((size_t)0));
-      switch (request->arg(1).toInt()) {
-        case 0: // Parametro acao = 0(Nenhuma)
-          aI16_ControlHS[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
-          aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = request->arg(3).toInt();
-          validacao = "OK_DADO_RECEBIDO";
-          break;
-        case 65534: // Parametro acao = 65534(status)
-          aI16_ControlHS[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
-          aI16_ControlHS[1][fU8_retornaIndiceHS(request->arg((size_t)0))] = request->arg(3).toInt();
-          aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = request->arg(3).toInt();
-          vB_envia_Historico = true;
-          validacao = "OK_DADO_RECEBIDO";
-          break;
-        case 65535: // Parametro acao = 65535(sincronismo)
-          aI16_ControlHS[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
-          aI16_ControlHS[1][fU8_retornaIndiceHS(request->arg((size_t)0))] = request->arg((size_t)0).toInt();
-          aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = aI16_ControlHS[1][fU8_retornaIndiceHS(request->arg((size_t)0))];
-          validacao = "OK_DADO_RECEBIDO";
-          break;
-        default:
-          aI16_ControlHS[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
-          aI16_ControlHS[1][fU8_retornaIndiceHS(request->arg((size_t)0))] = 0;
-          aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = request->arg(3).toInt();
-          validacao = "OK_DADO_RECEBIDO";
-          break;
-      }
-      Serial.println("Acao/Indice/Status " + request->arg(1) + " " + request->arg(2) + " " + request->arg(3));
-      request->send(200, "text/plain", validacao);
-    } else {
-      Serial.println("Rejeitado dados da placa " + request->arg((size_t)0));
-      Serial.println("Acao/Indice/Status " + request->arg(1) + " " + request->arg(2) + " " + request->arg(3));
-      request->send(401, "text/plain", "ERRO - PLACA NAO CADASTRADA\n");
-    }
-  } else {
-    Serial.println("Erro dados da placa " + request->arg((size_t)0));
-    Serial.println("Acao/Indice/Status " + request->arg(1) + " " + request->arg(2) + " " + request->arg(3));
-    request->send(400, "text/plain", "ERRO - PARAMETROS INVALIDOS\n");
-  }
+uint16_t fU16_separaPinos(String pinos) {
+  uint16_t resultado = 0;
+
+  return resultado;
 }
 
 //========================================
@@ -386,7 +331,7 @@ bool fB_verificaPrimeiraExec(bool force) {
                                   String("5") + //47
                                   String("false") + //48
                                   String("0") + //49
-                                  String("0") + //50 sem uso
+                                  String("1") + //50
                                   String("0") + //51 sem uso
                                   String("0") + //52 sem uso
                                   String("0") + //53 sem uso
@@ -1038,18 +983,17 @@ void fV_configuraModulos(bool force) {
 //========================================
 void fV_salvarFlash() {
   fV_imprimeSerial("Salvando informacoes em Preferences e Filesys...");
-  
+
   // Preferencias
   fV_Preference("E",false);
-  //fV_salvaFILESYS_AS2D("/aS_Preference.txt", aS_Preference, vI8_aS_Preference_ROW, vI8_aS_Preference_COL);
-  
+
   // Pinos
   fV_salvaFlash_AUint("/aU16_Pinos.txt", aU16_Pinos, vI8_aU16_Pinos, vU8_totPinos);
   fV_salvaFILESYS_AS2D("/aS8_Pinos.txt", aS8_Pinos, vI8_aS8_Pinos, vU8_totPinos);
-  fV_salvaFILESYS_AS2D("/aS8_AcoesMenu.txt",aS8_AcoesMenu,1,vU8_totPinos);
-  fV_salvaFILESYS_AS2D("/aS8_AcoesRedeMenu.txt",aS8_AcoesRedeMenu,1,vU8_totPinos);
-  fV_salvaFILESYS_AS2D("/aS8_AcoesStringMenu.txt",aS8_AcoesStringMenu,1,vU8_totPinos);
-  
+  //fV_salvaFILESYS_AS2D("/aS8_AcoesMenu.txt",aS8_AcoesMenu,1,vU8_totPinos);
+  //fV_salvaFILESYS_AS2D("/aS8_AcoesRedeMenu.txt",aS8_AcoesRedeMenu,1,vU8_totPinos);
+  //fV_salvaFILESYS_AS2D("/aS8_AcoesStringMenu.txt",aS8_AcoesStringMenu,1,vU8_totPinos);
+
   // Acoes 1  
   fV_salvaFlash_AUint("/aU16_Acao1.txt", aU16_Acao1, vI8_aU16_Acao, vU8_totPinos);
   fV_salvaFlash_AUint("/aU8_AcaoRede1.txt", aU8_AcaoRede1, vI8_aU8_AcaoRede, vU8_totPinos);
@@ -1066,21 +1010,21 @@ void fV_salvarFlash() {
   fV_salvaFlash_AUint("/aU16_Acao4.txt", aU16_Acao4, vI8_aU16_Acao, vU8_totPinos);
   fV_salvaFlash_AUint("/aU8_AcaoRede4.txt", aU8_AcaoRede4, vI8_aU8_AcaoRede, vU8_totPinos);
   fV_salvaFILESYS_AS2D("/aS8_Acao4.txt",aS8_Acao4,vI8_aS8_Acao,vU8_totPinos);
-  
+
   // Inter Modulos
   fV_salvaFlash_AUint("/aI16_ControlHS.txt", aI16_ControlHS, vI8_aS_InterMod, vU8_totModulos);
   fV_salvaFlash_AUint("/aU16_InterMod.txt", aU16_InterMod, vI8_aU16_InterMod, vU8_totModulos);
   fV_salvaFlash_AUint("/aB_InterMod.txt", aB_InterMod, vI8_aB_InterMod, vU8_totModulos);
   fV_salvaFILESYS_AS2D("/aS_InterMod.txt",aS_InterMod,vI8_aS_InterMod,vU8_totModulos);
-  fV_salvaFILESYS_AS2D("/aU16_InterModMenu.txt",aU16_InterModMenu,1,vU8_totModulos);
+  //fV_salvaFILESYS_AS2D("/aU16_InterModMenu.txt",aU16_InterModMenu,1,vU8_totModulos);
   //fV_salvaFILESYS_AS2D("/aS_InterModMenu.txt",aS_InterModMenu,1,vU8_totModulos);
   //fV_salvaFILESYS_AS2D("/aS16_InterModHA.txt",aS16_InterModHA,1,vU8_totModulos);
   //fV_salvaFILESYS_AS2D("/aSB_InterModMenu.txt",aSB_InterModMenu,1,vU8_totModulos);
   //fV_salvaFILESYS_AS2D("/aS8_ControlMsgModHist.txt",aS8_ControlMsgModHist,1,vU8_totModulos);
   //fV_salvaFILESYS_AS1D("/aU8_diasDaSemana.txt",aU8_diasDaSemana,vU8_diasDaSemana);
   //fV_salvaFILESYS_AS1D("/aU8_meses.txt",aU8_meses,vU8_meses);
-  
-  fV_imprimeSerial("As informacoes forma salvas");
+
+  fV_imprimeSerial("As informacoes foram salvas");
 }
 
 //========================================
@@ -1436,15 +1380,20 @@ bool fV_apagaTodosArquivosSPIFFS() {
 }
 
 //========================================
+void fV_iniciaPreference(bool force) {
+  vS_corStatus1 = fS_carregaConfigGeral(0,13,"Tomato");
+  vS_corStatus0 = fS_carregaConfigGeral(0,14,"LightGreen");
+  vU8_bitsProc = fU8_carregaConfigGeral(0,45,12);
+  vU8_ciclosAmostra = fU8_carregaConfigGeral(0,46,8);
+  vU8_colunasTabelas = fU8_carregaConfigGeral(0,40,7);
+  vU8_totTask = fU8_carregaConfigGeral(0,50,1);
+}
+
+//========================================
 void fV_iniciaPinos(bool force) {
     fV_imprimeSerial("Iniciando configuracao dos pinos...");
     if (!force) {
-      vS_corStatus1 = fS_carregaConfigGeral(0,13,"Tomato");
-      vS_corStatus0 = fS_carregaConfigGeral(0,14,"LightGreen");
       vU8_totPinos = fU8_carregaConfigGeral(0,39,5);
-      vU8_bitsProc = fU8_carregaConfigGeral(0,45,12);
-      vU8_ciclosAmostra = fU8_carregaConfigGeral(0,46,8);
-      vU8_colunasTabelas = fU8_carregaConfigGeral(0,40,7);
     }
     analogSetWidth(vU8_bitsProc);
 

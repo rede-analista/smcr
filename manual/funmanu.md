@@ -18,7 +18,7 @@
     1. "Acoes" = Apagar configurações das ações.
     2. "ExcetoWifi" = Apagar todas as configurações esceto informações do wifi.
     3. "Tudo" = Apagar todas as informações inclusive do wifi.
-    4. "Formatar" = Além de apagar todas as informações(inclusive wifi) tambem formata a memória flash(NVR).
+    4. "Formatar" = Além de apagar todas as informações(inclusive wifi) também formata a memória flash(NVR).
 
 
 # Recarregar Funções

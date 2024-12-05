@@ -355,3 +355,5 @@
      aS_Preference[0][47] = "5" = Total de módulos para cadastro.
      aS_Preference[0][48] = "false" = Mostra status na página inicial.
      aS_Preference[0][49] = "false" = Mostra status inter módulos na página inicial.
+     aS_Preference[0][50] = "1" = Quantidade de tasks de açãoes ativas.
+

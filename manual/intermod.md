@@ -33,7 +33,7 @@
 
 
     No exemplo acima o módulo está configurado para aceitar informações de outros módulos que tenham os hostname "Medidor", "Aquario" ou "Gerador".<br>
-    Estas informações tambem serão usadas caso queira enviar informações para outros módulos.<br><br>
+    Estas informações também serão usadas caso queira enviar informações para outros módulos.<br><br>
     NOTA 3: Um módulo pode enviar e receber informações, ou seja, pode ser um transmissor e um receptor simultâneamente, basta efetuar o cadastro e configurar nas ações os ID que foram cadastrados nesta página.
 
 
