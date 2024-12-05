@@ -2,6 +2,68 @@
 #include "globals.h"
 
 //========================================
+void fV_recebeDados(AsyncWebServerRequest *request) {
+/*
+ Argumento 0 = Nome do Dispositivo
+ Argumento 1 = Acao
+ Argumento 2 = Numero do Pino
+ Argumento 3 = Status do Pino
+*/
+  vS_uri = request->url();
+  if (request->args() == 4) {
+    if (ULTIMOS_GET_RECEBIDOS.length() > 260) {
+      ULTIMOS_GET_RECEBIDOS = "";
+    }
+    vS_payrec = vS_uri + "?" + request->argName(0) + "=" + request->arg((size_t)0) + "&" + request->argName(1) + "=" + request->arg(1) + "&" + request->argName(2) + "=" + request->arg(2) + "&" + request->argName(3) + "=" + request->arg(3);
+    ULTIMOS_GET_RECEBIDOS += fS_DataHora();
+    ULTIMOS_GET_RECEBIDOS += " -> ";
+    ULTIMOS_GET_RECEBIDOS += vS_payrec;
+    ULTIMOS_GET_RECEBIDOS += "<br><br>";
+    String validacao = "_SEM_DADOS_";
+    vU16_ulimoModRecebido = fI_retornaModulo(request->arg((size_t)0));
+    if ( vU16_ulimoModRecebido < vU8_totModulos) {
+      Serial.println("Recebido dados da placa " + request->arg((size_t)0));
+      switch (request->arg(1).toInt()) {
+        case 0: // Parametro acao = 0(Nenhuma)
+          aI16_ControlHS[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
+          aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = request->arg(3).toInt();
+          validacao = "OK_DADO_RECEBIDO";
+          break;
+        case 65534: // Parametro acao = 65534(status)
+          aI16_ControlHS[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
+          aI16_ControlHS[1][fU8_retornaIndiceHS(request->arg((size_t)0))] = request->arg(3).toInt();
+          aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = request->arg(3).toInt();
+          vB_envia_Historico = true;
+          validacao = "OK_DADO_RECEBIDO";
+          break;
+        case 65535: // Parametro acao = 65535(sincronismo)
+          aI16_ControlHS[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
+          aI16_ControlHS[1][fU8_retornaIndiceHS(request->arg((size_t)0))] = request->arg((size_t)0).toInt();
+          aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = aI16_ControlHS[1][fU8_retornaIndiceHS(request->arg((size_t)0))];
+          validacao = "OK_DADO_RECEBIDO";
+          break;
+        default:
+          aI16_ControlHS[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
+          aI16_ControlHS[1][fU8_retornaIndiceHS(request->arg((size_t)0))] = 0;
+          aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = request->arg(3).toInt();
+          validacao = "OK_DADO_RECEBIDO";
+          break;
+      }
+      Serial.println("Acao/Indice/Status " + request->arg(1) + " " + request->arg(2) + " " + request->arg(3));
+      request->send(200, "text/plain", validacao);
+    } else {
+      Serial.println("Rejeitado dados da placa " + request->arg((size_t)0));
+      Serial.println("Acao/Indice/Status " + request->arg(1) + " " + request->arg(2) + " " + request->arg(3));
+      request->send(401, "text/plain", "ERRO - PLACA NAO CADASTRADA\n");
+    }
+  } else {
+    Serial.println("Erro dados da placa " + request->arg((size_t)0));
+    Serial.println("Acao/Indice/Status " + request->arg(1) + " " + request->arg(2) + " " + request->arg(3));
+    request->send(400, "text/plain", "ERRO - PARAMETROS INVALIDOS\n");
+  }
+}
+
+//========================================
 void f_handle_SerialOutput(AsyncWebServerRequest *request) {
     // Gera o HTML da página
     String html = fS_cabecaHTML("Monitor Serial", "Saída Serial", "/serial", "/blob/main/manual/serial.md");
@@ -158,6 +220,13 @@ void f_handle_salvarCadastroGeral(AsyncWebServerRequest *request) {
         fV_imprimeSerial("Erro no parametro TOTPIN");
     }
     aS_Preference[0][39] = String(vU8_totPinos);
+    if (request->hasParam("TOTTASK", true)) {
+        vU8_totTask = request->getParam("TOTTASK", true)->value().toInt();
+    } else {
+        erro++;
+        fV_imprimeSerial("Erro no parametro TOTTASK");
+    }
+    aS_Preference[0][50] = String(vU8_totTask);
     // Responde com uma página HTML
     String html = "";
     if (erro == 0) {
@@ -231,9 +300,15 @@ void f_handle_CadastroGeral(AsyncWebServerRequest *request) {
     html += "<td><label for='id_totpin'>Informe a Quantidade Total de Pinos: </label></td>";
     html += "<td><input type='text' style='background-color: Red' name='TOTPIN' maxlength='6' size='6' id='id_totpin' value='" + String(vU8_totPinos) + "' required></td>";
     html += "</tr>";
-  
+
+    // Linha para quantidade de tasks
+    html += "<tr>";
+    html += "<td><label for='id_tottask'>Total de Tasks em execução (de 0 a 5):<br> 0=Desligado / 5=Todas </label></td>";
+    html += "<td><input type='text' style='background-color: LightGrey' name='TOTTASK' maxlength='6' size='6' id='id_tottask' value='" + String(vU8_totTask) + "' required ></td>";
+    html += "</tr>";
+
     html += "</table>";    
-    
+
     html += "<br><input type='submit' name='SUBMIT_SALVAR' value='Aplicar (sem salvar)' id='id_salvar'>";
     html += "</form>";
     html += fS_rodapeHTML("/configurag", "/blob/main/manual/configgeral.md");

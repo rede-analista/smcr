@@ -42,6 +42,7 @@ extern File jsonFile;
 extern hw_timer_t *vHW_timer;  // Faz o controle do temporizador (interrupcao por tempo)
 extern bool aB_restartRotinas[5]; // Reiniciar rotinas e tasks
 extern String** aS_Preference;  // Guarda as configuracoes (substitui preferences)
+extern size_t vU8_totTask;
 
 /*---- Variáveis e arrays dos pinos ----*/
 extern size_t vU8_totPinos;          // Total de colunas do array cadastro de pinos

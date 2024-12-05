@@ -93,6 +93,7 @@ String fS_calculaBytes(const size_t bytes);
 String processor(const String& var);
 bool fB_configuraServidorWEB(const uint16_t& porta = 65535, bool force = false);
 bool fV_apagaTodosArquivosSPIFFS() ;
+void fV_iniciaPreference(bool force);
 void fV_iniciaPinos(bool force);
 void f_cria_MDNS(String nome, IPAddress ip, uint16_t porta);
 void fV_configNTP();

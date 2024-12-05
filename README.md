@@ -1,5 +1,5 @@
 # SMCR
-Programação de um sistema modular de sensores e acionamentos para ESP32. 
+Programação de um sistema modular de sensores e acionamentos para ESP32.
 
 # Descrição:
 O objetivo é criar uma programação para ESP32, de forma que a definição os pinos não seja estática dentro do código fonte, proporcionando a possibilidade de alterar a definição dos pinos por interface web e configurar ações com base no status dos pinos.
@@ -8,11 +8,11 @@ O objetivo é criar uma programação para ESP32, de forma que a definição os 
 A programação é feita de forma que a maioria das configurações estejam disponíveis em uma interface web no ESP32, para que o usuário possa acessar pelo navegador e realizar as configurações desejadas, salvando as informações em arquivos na flash do ESP32.<br>
 Algumas das características são proporcionar comunicação com outros módulos ESP32, notificação por Telegram, comunicação com MqTT e notificação por assistentes.
 
-A interface web pode disponibilizar até 254 posições de configurações de pinos, ou seja, voce poderá configurar até 254 pinos como entrada ou saída. Tambem pela interface poderá configurar até 4 ações para cada pino, estas ações serão executadas quando por exemplo um sensor for acionado. Na configuração de ações é possível realizar uma configuração em cascata quando por exemplo o pino 2 aciona o pino 4, o pino 4 aciona o pino 5 e assim por diante, há várias formas de realizar as configurações de ações, depende um pouco da imaginação, espero que as quantidades sejam suficientes para atender uma boa parte das necessidades.
+A interface web pode disponibilizar até 254(uint8_t) posições de configurações de pinos, ou seja, você poderá configurar até 254 pinos como entrada ou saída. também pela interface poderá configurar até 4 ações para cada pino, estas ações serão executadas quando por exemplo um sensor for acionado. Na configuração de ações é possível realizar uma configuração em cascata por exemplo quando o pino 2 aciona o pino 4, o pino 4 aciona o pino 5 e assim por diante, há várias formas de realizar as configurações de ações, depende um pouco da imaginação, espero que as quantidades sejam suficientes para atender uma boa parte das necessidades.
 
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/t_top_0.png)
 
-**NOTA 1: Não sou programador e nem técnico em eletrônica, somente me interesso por programação, sendo assim, não espere uma programação "bonita" e/ou dentro das melhores práticas, mas fique a vontade para trocar informações ou sugerir alguma melhoria.**
+**NOTA 1: Não sou programador e nem técnico em eletrônica, somente me interesso por programação, sendo assim, não garanto uma programação "bonita" e/ou dentro das melhores práticas, mas fique a vontade para trocar informações ou sugerir alguma melhoria.**
 
 [Print de Telas](manual/telas/prints.md)
 
@@ -63,8 +63,8 @@ A interface web pode disponibilizar até 254 posições de configurações de pi
   NOTA: Na pasta ["build"](https://github.com/rede-analista/smcr/tree/main/.pio/build/upesy_wroom) deixarei o arquivo de fimware .bin já compilado caso queiram simplesmente realizar a gravação no ESP32 sem precisar compilar. Para gravação sem compílar pode usar qualquer ferramenta como exemplo "esptools".
 
 # !!!! IMPORTANTE !!!!
-A programação atual não faz nenhuma tratativa com as informações que são inseridas/configuradas, não há tratativas para informações com acentuação e tambem não há tratativas para configurações incorretas de pinagem.<br>
-Desta forma, uma configuração incorreta pode causar travamentos, falhas ou ainda danificar o módulo ESP32, tenha cuidado e muita atenção para inserir as informações.
+A programação atual não faz nenhuma tratativa com as informações que são inseridas/configuradas, não há tratativas para informações com acentuação e também não há tratativas para configurações incorretas de pinagem.<br>
+Desta forma, uma configuração incorreta pode causar travamentos, falhas ou ainda danificar o módulo ESP32, tenha cuidado e atenção para inserir as informações.
 
 
 # Primeiro Acesso
@@ -72,14 +72,14 @@ Desta forma, uma configuração incorreta pode causar travamentos, falhas ou ain
 <br>Após realizar a gravação do programa no ESP32 e rebootar o módulo ele irá gerar uma rede wifi (modo AP) com o nome padrão default do módulo "esp32modularx Ponto de Acesso" a senha padrão é "senha12345678".<br>
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_wifi_inicial_t1.png)
 
-Conecte-se na rede e pelo navegador você deve acessar o endereço "http://192.168.4.1:8080/wifiinicio". ao abrir a página informe o nome e senha da sua rede wifi, logo após salve as informações.<br>
+Conecte-se na rede e pelo navegador você deve acessar o endereço "http://192.168.4.1:8080/wifiinicio". ao abrir a página informe o nome e senha da sua rede wifi e salve as informações.<br>
 ![image](https://github.com/rede-analista/smcr/blob/develop/manual/telas/c_wifi_inicial_t2.png)
 
 
-  - Após configurar o wifi o módulo irá reiniciar e conectar na rede wifi que você acabou de informar, a partir deste ponto você deve acessar o módulo pelo IP que foi atribuído à placa esp pelo seu roteador (ou servidor DHCP).<br>
+  - Após configurar o wifi o módulo irá reiniciar e conectar na rede wifi que você acabou de informar, a partir deste ponto você deve acessar o módulo pelo IP que foi atribuído ao módulo pelo seu roteador (ou servidor DHCP).<br>
 
-  - A programação configura o recurso de mDNS, voce pode tentar descobrir o IP da placa esp com o comando "ping esp32modularx.local". Caso não tenha resultado você deverá conectar no seu roteador para identificar qual andereço IP o módulo recebeu.<br>
+  - A programação configura o recurso de mDNS, você pode tentar descobrir o IP do módulo com o comando "ping esp32modularx.local". Caso não tenha resultado você deverá conectar no seu roteador para identificar qual andereço IP o módulo recebeu.<br>
     - Por exemplo:
     - http://esp32modularx.local:8080  (esp32modularx é o nome default do módulo)
 
-  - É recomendado realizar o recurso de reserva de IP do seu roteador para que a placa esp sempre recebe o mesmo endereço IP. Isso é importante pois caso voce configure comunicação entre módulos e o IP de uma das placas for alterado, a comunicação entre módulos pode não funcionar.
+  - É recomendado realizar o recurso de reserva de IP do seu roteador para que o módulo sempre recebe o mesmo endereço IP. Isso é importante pois caso você configure comunicação entre módulos e o IP de uma das placas for alterado, a comunicação entre módulos pode não funcionar.

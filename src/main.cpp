@@ -35,7 +35,7 @@ bool vB_exec_Telegram, vB_modoAP, vB_exec_MqTT, vB_exec_Assistente, vB_exec_Modu
      vB_rodando, vB_envia_Historico, vB_pausaEXECs, request_in_progress, VB_mostra_Interm,
      vB_pedeAutentica = false;
 
-
+size_t vU8_totTask = 0; // Total de tasks em execucao
 hw_timer_t *vHW_timer = NULL;  // Faz o controle do temporizador (interrupcao por tempo)
 bool aB_restartRotinas[5] = {0,0,0,0,0};
 String** aS_Preference = nullptr;
@@ -146,22 +146,47 @@ void setup() {
         fV_carregaFILESYS_AS1D("/aU8_meses.txt",aU8_meses,vU8_meses);  // // Carregar array com os meses
         fV_imprimeSerial(fS_DataHora(),true); // Imprime na seria data e hora
         fS_listDir("/",4); // Lista arquivos em salvos em SPIFFS
+        fV_iniciaPreference(false); // Inicia configurações dos pinos
         fV_iniciaPinos(false); // Inicia configurações dos pinos
         fV_iniciaAcoes(false);  // Inicia configuracoes das acoes
         fU8_configuraWifi(); // Configurar o wifi ou colocar em modo AP caso nao consiga conexao com wifi
         fB_configuraServidorWEB(false); // Configura servidor web para acesso ao esp32
         fV_configuraModulos(false);  // Configura intermodulos
-        fV_imprimeSerial("Iniciando tarefas... ",false);
+        fV_imprimeSerial("Iniciando tarefas... ");
         xTaskCreate(TaskLeituraPinos, "t_LePinos", 2560, NULL, 3, NULL); //Inicia tarefa(task) para execução continua de leitura de portas(pinos)
+        fV_imprimeSerial(" - ativando task leitura pinos - ");
         delay(600);
-        xTaskCreate(TaskAcoes1Pinos, "t_Ac1Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 1
-        delay(600);
-        xTaskCreate(TaskAcoes2Pinos, "t_Ac2Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 2
-        delay(600);
-        xTaskCreate(TaskAcoes3Pinos, "t_Ac3Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 3
-        delay(600);
-        xTaskCreate(TaskAcoes4Pinos, "t_Ac4Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 4
-        delay(600);
+        switch (vU8_totTask) {
+          case 0:
+            fV_imprimeSerial(" - sem tasks ativas - ");
+          case 1:
+            xTaskCreate(TaskAcoes1Pinos, "t_Ac1Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 1
+            fV_imprimeSerial(" - ativando task acoes 1 - ");
+            break;
+          case 2:
+            xTaskCreate(TaskAcoes2Pinos, "t_Ac2Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 2
+            fV_imprimeSerial(" - ativando task acoes 2 - ");
+            break;
+          case 3:
+            xTaskCreate(TaskAcoes3Pinos, "t_Ac3Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 3
+            fV_imprimeSerial(" - ativando task acoes 3 - ");
+            break;
+          case 4:
+            xTaskCreate(TaskAcoes4Pinos, "t_Ac4Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 4
+            fV_imprimeSerial(" - ativando task acoes 4 - ");
+            break;
+          case 5:
+            fV_imprimeSerial(" - ativando tasks acoes 1 a 4 - ");
+            xTaskCreate(TaskAcoes1Pinos, "t_Ac1Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 1
+            delay(600);
+            xTaskCreate(TaskAcoes2Pinos, "t_Ac2Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 2
+            delay(600);
+            xTaskCreate(TaskAcoes3Pinos, "t_Ac3Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 3
+            delay(600);
+            xTaskCreate(TaskAcoes4Pinos, "t_Ac4Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 4
+            delay(600);
+            break;            
+        }
         fV_configuraWatchDog(false);  // Configura watchdog
         if (vB_exec_Modulos) {
             vB_envia_Historico = true;
