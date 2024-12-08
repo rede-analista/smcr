@@ -23,23 +23,11 @@ void fV_salvarAcoes(AsyncWebServerRequest *request) {
         request->send(400, "text/html", html);
         return;
     }
-    html += "<br>================<br>";
-    html += "acaoID: " + String(acaoID);
-    html += "<br>Índice(Pino): " + String(coluna);    
-    html += "<br>================<br>";
     // Salvar aU16_Acao
     for (uint8_t i = 0; i < vI8_aU16_Acao; i++) {
         String fieldName = "aU16_Acao" + String(i);
         if (request->hasParam(fieldName, true)) {
             AsyncWebParameter* param = request->getParam(fieldName, true);
-            fV_imprimeSerial("================");
-            fV_imprimeSerial("Acao: ",false);
-            fV_imprimeSerial(acaoID, false);
-            fV_imprimeSerial(" - coluna: ",false);
-            fV_imprimeSerial(coluna, false);
-            fV_imprimeSerial(" - i: ",false);
-            fV_imprimeSerial(i);
-            fV_imprimeSerial("================");
             switch (acaoID) {
                 case 1: aU16_Acao1[i][coluna] = param->value().toInt(); break;
                 case 2: aU16_Acao2[i][coluna] = param->value().toInt(); break;
@@ -368,30 +356,30 @@ size_t f_handle_ConfiguraAcoes(unsigned char *data, size_t len, bool final) {
             for (x = vU8_colINICIO; x < vU8_colFIM; x++) {
                 html += "<td><center>";
                 if (aS8_Pinos[0][x] == 0) {
-                    html += "<label for='id_ac_pino'>Índice " + String(0) + "-" + String(x) +" Pino: (sem cadastro)</label><br>";
+                    html += "<label for='id_ac_pino'>Índice " + String(0) + "-" + String(x) +"<br>Pino: (sem cadastro)</label>";
                 } else {
-                    html += "<label for='id_ac_pino'>Índice " + String(0) + "-" + String(x) +" Pino:"+String(aU16_Pinos[0][x])+"(origem)<br>" + aS8_Pinos[0][x] + "</label><br>";
+                    html += "<label for='id_ac_pino'>Índice " + String(0) + "-" + String(x) +"<br>Origem é Pino:"+String(aU16_Pinos[0][x])+"<br>" + aS8_Pinos[0][x] + "</label>";
                 }
                 if (aU16_Pinos[0][x] > 0) {
                     if (aU16_Acao1[1][x] == 0 ) {
-                        html += "<button type='submit' name='acao1' value='" + String(0) + "-" + String(x) + "'> 1ªAção(livre)";
+                        html += "<br><button type='submit' name='acao1' value='" + String(0) + "-" + String(x) + "'> 1ªAção(livre)";
                     } else {
-                        html += "<button type='submit' name='acao1' value='" + String(0) + "-" + String(x) + "'> 1ªAção<br>Destino:" + String(aU16_Acao1[1][x]) + "-" + fS_traduzAcoes(aU16_Acao1[2][x]);
+                        html += "<br><button type='submit' name='acao1' value='" + String(0) + "-" + String(x) + "'> 1ªAção é " + fS_traduzAcoes(aU16_Acao1[2][x]) + "<br>Destino: " + String(aU16_Acao1[1][x]) + " - " + aS8_Pinos[0][fU16_retornaIndicePino(aU16_Acao1[1][x])];
                     }
                     if (aU16_Acao2[1][x] == 0 ) {
-                        html += "<button type='submit' name='acao2' value='" + String(0) + "-" + String(x) + "'> 2ªAção(livre)";
+                        html += "<br><button type='submit' name='acao2' value='" + String(0) + "-" + String(x) + "'> 2ªAção(livre)";
                     } else {
-                        html += "<button type='submit' name='acao2' value='" + String(0) + "-" + String(x) + "'> 2ªAção<br>Destino:" + String(aU16_Acao2[1][x]) + "-" + fS_traduzAcoes(aU16_Acao2[2][x]);
+                        html += "<br><button type='submit' name='acao2' value='" + String(0) + "-" + String(x) + "'> 2ªAção é " + fS_traduzAcoes(aU16_Acao2[2][x]) + "<br>Destino: " + String(aU16_Acao2[1][x]) + " - " + aS8_Pinos[0][fU16_retornaIndicePino(aU16_Acao2[1][x])];
                     }
                     if (aU16_Acao3[1][x] == 0 ) {
-                        html += "<button type='submit' name='acao3' value='" + String(0) + "-" + String(x) + "'> 3ªAção(livre)";
+                        html += "<br><button type='submit' name='acao3' value='" + String(0) + "-" + String(x) + "'> 3ªAção(livre)";
                     } else {
-                        html += "<button type='submit' name='acao3' value='" + String(0) + "-" + String(x) + "'> 3ªAção<br>Destino:" + String(aU16_Acao3[1][x]) + "-" + fS_traduzAcoes(aU16_Acao3[2][x]);
+                        html += "<br><button type='submit' name='acao3' value='" + String(0) + "-" + String(x) + "'> 3ªAção é " + fS_traduzAcoes(aU16_Acao3[2][x]) + "<br>Destino: " + String(aU16_Acao3[1][x]) + " - " + aS8_Pinos[0][fU16_retornaIndicePino(aU16_Acao3[1][x])];
                     }
                     if (aU16_Acao4[1][x] == 0 ) {
-                        html += "<button type='submit' name='acao4' value='" + String(0) + "-" + String(x) + "'> 4ªAção(livre)";
+                        html += "<br><button type='submit' name='acao4' value='" + String(0) + "-" + String(x) + "'> 4ªAção(livre)";
                     } else {
-                        html += "<button type='submit' name='acao4' value='" + String(0) + "-" + String(x) + "'> 4ªAção<br>Destino:" + String(aU16_Acao4[1][x]) + "-" + fS_traduzAcoes(aU16_Acao4[2][x]);
+                        html += "<br><button type='submit' name='acao4' value='" + String(0) + "-" + String(x) + "'> 4ªAção é " + fS_traduzAcoes(aU16_Acao4[2][x]) + "<br>Destino: " + String(aU16_Acao4[1][x]) + " - " + aS8_Pinos[0][fU16_retornaIndicePino(aU16_Acao4[1][x])];
                     }                    
                 }
                 html += "</center></td>";

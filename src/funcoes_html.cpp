@@ -138,7 +138,6 @@ void f_handle_OpcoesFuncoes(AsyncWebServerRequest *request) {
     String html = fS_cabecaHTML("Opções Gerais", "Opções Gerais","/","/blob/main/manual/execgeral.md");
     html += "Escolha sua opção para ["+vS_nomeDispositivo+"]<br>";
     html += "<br><button id='openWebSerial'>Serial Web</button><script>document.getElementById('openWebSerial').addEventListener('click', function() { window.location.href = '/serial'; });</script><br>";
-    html += "<br><button id='openRestart'>Reiniciar o Módulo</button><script>document.getElementById('openRestart').addEventListener('click', function() { window.location.href = '/pergunta?funcao=fV_restart&redirecionar=true'; });</script><br>";
     html += "<br><button id='openPausarExecs'>Pausar/Retornar Execuções</button><script>document.getElementById('openPausarExecs').addEventListener('click', function() { window.location.href = '/pergunta?funcao=fV_mudaExec'; });</script>";
     if (vB_pausaEXECs) {
         html += " (Rotinas: Desabilitadas)<br>";
@@ -147,10 +146,11 @@ void f_handle_OpcoesFuncoes(AsyncWebServerRequest *request) {
         html += " (Rotinas: Habilitadas)<br>";
         html += "<br><button id='openRestartTasks' disabled>Reiniciar Tasks</button><script>document.getElementById('openRestartTasks').addEventListener('click', function() { window.location.href = '/pergunta?funcao=fV_restartTasks&redirecionar=true'; });</script><br>";
     }
+    html += "<br><button id='openRestart'>Reiniciar o Módulo</button><script>document.getElementById('openRestart').addEventListener('click', function() { window.location.href = '/pergunta?funcao=fV_restart&redirecionar=true'; });</script><br>";
     html += "<br><button id='openFormataFlash'>Formatar Flash</button><script>document.getElementById('openFormataFlash').addEventListener('click', function() { window.location.href = '/pergunta?funcao=fV_formataFLASH&redirecionar=true'; });</script><br>";
-    html += "<br><button id='openCarregarModulos'>Recarregar Inter Módulos</button><script>document.getElementById('openCarregarModulos').addEventListener('click', function() { window.location.href = '/pergunta?funcao=fV_configuraModulos(true)'; });</script><br>";
-    html += "<br><button id='openRecargaPinos'>Recarregar Configuração dos Pinos</button><script>document.getElementById('openRecargaPinos').addEventListener('click', function() { window.location.href = '/pergunta?funcao=fV_iniciaPinos(true)'; });</script><br>";
-    html += "<br><button id='openRecargaAcoes'>Recarregar Configuração das Ações</button><script>document.getElementById('openRecargaAcoes').addEventListener('click', function() { window.location.href = '/pergunta?funcao=fV_iniciaAcoes(true)'; });</script><br>";
+    //html += "<br><button id='openCarregarModulos'>Recarregar Inter Módulos</button><script>document.getElementById('openCarregarModulos').addEventListener('click', function() { window.location.href = '/pergunta?funcao=fV_configuraModulos(true)'; });</script><br>";
+    //html += "<br><button id='openRecargaPinos'>Recarregar Configuração dos Pinos</button><script>document.getElementById('openRecargaPinos').addEventListener('click', function() { window.location.href = '/pergunta?funcao=fV_iniciaPinos(true)'; });</script><br>";
+    //html += "<br><button id='openRecargaAcoes'>Recarregar Configuração das Ações</button><script>document.getElementById('openRecargaAcoes').addEventListener('click', function() { window.location.href = '/pergunta?funcao=fV_iniciaAcoes(true)'; });</script><br>";
     html += "<br><button id='openRecargaGAcoes'>Recarregar Grupos das Ações</button><script>document.getElementById('openRecargaGAcoes').addEventListener('click', function() { window.location.href = '/pergunta?funcao=fV_grupoAcoes(true)'; });</script><br>";
     html += "<br><button id='openRecargaWatchD'>Recarregar WhatchDog</button><script>document.getElementById('openRecargaWatchD').addEventListener('click', function() { window.location.href = '/pergunta?funcao=fV_configuraWatchDog(true)&redirecionar=true'; });</script><br>";    
     html += fS_rodapeHTML("/","/blob/main/manual/execgeral.md");
@@ -344,7 +344,7 @@ void fV_resposta(AsyncWebServerRequest *request) {
     confirmacao.trim();  // Remove espaços extras
 
     String pagina = fS_cabecaHTML("Resposta", "", "/");
-    fV_imprimeSerial("Execucao da acao: " + funcao, false);
+    fV_imprimeSerial("Execucao de: " + funcao, false);
 
     // Separar nome da função e parâmetros
     int pos = funcao.indexOf('(');
@@ -384,11 +384,10 @@ void fV_resposta(AsyncWebServerRequest *request) {
                 pagina += "<p>Função " + nomeFuncao + "("+parametros+") desconhecida.</p>";
             }
         }
-    }
+    } 
+
 
     pagina += fS_rodapeHTML("/");
-
-    // Envia a resposta HTML para o cliente
     request->send(200, "text/html", pagina);
 }
 
@@ -499,11 +498,11 @@ void f_handle_Index(AsyncWebServerRequest *request) {
     if (!vB_rodando) {
         html += "<br><br><br><br><br><br><center><h1>!!! SISTEMA INICIANDO !!!</h1></center>";
     } else {
-        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/configurag'> Configurações Gerais</a> - ";
-        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/pinos'> Configurar Pinos</a> - ";
-        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/acoes'> Configurar Ações</a> - ";
-        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/execfuncoes'> Executar Funções</a> - ";
-        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/files'> Gerenciar Arquivos</a> - ";
+        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/configurag'> Geral</a> - ";
+        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/pinos'> Pinos</a> - ";
+        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/acoes'> Ações</a> - ";
+        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/execfuncoes'> Funções</a> - ";
+        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/files'> Arquivos</a> - ";
         html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/logout'> Sair</a> - ";
         html += "<a href='https://github.com/rede-analista/smcr/tree/main' target='_blank'>Ajuda</a></center>";
 
