@@ -192,8 +192,9 @@ void setup() {
             vB_envia_Historico = true;
         }
     } else {
-        fV_imprimeSerial("Arquivos de configuracao nao encontrados. Reiniciando o modulo.");
+        fV_imprimeSerial("Arquivos de configuracao nao encontrados e foram criados. Reiniciando o modulo.");
         delay(2000);
+        fV_restart();
     }
     fV_imprimeSerial("!!!!---- SETUP FINALIZADO ----!!!!",true);
 }

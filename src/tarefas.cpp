@@ -127,12 +127,12 @@ void TaskAcoes1Pinos(void *pvParameters) {
             aB_restartRotinas[1] = 0;
         }
     if (!vB_pausaEXECs) {
-      switch (aU16_Acao1[2][idz]) {
+      switch (aU16_Acao1[2][idz]) { // Se a acao for...
         case 1: //LIGA
-          if (aU16_Acao1[0][idz] > 0 && aU16_Acao1[1][idz] > 0) {
-            if (aU16_Pinos_Status[0][idz] >= aU16_Pinos[4][idz]) {
-              if (!aU8_AcaoTP1[0][idz]) {
-                if (fS_retornaGrupoAcao(aU16_Acao1[1][idz]).length() < 1) {
+          if (aU16_Acao1[0][idz] > 0 && aU16_Acao1[1][idz] > 0) { // Se tiver pino origem e destino cadastrado
+            if (aU16_Pinos_Status[0][idz] >= aU16_Pinos[4][idz]) { // Se o status for igual ou maior que o nivel cadastrado
+              if (!aU8_AcaoTP1[0][idz]) { 
+                if (fS_retornaGrupoAcao(aU16_Acao1[1][idz]).length() < 1) { // Verifica se o pino tem mais de uma acao configurada
                   fV_gravaPino(aU16_Pinos[1][fU16_retornaIndicePino(aU16_Acao1[1][idz])],aU16_Acao1[1][idz],aU16_Pinos[4][fU16_retornaIndicePino(aU16_Acao1[1][idz])]);
                 } else if (fB_retornaStatusGrupoAcao(fS_retornaGrupoAcao(aU16_Acao1[1][idz]),aU16_Pinos[4][fU16_retornaIndicePino(aU16_Acao1[1][idz])])) {
                   fV_gravaPino(aU16_Pinos[1][fU16_retornaIndicePino(aU16_Acao1[1][idz])],aU16_Acao1[1][idz],aU16_Pinos[4][fU16_retornaIndicePino(aU16_Acao1[1][idz])]);

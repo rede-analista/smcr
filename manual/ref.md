@@ -239,19 +239,21 @@
 
      uint8_t aU8_InterMod[vI8_aU8_InterMod][vU8_totPinos]
 
-# Array de dados aU8_Pinos (carregado da flash)
+# Array de dados aU16_Pinos (carregado da flash)
      Usado para cadastro de porta (pinos fisicos)
 
-     aU8_Pinos[Propriedade][Pino]
-     aU8_Pinos[0][x] = Fisico - Mapeamento dos pinos fisicos
-     aU8_Pinos[1][x] = Tipo 1=DIGITAL / 0=ANALOGICO / 254=REMOTO
-     aU8_Pinos[2][x] = Modo INPUT=1 / OUTPUT=3 / PULLUP=4 / INPUT_PULLUP=5 / PULLDOWN=8 / INPUT_PULLDOWN=9 / OPEN_DRAIN=10 / OUTPUT_OPEN_DRAIN=12 / REMOTO=254
-     aU8_Pinos[3][x] = Invertido(XOR) 1=SIM / 0=NAO
-     aU8_Pinos[4][x] = Status 0=LOW / 1=HIGH
-     aU8_Pinos[5][x] = Retencao 0=NAO / 1=SIM
-     aU8_Pinos[6][x] = Tempo Retencao 0 a 255
+     aU16_Pinos[Propriedade][Pino]
+     aU16_Pinos[0][x] = Fisico - Mapeamento dos pinos fisicos
+     aU16_Pinos[1][x] = Tipo 1=DIGITAL / 0=ANALOGICO / 254=REMOTO
+     aU16_Pinos[2][x] = Modo INPUT=1 / OUTPUT=3 / PULLUP=4 / INPUT_PULLUP=5 / PULLDOWN=8 / INPUT_PULLDOWN=9 / OPEN_DRAIN=10 / OUTPUT_OPEN_DRAIN=12 / REMOTO=254
+     aU16_Pinos[3][x] = Invertido(XOR) 1=SIM / 0=NAO
+     aU16_Pinos[4][x] = Status 0=LOW / 1=HIGH
+     aU16_Pinos[5][x] = Retencao 0=NAO / 1=SIM
+     aU16_Pinos[6][x] = Tempo Retencao 0 a 255
 
-     uint8_t aU8_Pinos[vI8_aU8_Pinos][vU8_totPinos]
+     size_t vU8_totPinos = 5
+     size_t vI8_aU16_Pinos = 6
+     uint16_t aU16_Pinos[vI8_aU8_Pinos][vU8_totPinos]
 
 # Array de dados aS8_Pinos (carregado da flash)
      Usado para cadastro do nome(descricao) dos pinos
@@ -259,6 +261,7 @@
      aS8_Pinos[Propriedade][Pino]
      aS8_Pinos[0][x] = Nome/descricao
 
+     size_t vI8_aS8_Pinos = 1
      String aS8_Pinos[vI8_aS8_Pinos][vU8_totPinos]
 
 
@@ -344,7 +347,7 @@
      aS_Preference[0][36] = "65535" = Tempo de handshake do inter módulos.
      aS_Preference[0][37] = "65535" = Tempo de verificação das rotinas dos inter módulos.
      aS_Preference[0][38] = "10" = Ciclo de handshake.
-     aS_Preference[0][39] = "5" = Total de pinos (portas do ESP) !!!! ATENÇÃO !!!!.
+     aS_Preference[0][39] = "15" = Total de pinos (portas do ESP) !!!! ATENÇÃO !!!!.
      aS_Preference[0][40] = "7" = Número de colunas das tabelas na interface web.
      aS_Preference[0][41] = "120" = Tempo  de refresh da tela pincipal (página de status).
      aS_Preference[0][42] = "80" = Tempo de clock do ESP32 em Mhz para whactdog.
@@ -352,7 +355,7 @@
      aS_Preference[0][44] = "300000000" = Tempo em microsegundos  (µs) de reset do watchdog .
      aS_Preference[0][45] = "12" = Quantidade de bits do processador (usado para pinos analógicos).
      aS_Preference[0][46] = "8" = Ciclos de amostra para pinos analógicos.
-     aS_Preference[0][47] = "5" = Total de módulos para cadastro.
+     aS_Preference[0][47] = "7" = Total de módulos para cadastro.
      aS_Preference[0][48] = "false" = Mostra status na página inicial.
      aS_Preference[0][49] = "false" = Mostra status inter módulos na página inicial.
      aS_Preference[0][50] = "1" = Quantidade de tasks de açãoes ativas.

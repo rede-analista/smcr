@@ -191,8 +191,8 @@ size_t f_handle_ConfiguraModulos(unsigned char *data, size_t len, bool final) {
         return 0;
     }
     if (vU8_estado == 0) {
-        //linha = std::ceil(static_cast<float>(vU8_totModulos) / vU8_colunasTabelas);
-        vU16_linhaPagCad = vU8_totModulos/vU8_colunasTabelas;
+        vU16_linhaPagCad = std::ceil(static_cast<float>(vU8_totModulos) / vU8_colunasTabelas);
+        //vU16_linhaPagCad = vU8_totModulos/vU8_colunasTabelas;
         vU8_colINICIO = 0;
         vU8_colFIM = vU8_colunasTabelas;
         html += fS_cabecaHTML("Cadastro de Módulos","Cadastro de Módulos","/configurag","/blob/main/manual/intermod.md");
