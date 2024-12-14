@@ -19,7 +19,7 @@ extern uint8_t vU8_tentativaConexoes, vI_cicloHandshake, vU8_crtl_ModHist, vU8_b
             vU8_ciclosAmostra, vI8_ControlAcoesGroups, vU8_colunasTabelas, vI8_aS_InterMod, vI8_aU16_InterModHA,
             vI8_aS8_Acao, vU8_colINICIO, vU8_colFIM, vU8_estado, vU8_diasDaSemana, vU8_meses, vU8_tempoRefresh,
             vI8_aU16_InterMod, vI8_aB_InterMod, vI8_aU16_Acao, vI8_aU8_AcaoRede, vI8_aU8_ControlMsgHist,
-            vI8_aU8_ControlMsg, vI8_aS_Preference_ROW, vI8_aS_Preference_COL;
+            vI8_aU8_ControlMsg, vI8_aS_Preference_ROW, vI8_aS_Preference_COL, vI8_aS16_InterModFila_EnviaModulo;
 
 extern uint16_t vU16_bot_MTBS, vU16_mqttPorta, vU16_mqtt_MTBS, vU8_ultimoModEnviado, vI_U16_portaWebAsync,
             vU16_ass_MTBS, vU16_modulos_HandShake, vU16_modulos_MTBS_Acoes, vU16_clockESP32, vU16_ulimoModRecebido;
@@ -78,13 +78,13 @@ extern String** aS_InterModMenu; // Menu do cadasro de intermodulos
 extern String** aU16_InterModMenu;
 extern String** aSB_InterModMenu;
 extern String** aS_InterMod;     // Cadastro de intermodulos
-extern String** aS16_InterModHA;
+extern String** aS16_InterModMenu_CTRL_HandShake;
 extern String** aS8_ControlMsgModHist;
 extern uint16_t** aU16_InterMod;
-extern uint16_t** aI16_ControlHS;
+extern uint16_t** aI16_InterMod_CTRL_HandShake;
 extern uint8_t** aB_InterMod;
-extern uint16_t** aU16_ControlMsgModHist;
-extern uint16_t** aU16_ControlMsgMod;
+extern uint16_t** aS16_InterModFila_EnviaModulo;
+extern uint16_t** aS16_InterModControleRepeticao_EnviaModulo;
 
 /*---- Inicia objetos, tipos e estruturas ----*/
 enum class VarType {

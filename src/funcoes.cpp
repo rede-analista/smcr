@@ -33,6 +33,7 @@ uint8_t fU8_retornaIndiceHS(String modulo) {
   for (uint8_t x=0; x<vU8_totModulos; x++) {
     if (aS_InterMod[0][x] == modulo) {
       resultado = x;
+      break;
     }
   }
   return resultado;
@@ -52,28 +53,30 @@ int fI_retornaModulo(String modulo) {
   return resultado;
 }
 
-//========================================
+/*========================================
+Funcao HandShake, envia sinal de handshake para testar comunicacao entrte modulos
+*/
 void fV_checkHandShake() {
   uint64_t agora = millis();
   if (!vB_pausaEXECs && vB_exec_Modulos) {
     if ((agora - check_mod_lasttime) > vU16_modulos_HandShake) {
-      for (uint8_t y=0; y<vU8_totPinos; y++) {
-        if (aI16_ControlHS[0][y] < 1) {
-          aI16_ControlHS[1][y] = 1;
+      for (uint8_t y=0; y<vU8_totModulos; y++) {
+        if (aI16_InterMod_CTRL_HandShake[0][y] < 1) {
+          aI16_InterMod_CTRL_HandShake[1][y] = 1;
           //vB_envia_Historico = true;
         } else {
-          aI16_ControlHS[0][y]--;
+          aI16_InterMod_CTRL_HandShake[0][y]--;
         }
         if ( aB_InterMod[0][y] && aU16_InterMod[0][y] > 0 ) {
-          aI16_ControlHS[2][y] = fI_enviaModulo(aU16_InterMod[0][y],"65535", String(aU16_InterMod[0][fU8_retornaIndiceHS(vS_nomeDispositivo)]), "0");
-          if (aI16_ControlHS[2][y] == 200) {
-            aI16_ControlHS[0][y] = vI_cicloHandshake;
-            aI16_ControlHS[1][y] = 0;
-            aI16_ControlHS[3][fI_retornaModulo(vS_nomeDispositivo)] = 0;
+          aI16_InterMod_CTRL_HandShake[2][y] = fI_enviaModulo(aU16_InterMod[0][y],"65535", String(aU16_InterMod[0][fU8_retornaIndiceHS(vS_nomeDispositivo)]), "0");
+          if (aI16_InterMod_CTRL_HandShake[2][y] == 200) {
+            aI16_InterMod_CTRL_HandShake[0][y] = vI_cicloHandshake;
+            aI16_InterMod_CTRL_HandShake[1][y] = 0;
+            aI16_InterMod_CTRL_HandShake[3][fI_retornaModulo(vS_nomeDispositivo)] = 0;
           }
         }
         if ( fU16_retornaIndicePino(aU16_InterMod[0][y]) > 0 && fU16_retornaIndicePino(aU16_InterMod[0][y]) < 65535 ) {
-          aU16_Pinos_Status[0][fU16_retornaIndicePino(aU16_InterMod[0][y])] = aI16_ControlHS[1][y];
+          aU16_Pinos_Status[0][fU16_retornaIndicePino(aU16_InterMod[0][y])] = aI16_InterMod_CTRL_HandShake[1][y];
         }
       }
       check_mod_lasttime = agora;
@@ -109,11 +112,13 @@ uint16_t fU16_retornaIndiceModulo(uint16_t modulo) {
   return resultado;
 }
 
-//========================================
+/*========================================
+Funcao enviar informacoes para outro modulo
+*/
 int fI_enviaModulo(uint16_t idmodulo, String acao, String pino, String valor) {
   vI_httpResponseCode = 0;
   int resposta = 504;
- if (aI16_ControlHS[3][fU16_retornaIndiceModulo(idmodulo)] < vU8_tentativaConexoes) {
+ if (aI16_InterMod_CTRL_HandShake[3][fU16_retornaIndiceModulo(idmodulo)] < vU8_tentativaConexoes) {
     if (WiFi.status() != WL_CONNECTED) {
         fU8_configuraWifi();
     } else {
@@ -155,15 +160,15 @@ int fI_enviaModulo(uint16_t idmodulo, String acao, String pino, String valor) {
               vS_payload = payload;
               if (statusCode == 200 && payload == "OK_DADO_RECEBIDO") {
                 // Atualiza o controle do handshake
-                aI16_ControlHS[0][moduloIdx] = vI_cicloHandshake;
-                aI16_ControlHS[1][moduloIdx] = 0;
-                aI16_ControlHS[2][moduloIdx] = statusCode;
-                aI16_ControlHS[3][moduloIdx] = 0;
+                aI16_InterMod_CTRL_HandShake[0][moduloIdx] = vI_cicloHandshake;
+                aI16_InterMod_CTRL_HandShake[1][moduloIdx] = 0;
+                aI16_InterMod_CTRL_HandShake[2][moduloIdx] = statusCode;
+                aI16_InterMod_CTRL_HandShake[3][moduloIdx] = 0;
                 vU8_ultimoModEnviado = idmodulo;
               } else {
-                  aI16_ControlHS[2][moduloIdx] = statusCode;
-                  aI16_ControlHS[3][moduloIdx] = (aI16_ControlHS[3][moduloIdx] < 32766) 
-                                                  ? aI16_ControlHS[3][moduloIdx] + 1 
+                  aI16_InterMod_CTRL_HandShake[2][moduloIdx] = statusCode;
+                  aI16_InterMod_CTRL_HandShake[3][moduloIdx] = (aI16_InterMod_CTRL_HandShake[3][moduloIdx] < 32766) 
+                                                  ? aI16_InterMod_CTRL_HandShake[3][moduloIdx] + 1 
                                                   : 1;
               }
               fV_imprimeSerial("HTTP Response code: " + String(statusCode));
@@ -171,28 +176,30 @@ int fI_enviaModulo(uint16_t idmodulo, String acao, String pino, String valor) {
             }
         }, nullptr);  // Passar nullptr como argumento para a lambda
         CLIENTE_WEB_ASYNC->send();  // Envia a requisição assíncrona
-        fV_imprimeSerial("Enviado: " + GET_SERVIDOR);
+        //fV_imprimeSerial("Enviado: " + GET_SERVIDOR);
         request_in_progress = false;
       } else {
-        fV_imprimeSerial("Aguardando envio de informacoes");
+        fV_imprimeSerial("Aguardando para enviar informacoes");
       }
     }
   } 
   return resposta;
 }
 
-//========================================
+/*========================================
+Funcao para enviar a outro modulo a fila de status dos alertas
+*/
 void fV_enviaAcoesModulos() {
   uint64_t agora = millis();
   if (!vB_pausaEXECs && vB_exec_Modulos) {
     if ((agora - envia_acoes_mod_lasttime) > (vU16_modulos_MTBS_Acoes+500)) {
       for (uint8_t x=0; x<vU8_totPinos; x++) {
-        if (aU16_ControlMsgModHist[0][x] > 0) {
-          if ( fI_enviaModulo(aU16_ControlMsgModHist[0][x], String(aU16_ControlMsgModHist[1][x]), String(aU16_ControlMsgModHist[2][x]), String(aU16_ControlMsgModHist[3][x])) == 200) {
-            aU16_ControlMsgModHist[0][x] = 0;
-            aU16_ControlMsgModHist[1][x] = 0;
-            aU16_ControlMsgModHist[2][x] = 0;
-            aU16_ControlMsgModHist[3][x] = 0;
+        if (aS16_InterModFila_EnviaModulo[0][x] > 0) {
+          if ( fI_enviaModulo(aS16_InterModFila_EnviaModulo[0][x], String(aS16_InterModFila_EnviaModulo[1][x]), String(aS16_InterModFila_EnviaModulo[2][x]), String(aS16_InterModFila_EnviaModulo[3][x])) == 200) {
+            aS16_InterModFila_EnviaModulo[0][x] = 0;
+            aS16_InterModFila_EnviaModulo[1][x] = 0;
+            aS16_InterModFila_EnviaModulo[2][x] = 0;
+            aS16_InterModFila_EnviaModulo[3][x] = 0;
           }
         }
       }
@@ -241,8 +248,8 @@ bool fB_verificaPrimeiraExec(bool force) {
   String aS_checkFiles[totalArquivos] = {
       "aU8_diasDaSemana", "aU8_meses", "aS16_PinosMenu", "aS8_AcoesMenu", 
       "aS8_AcoesStringMenu", "aS8_AcoesRedeMenu", "aS_InterModMenu",
-      "aU16_InterModMenu", "aSB_InterModMenu", "aS16_InterModHA", "aS8_ControlMsgModHist",
-      "nulo","aS_Preference" };
+      "aU16_InterModMenu", "aSB_InterModMenu", "nulo","aS_Preference",
+      "aS16_InterModMenu_CTRL_HandShake", "aS8_ControlMsgModHist" };
 
   // Percorre cada arquivo do array
   for (uint8_t i = 0; i < totalArquivos; i++) {
@@ -274,7 +281,7 @@ bool fB_verificaPrimeiraExec(bool force) {
                   defaultValues = "ID-Pino HandShake,Porta do Receptor";
               } else if (aS_checkFiles[i] == "aSB_InterModMenu") {
                   defaultValues = "Enviar Handshake";
-              } else if (aS_checkFiles[i] == "aS16_InterModHA") {
+              } else if (aS_checkFiles[i] == "aS16_InterModMenu_CTRL_HandShake") {
                   defaultValues = "Ciclo,Status,CTRL Resposta,Envio Pausado";
               } else if (aS_checkFiles[i] == "aS8_ControlMsgModHist") {
                   defaultValues = "Módulo,Ação,Pino,Valor";
@@ -284,11 +291,11 @@ bool fB_verificaPrimeiraExec(bool force) {
                   defaultValues = String("wifi,") + //0
                                   String("12345678,") + //1
                                   String("4,") + //2
-                                  String("80,") + //3
+                                  String("4080,") + //3
                                   String("esp32modularx,") + //4
                                   String("admin,") + //5
                                   String("admin,") + //6
-                                  String("esp32modularx Ponto de Acesso,") + //7
+                                  String("esp32modularx_" + vS_mqttIdUnico + ",") + //7
                                   String("senha12345678,") + //8
                                   String("true,") + //9
                                   String("pool.ntp.br,") + //10
@@ -365,10 +372,10 @@ bool fB_verificaPrimeiraExec(bool force) {
 
 //========================================
 bool fV_regModHist(uint16_t idmodulo, uint16_t acao, uint16_t pino, uint16_t valor) {
-  aU16_ControlMsgModHist[0][vU8_crtl_ModHist] = idmodulo;
-  aU16_ControlMsgModHist[1][vU8_crtl_ModHist] = acao;
-  aU16_ControlMsgModHist[2][vU8_crtl_ModHist] = pino;
-  aU16_ControlMsgModHist[3][vU8_crtl_ModHist] = valor;
+  aS16_InterModFila_EnviaModulo[0][vU8_crtl_ModHist] = idmodulo;
+  aS16_InterModFila_EnviaModulo[1][vU8_crtl_ModHist] = acao;
+  aS16_InterModFila_EnviaModulo[2][vU8_crtl_ModHist] = pino;
+  aS16_InterModFila_EnviaModulo[3][vU8_crtl_ModHist] = valor;
   vU8_crtl_ModHist++;
   if (vU8_crtl_ModHist >= vU8_totPinos) {
     vU8_crtl_ModHist = 0;
@@ -382,42 +389,56 @@ void fV_checkAcoesModulos() {
   if (!vB_pausaEXECs && vB_exec_Modulos) {
     if ((agora - check_acoes_mod_lasttime) > vU16_modulos_MTBS_Acoes) {
       for (uint8_t x=0; x<vU8_totPinos; x++) {
-        if ((aU8_AcaoRede1[0][x] > 0 ) && (aU16_Pinos_Status[0][x] >= aU16_Pinos[4][x]) && (aU16_ControlMsgMod[0][x] < 1)) {
+        if ((aU8_AcaoRede1[0][x] > 0 ) && (aU16_Pinos_Status[0][x] >= aU16_Pinos[4][x]) && (aS16_InterModControleRepeticao_EnviaModulo[0][x] < 1)) {
           if (fV_regModHist(aU8_AcaoRede1[0][x],aU16_Acao1[2][x], aU16_Acao1[5][x], aU16_Pinos_Status[0][x])) {
-            aU16_ControlMsgMod[0][x] = 1;
+            aS16_InterModControleRepeticao_EnviaModulo[0][x] = 1;
           }
-        } else if ((aU8_AcaoRede1[0][x] >0 ) && (aU16_Pinos_Status[0][x] < aU16_Pinos[4][x]) && (aU16_ControlMsgMod[0][x] > 0)) {
+        } else if ((aU8_AcaoRede1[0][x] >0 ) && (aU16_Pinos_Status[0][x] < aU16_Pinos[4][x]) && (aS16_InterModControleRepeticao_EnviaModulo[0][x] > 0)) {
           if (fV_regModHist(aU8_AcaoRede1[0][x],aU16_Acao1[2][x], aU16_Acao1[5][x], aU16_Pinos_Status[0][x])) {
-            aU16_ControlMsgMod[0][x] = 0;
+            aS16_InterModControleRepeticao_EnviaModulo[0][x] = 0;
           }
         } else if (vB_envia_Historico && (aU8_AcaoRede1[0][x] >0)){
           fV_regModHist(aU8_AcaoRede1[0][x],aU16_Acao1[2][x], aU16_Acao1[5][x], aU16_Pinos_Status[0][x]);
         }
 
 
-        if ((aU8_AcaoRede2[0][x] >0 ) && (aU16_Pinos_Status[0][x] >= aU16_Pinos[4][x]) && (aU16_ControlMsgMod[1][x] < 1)) {
+        if ((aU8_AcaoRede2[0][x] >0 ) && (aU16_Pinos_Status[0][x] >= aU16_Pinos[4][x]) && (aS16_InterModControleRepeticao_EnviaModulo[1][x] < 1)) {
           if (fV_regModHist(aU8_AcaoRede2[0][x],aU16_Acao2[2][x], aU16_Acao2[5][x], aU16_Pinos_Status[0][x])) {
-            aU16_ControlMsgMod[1][x] = 1;
+            aS16_InterModControleRepeticao_EnviaModulo[1][x] = 1;
           }
-        } else if ((aU8_AcaoRede2[0][x] >0 ) && (aU16_Pinos_Status[0][x] < aU16_Pinos[4][x]) && (aU16_ControlMsgMod[1][x] > 0)){
+        } else if ((aU8_AcaoRede2[0][x] >0 ) && (aU16_Pinos_Status[0][x] < aU16_Pinos[4][x]) && (aS16_InterModControleRepeticao_EnviaModulo[1][x] > 0)){
           if (fV_regModHist(aU8_AcaoRede2[0][x],aU16_Acao2[2][x], aU16_Acao2[5][x], aU16_Pinos_Status[0][x])) {
-            aU16_ControlMsgMod[1][x] = 0;
+            aS16_InterModControleRepeticao_EnviaModulo[1][x] = 0;
           }
         } else if (vB_envia_Historico && (aU8_AcaoRede2[0][x] >0)){
           fV_regModHist(aU8_AcaoRede2[0][x],aU16_Acao2[2][x], aU16_Acao2[5][x], aU16_Pinos_Status[0][x]);
         }
 
 
-        if ((aU8_AcaoRede3[0][x] >0 ) && (aU16_Pinos_Status[0][x] >= aU16_Pinos[4][x])&& (aU16_ControlMsgMod[2][x] < 1)) {
+        if ((aU8_AcaoRede3[0][x] >0 ) && (aU16_Pinos_Status[0][x] >= aU16_Pinos[4][x])&& (aS16_InterModControleRepeticao_EnviaModulo[2][x] < 1)) {
           if (fV_regModHist(aU8_AcaoRede3[0][x], aU16_Acao3[2][x], aU16_Acao3[5][x], aU16_Pinos_Status[0][x])) {
-            aU16_ControlMsgMod[2][x] = 1;
+            aS16_InterModControleRepeticao_EnviaModulo[2][x] = 1;
           }
-        } else if ((aU8_AcaoRede3[0][x] >0 ) && (aU16_Pinos_Status[0][x] < aU16_Pinos[4][x]) && (aU16_ControlMsgMod[2][x] > 0)){
+        } else if ((aU8_AcaoRede3[0][x] >0 ) && (aU16_Pinos_Status[0][x] < aU16_Pinos[4][x]) && (aS16_InterModControleRepeticao_EnviaModulo[2][x] > 0)){
           if (fV_regModHist(aU8_AcaoRede3[0][x], aU16_Acao3[2][x], aU16_Acao3[5][x], aU16_Pinos_Status[0][x])) {
-            aU16_ControlMsgMod[2][x] = 0;
+            aS16_InterModControleRepeticao_EnviaModulo[2][x] = 0;
           }
         } else if (vB_envia_Historico && (aU8_AcaoRede3[0][x] >0)){
           fV_regModHist(aU8_AcaoRede3[0][x],aU16_Acao3[2][x], aU16_Acao3[5][x], aU16_Pinos_Status[0][x]);
+
+
+        if ((aU8_AcaoRede4[0][x] >0 ) && (aU16_Pinos_Status[0][x] >= aU16_Pinos[4][x])&& (aS16_InterModControleRepeticao_EnviaModulo[3][x] < 1)) {
+          if (fV_regModHist(aU8_AcaoRede4[0][x], aU16_Acao4[2][x], aU16_Acao4[5][x], aU16_Pinos_Status[0][x])) {
+            aS16_InterModControleRepeticao_EnviaModulo[3][x] = 1;
+          }
+        } else if ((aU8_AcaoRede4[0][x] >0 ) && (aU16_Pinos_Status[0][x] < aU16_Pinos[4][x]) && (aS16_InterModControleRepeticao_EnviaModulo[3][x] > 0)){
+          if (fV_regModHist(aU8_AcaoRede4[0][x], aU16_Acao4[2][x], aU16_Acao4[5][x], aU16_Pinos_Status[0][x])) {
+            aS16_InterModControleRepeticao_EnviaModulo[3][x] = 0;
+          }
+        } else if (vB_envia_Historico && (aU8_AcaoRede4[0][x] >0)){
+          fV_regModHist(aU8_AcaoRede4[0][x],aU16_Acao4[2][x], aU16_Acao4[5][x], aU16_Pinos_Status[0][x]);
+        }
+
         }
       }
       vB_envia_Historico = false;
@@ -752,44 +773,47 @@ void fV_configuraModulos(bool force) {
     vB_exec_Modulos = fB_carregaConfigGeral(0,35, false);
     vU16_modulos_HandShake = fU16_carregaConfigGeral(0,36, 65535);
     vU16_modulos_MTBS_Acoes = fU16_carregaConfigGeral(0,37, 65535);
-    vU8_totModulos = fU8_carregaConfigGeral(0,47,5);
+    vU8_totModulos = fU8_carregaConfigGeral(0,47,7);
     vI_cicloHandshake = fI32_carregaConfigGeral(0,38, 65535);
 
-    fV_carregaFlash_AUint("/aU16_InterMod.txt", aU16_InterMod, vI8_aU16_InterModHA, vU8_totModulos);
+    fV_carregaFlash_AUint("/aU16_InterMod.txt", aU16_InterMod, vI8_aU16_InterMod, vU8_totModulos);
     fV_carregaFlash_AUint("/aB_InterMod.txt", aB_InterMod, vI8_aB_InterMod, vU8_totModulos);
     fV_carregaFILESYS_AS2D("/aS_InterMod.txt",aS_InterMod,vI8_aS_InterMod,vU8_totModulos);
-    fV_carregaFILESYS_AS2D("/aS_InterModMenu.txt",aS_InterModMenu,1,vU8_totModulos);
     fV_carregaFILESYS_AS2D("/aU16_InterModMenu.txt",aU16_InterModMenu,1,vU8_totModulos);
-    fV_carregaFILESYS_AS2D("/aS16_InterModHA.txt",aS16_InterModHA,1,vU8_totModulos);
     fV_carregaFILESYS_AS2D("/aSB_InterModMenu.txt",aSB_InterModMenu,1,vU8_totModulos);
-    fV_carregaFILESYS_AS2D("/aS8_ControlMsgModHist.txt",aS8_ControlMsgModHist,1,vU8_totModulos);
+    fV_carregaFILESYS_AS2D("/aS_InterModMenu.txt",aS_InterModMenu,1,vU8_totModulos);
 
-    fV_carregaFlash_AUint("/aI16_ControlHS.txt", aI16_ControlHS, vI8_aU16_InterModHA, vU8_totModulos);
+
+
+    fV_carregaFILESYS_AS2D("/aS16_InterModMenu_CTRL_HandShake.txt",aS16_InterModMenu_CTRL_HandShake,1,vI8_aU16_InterModHA);
+    fV_carregaFILESYS_AS2D("/aS8_ControlMsgModHist.txt",aS8_ControlMsgModHist,1,vI8_aU8_ControlMsgHist);
+
+    fV_carregaFlash_AUint("/nulo.txt", aI16_InterMod_CTRL_HandShake, vI8_aU16_InterModHA, vU8_totModulos);
     for (uint8_t y=0; y<vU8_totModulos; y++) {
-      aI16_ControlHS[0][y] = vI_cicloHandshake;
-      aI16_ControlHS[3][y] = 0;
+      aI16_InterMod_CTRL_HandShake[0][y] = vI_cicloHandshake;
+      aI16_InterMod_CTRL_HandShake[3][y] = 0;
     }
   } else if (force) {
 
-    fV_carregaFlash_AUint("/aU16_InterMod.txt", aU16_InterMod, vI8_aU16_InterModHA, vU8_totModulos);
-    fV_carregaFlash_AUint("/aB_InterMod.txt", aB_InterMod, vI8_aB_InterMod, vU8_totModulos);
-    fV_carregaFILESYS_AS2D("/aS_InterMod.txt",aS_InterMod,vI8_aS_InterMod,vU8_totModulos);
-    fV_carregaFILESYS_AS2D("/aS_InterModMenu.txt",aS_InterModMenu,1,vU8_totModulos);
-    fV_carregaFILESYS_AS2D("/aU16_InterModMenu.txt",aU16_InterModMenu,1,vU8_totModulos);
-    fV_carregaFILESYS_AS2D("/aS16_InterModHA.txt",aS16_InterModHA,1,vU8_totModulos);
-    fV_carregaFILESYS_AS2D("/aSB_InterModMenu.txt",aSB_InterModMenu,1,vU8_totModulos);
-    fV_carregaFILESYS_AS2D("/aS8_ControlMsgModHist.txt",aS8_ControlMsgModHist,1,vU8_totModulos);
+    //fV_carregaFlash_AUint("/aU16_InterMod.txt", aU16_InterMod, vI8_aU16_InterMod, vU8_totModulos);
+    //fV_carregaFlash_AUint("/aB_InterMod.txt", aB_InterMod, vI8_aB_InterMod, vU8_totModulos);
+    //fV_carregaFILESYS_AS2D("/aS_InterMod.txt",aS_InterMod,vI8_aS_InterMod,vU8_totModulos);
+    //fV_carregaFILESYS_AS2D("/aS_InterModMenu.txt",aS_InterModMenu,1,vU8_totModulos);
+    //fV_carregaFILESYS_AS2D("/aU16_InterModMenu.txt",aU16_InterModMenu,1,vU8_totModulos);
+    //fV_carregaFILESYS_AS2D("/aS16_InterModMenu_CTRL_HandShake.txt",aS16_InterModMenu_CTRL_HandShake,1,vU8_totModulos);
+    //fV_carregaFILESYS_AS2D("/aSB_InterModMenu.txt",aSB_InterModMenu,1,vU8_totModulos);
+    //fV_carregaFILESYS_AS2D("/aS8_ControlMsgModHist.txt",aS8_ControlMsgModHist,1,vU8_totModulos);
 
-    fV_carregaFlash_AUint("/aI16_ControlHS.txt", aI16_ControlHS, vI8_aU16_InterModHA, vU8_totModulos);
-    for (uint8_t y=0; y<vU8_totModulos; y++) {
-      aI16_ControlHS[0][y] = vI_cicloHandshake;
-      aI16_ControlHS[3][y] = 0;
-    }
-    vB_exec_Modulos = true;
-    vU8_crtl_ModHist = 0;
+    //fV_carregaFlash_AUint("/aI16_InterMod_CTRL_HandShake.txt", aI16_InterMod_CTRL_HandShake, vI8_aU16_InterModHA, vU8_totModulos);
+    //for (uint8_t y=0; y<vU8_totModulos; y++) {
+    //  aI16_InterMod_CTRL_HandShake[0][y] = vI_cicloHandshake;
+    //  aI16_InterMod_CTRL_HandShake[3][y] = 0;
+    //}
+    //vB_exec_Modulos = true;
+    //vU8_crtl_ModHist = 0;
   }
-  fV_carregaFlash_AUint("/nulo.txt", aU16_ControlMsgModHist, vI8_aU8_ControlMsgHist, vU8_totModulos,"aU16_ControlMsgModHist");
-  fV_carregaFlash_AUint("/nulo.txt", aU16_ControlMsgMod, vI8_aU8_ControlMsg, vU8_totModulos,"aU16_ControlMsgMod");  
+  fV_carregaFlash_AUint("/nulo.txt", aS16_InterModFila_EnviaModulo, vI8_aU8_ControlMsgHist, vI8_aS16_InterModFila_EnviaModulo,"aS16_InterModFila_EnviaModulo");
+  fV_carregaFlash_AUint("/nulo.txt", aS16_InterModControleRepeticao_EnviaModulo, vI8_aU8_ControlMsg, vU8_totPinos,"aS16_InterModControleRepeticao_EnviaModulo");  
   fV_imprimeSerial(" OK");  
 }
 
@@ -825,13 +849,13 @@ void fV_salvarFlash() {
   fV_salvaFILESYS_AS2D("/aS8_Acao4.txt",aS8_Acao4,vI8_aS8_Acao,vU8_totPinos);
 
   // Inter Modulos
-  fV_salvaFlash_AUint("/aI16_ControlHS.txt", aI16_ControlHS, vI8_aS_InterMod, vU8_totModulos);
+  //fV_salvaFlash_AUint("/aI16_InterMod_CTRL_HandShake.txt", aI16_InterMod_CTRL_HandShake, vI8_aS_InterMod, vU8_totModulos);
   fV_salvaFlash_AUint("/aU16_InterMod.txt", aU16_InterMod, vI8_aU16_InterMod, vU8_totModulos);
   fV_salvaFlash_AUint("/aB_InterMod.txt", aB_InterMod, vI8_aB_InterMod, vU8_totModulos);
   fV_salvaFILESYS_AS2D("/aS_InterMod.txt",aS_InterMod,vI8_aS_InterMod,vU8_totModulos);
   //fV_salvaFILESYS_AS2D("/aU16_InterModMenu.txt",aU16_InterModMenu,1,vU8_totModulos);
   //fV_salvaFILESYS_AS2D("/aS_InterModMenu.txt",aS_InterModMenu,1,vU8_totModulos);
-  //fV_salvaFILESYS_AS2D("/aS16_InterModHA.txt",aS16_InterModHA,1,vU8_totModulos);
+  //fV_salvaFILESYS_AS2D("/aS16_InterModMenu_CTRL_HandShake.txt",aS16_InterModMenu_CTRL_HandShake,1,vU8_totModulos);
   //fV_salvaFILESYS_AS2D("/aSB_InterModMenu.txt",aSB_InterModMenu,1,vU8_totModulos);
   //fV_salvaFILESYS_AS2D("/aS8_ControlMsgModHist.txt",aS8_ControlMsgModHist,1,vU8_totModulos);
   //fV_salvaFILESYS_AS1D("/aU8_diasDaSemana.txt",aU8_diasDaSemana,vU8_diasDaSemana);
@@ -870,275 +894,6 @@ String processor(const String& var) {
    // return fS_calculaBytes(FILESYS.totalBytes());
   }
   return String();
-}
-
-//========================================
-bool fB_configuraServidorWEB(const uint16_t& porta, bool force) {
-    bool resultado = false;
-
-    if (WiFi.status() == WL_CONNECTED) {
-        fV_imprimeSerial("Iniciando configuracao do servidor web na porta ", false);
-        if (!force) {
-          vI_U16_portaWebAsync = fU16_carregaConfigGeral(0,3,8080);
-          fV_imprimeSerial(vI_U16_portaWebAsync, false);
-          fV_imprimeSerial("...", false);
-          vU8_tempoRefresh = fU8_carregaConfigGeral(0,41,60);
-          VB_mostra_Status = fU8_carregaConfigGeral(0,48,60);
-          VB_mostra_Interm = fU8_carregaConfigGeral(0,49,60);
-        } else {
-          vI_U16_portaWebAsync = porta;
-          fV_imprimeSerial(vI_U16_portaWebAsync, false);
-          fV_imprimeSerial("...", false);
-          vB_emExecucaoWS = false;
-          delete SERVIDOR_WEB_ASYNC;          
-        }
-
-        // Liberar a memória se o servidor já estiver criado
-        if (SERVIDOR_WEB_ASYNC != nullptr) {
-          vB_emExecucaoWS = false;
-          delete SERVIDOR_WEB_ASYNC;
-        }
-        // Criar nova instância do servidor na porta configurada
-        SERVIDOR_WEB_ASYNC = new AsyncWebServer(vI_U16_portaWebAsync);
-
-        // ---- Conjunto basico pagina inicial ---- //
-        // Pagina inicial do acesso web ao esp32
-        SERVIDOR_WEB_ASYNC->on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-          //if(!request->authenticate(vS_userWeb.c_str(), vS_passWeb.c_str()) && vB_pedeAutentica) {
-          //  return request->requestAuthentication(); // Solicita autenticação
-          //} else {
-            f_handle_Index(request);
-          //}
-          //request->send(200, "text/plain", "Acesso SMCR!<br>Necessário autenticar");
-        });
-        // Faz logout do acesso web ao esp32
-        SERVIDOR_WEB_ASYNC->on("/logout", HTTP_GET, [](AsyncWebServerRequest * request) {
-          request->requestAuthentication();
-          request->send(401);
-        });
-        // ---- Fim do conjunto basico pagina inicial ---- //
-
-        // ---- Conjunto de cadastro de rede ---- //
-        // Configuracao de rede wifi, hostname, etc.
-        SERVIDOR_WEB_ASYNC->on("/conf_rede", HTTP_GET, [](AsyncWebServerRequest *request) {
-          f_handle_ConfiguraWifi(request);
-          //request->send(200, "text/html", "Configuração de Rede");
-        });
-        // Salvar informacoes do cadastro de rede
-        SERVIDOR_WEB_ASYNC->on("/salvar_rede", HTTP_POST, [](AsyncWebServerRequest *request) {
-            fV_salvarRede(request);
-        });
-        // ---- Fim do conjunto de cadastro de rede ---- //
-
-        // ---- Conjunto de cadastro de pinos ---- //
-        // Lista as portas (pinos) para escolha do pino para cadastro
-        SERVIDOR_WEB_ASYNC->on("/pinos", HTTP_GET, [](AsyncWebServerRequest *request) {
-            request->sendChunked("text/html", f_handle_ConfiguraPortas);
-        });
-        // Formulario para cadastro de pinos (portas)
-        SERVIDOR_WEB_ASYNC->on("/configurar_pino", HTTP_GET, [](AsyncWebServerRequest *request) {
-            fV_cadastraPino(request);
-        });
-        // Salvar informacoes do cadastro de pinos
-        SERVIDOR_WEB_ASYNC->on("/salvar_pinos", HTTP_POST, [](AsyncWebServerRequest *request) {
-            fV_salvarPinos(request);
-        });
-        // ---- Fim do conjunto de cadastro de pinos ---- //
-
-        // ---- Conjunto de cadastro de acoes ---- //
-        // Lista as acoes para escolha da acao para cadastro
-        SERVIDOR_WEB_ASYNC->on("/acoes", HTTP_GET, [](AsyncWebServerRequest *request) {
-            request->sendChunked("text/html", f_handle_ConfiguraAcoes);
-        });
-        // Formulario para cadastro de pinos (portas)
-        SERVIDOR_WEB_ASYNC->on("/configurar_acoes", HTTP_GET, [](AsyncWebServerRequest *request) {
-            fV_cadastraAcoes(request);
-        });
-        // Salvar informacoes do cadastro de pinos
-        SERVIDOR_WEB_ASYNC->on("/salvar_acoes", HTTP_POST, [](AsyncWebServerRequest *request) {
-            fV_salvarAcoes(request);
-        });
-        // ---- Fim do conjunto de cadastro de acoes ---- //
-
-        // ---- Conjunto de configuracao geral ---- //
-        // Configuracao de rede wifi, hostname, etc.
-        SERVIDOR_WEB_ASYNC->on("/conf_geral", HTTP_GET, [](AsyncWebServerRequest *request) {
-          f_handle_CadastroGeral(request);
-        });
-        // Salvar informacoes do cadastro de rede
-        SERVIDOR_WEB_ASYNC->on("/salvar_conf_geral", HTTP_POST, [](AsyncWebServerRequest *request) {
-            f_handle_salvarCadastroGeral(request);
-        });
-        // ---- Fim do conjunto de configuracao geral ---- //
-
-        // ---- Conjunto de cadastro de modulos ---- //
-        // Lista os modulos para escolha do modulos para cadastro
-        SERVIDOR_WEB_ASYNC->on("/modulos", HTTP_GET, [](AsyncWebServerRequest *request) {
-            request->sendChunked("text/html", f_handle_ConfiguraModulos);
-        });
-        // Formulario para cadastro de modulos
-        SERVIDOR_WEB_ASYNC->on("/configurar_modulo", HTTP_GET, [](AsyncWebServerRequest *request) {
-            fV_cadastraModulo(request);
-        });
-        // Salvar informacoes do cadastro do modulos
-        SERVIDOR_WEB_ASYNC->on("/salvar_intermodulos", HTTP_POST, [](AsyncWebServerRequest *request) {
-            fV_salvarInterModulos(request);
-        });        
-        // Salvar informacoes do cadastro de um modulo
-        SERVIDOR_WEB_ASYNC->on("/salvar_modulos", HTTP_POST, [](AsyncWebServerRequest *request) {
-            fV_salvarModulos(request);
-        });
-        // ---- Fim do conjunto de cadastro de modulos ---- //
-
-        // ---- Conjunto para confirmacoes de execucao pela web ---- //
-        // Usado para dialogo na interface web
-        SERVIDOR_WEB_ASYNC->on("/pergunta", HTTP_GET, [](AsyncWebServerRequest *request) {
-            String funcao = "";
-            bool redirecionar = false;
-            String pagina = "";
-
-            // Verifica se o parâmetro 'funcao' foi fornecido
-            if (request->hasParam("funcao")) {
-                funcao = request->getParam("funcao")->value();
-            } else {
-                funcao = "nenhuma função especificada"; // Mensagem de fallback
-            }
-
-            // Verifica se o parâmetro 'redirecionar' foi fornecido
-            if (request->hasParam("redirecionar")) {
-                String redirParam = request->getParam("redirecionar")->value();
-                redirecionar = (redirParam == "true");  // Converte para booleano
-            }
-            if (!redirecionar) {
-                pagina += fS_cabecaHTML("Pergunta", "Deseja executar esta ação?", "/");
-                pagina += "<br><br><label id='texto'>Executar a ação: " + funcao + "</label><br>";
-                pagina += "<form action='/resposta' method='post'>";
-                pagina += "<input type='hidden' name='funcao' value='" + funcao + "'>";
-                pagina += "<br><label for='confirmacao'>Digite 'Sim' para confirmar a ação:</label>";
-                pagina += "<input type='text' id='confirmacao' name='confirmacao'>";
-                pagina += "<input type='submit' value='Confirmar'>";
-                pagina += "</form>";
-                pagina += fS_rodapeHTML("/");
-            } else {
-                pagina += "<!DOCTYPE html>";
-                pagina += "<html lang='pt-br'>";
-                pagina += "<head>";
-                pagina += "<meta charset='UTF-8'>";
-                pagina += "<meta http-equiv='refresh' content='15000; URL=/'>";
-                pagina += "<script>setTimeout(function(){ window.location = '/'; }, 15000);</script>";                
-                pagina += "<meta name='viewport' content='width=device-width, initial-scale=1.0' />";
-                pagina += "<title>"+vS_nomeDispositivo+" - Pergunta</title>";
-                pagina += "</head>";
-                pagina += "<body id='body'>";
-                pagina += "<h1>Deseja executar esta ação?</h1>";
-                pagina += "<br><a href='https://github.com/rede-analista/smcr/' target='_blank'>Ajuda</a>";
-                pagina += "<br><a href=\"/\">Página Inicial</a>";
-                pagina += "<p>Você será redirecionado para página inicial em 15 segundos.</p>";                
-                pagina += "<form action='/resposta' method='post'>";
-                pagina += "<input type='hidden' name='funcao' value='" + funcao + "'>";
-                pagina += "<br><label for='confirmacao'>Digite 'Sim' para confirmar a ação:</label>";
-                pagina += "<input type='text' id='confirmacao' name='confirmacao'>";
-                pagina += "<input type='submit' value='Confirmar'>";
-                pagina += "</form>";
-                pagina += fS_rodapeHTML("/");                
-            }
-
-            request->send(200, "text/html", pagina);
-        });
-        // Usado para executar funcao conforme resposta do dialogo na interface web
-        SERVIDOR_WEB_ASYNC->on("/resposta", HTTP_POST, [](AsyncWebServerRequest *request){
-            fV_resposta(request);
-        });
-        // ---- Fim do conjunto para confirmacoes de execucao pela web ---- //
-
-        // ---- Conjunto para gerenciamento de arquivos ---- //
-        // Pagina de gerenciamento de arquivos
-        SERVIDOR_WEB_ASYNC->on("/files", HTTP_GET, [](AsyncWebServerRequest *request) {
-          request->send_P(200, "text/html", index_html, processor);
-        });
-        // Faz upload de arquivos para LittleFS (FILESYS)
-        SERVIDOR_WEB_ASYNC->on("/upload", HTTP_POST, [](AsyncWebServerRequest *request) {
-            request->send(200, "text/plain", "Upload successful");
-        }, handleFileUpload);
-        // Lista arquivos do LittleFS (FILESYS)
-        SERVIDOR_WEB_ASYNC->on("/fS_listaArquivosFilesys", HTTP_GET, [](AsyncWebServerRequest *request) {
-          request->send(200, "text/plain", fS_listaArquivosFilesys(true));
-        });    
-        // Manipula arquivos do LittleFS (FILESYS), download, delete e lista
-        SERVIDOR_WEB_ASYNC->on("/file", HTTP_GET, [](AsyncWebServerRequest *request) {
-          if (request->hasParam("name") && request->hasParam("action")) {
-              String fileName = request->getParam("name")->value();
-              String fileAction = request->getParam("action")->value();
-              // Garantir que o nome do arquivo comece com "/"
-              if (!fileName.startsWith("/")) {
-                  fileName = "/" + fileName;
-              }
-              if (!FILESYS.exists(fileName)) {
-                  request->send(400, "text/plain", "ERROR: arquivo nao existe");
-              } else {
-                  if (fileAction == "download") {
-                      request->send(FILESYS, fileName, "application/octet-stream");
-                  } else if (fileAction == "delete") {
-                      FILESYS.remove(fileName);
-                      String html = fS_cabecaHTML("Gerência de Arquivos","Apagar Arquivos","/files");
-                      html += "Arquivo apagado: ";
-                      html += fileName;
-                      html += "<br>";
-                      html += fS_rodapeHTML("/files");
-                      request->send(200, "text/html", html);
-                  } else {
-                      request->send(400, "text/plain", "ERROR: parametro de acao invalido fornecido");
-                  }
-              }
-          } else {
-              request->send(400, "text/plain", "ERROR: nome e parametros de acao necessarios");
-          }
-
-        });
-        // ---- Fim do conjunto para gerenciamento de arquivos ---- //
-
-        // ---- Abre pagina de monitoramento da Serial ---- //
-        SERVIDOR_WEB_ASYNC->on("/serial", HTTP_GET, [](AsyncWebServerRequest *request) {
-          f_handle_SerialOutput(request);
-        });
-
-        // Abre opcoes para configuracoes gerais do programa
-        SERVIDOR_WEB_ASYNC->on("/configurag", HTTP_GET, [](AsyncWebServerRequest *request) {
-          f_handle_OpcoesGerais(request);
-        });
-
-        // Abre opcoes para executar funcoes do programa
-        SERVIDOR_WEB_ASYNC->on("/execfuncoes", HTTP_GET, [](AsyncWebServerRequest *request) {
-          f_handle_OpcoesFuncoes(request);
-        });
-
-        // Recebe dados do intermodulos
-        SERVIDOR_WEB_ASYNC->on("/dados", HTTP_GET, [](AsyncWebServerRequest *request) {
-          fV_recebeDados(request);
-        });
-
-        // Menssagem quando a pagina solicitada nao e encontrada
-        SERVIDOR_WEB_ASYNC->onNotFound([](AsyncWebServerRequest *request) {
-          f_handle_NotFound(request);
-          //request->send(200, "text/html", "Pagina nao encontrada");
-        });
-
-        // Iniciar o servidor
-        if (SERVIDOR_WEB_ASYNC != nullptr) {
-            ws = new AsyncWebSocket("/ws");
-            ws->onEvent(fV_onEvent);
-            SERVIDOR_WEB_ASYNC->addHandler(ws);
-            SERVIDOR_WEB_ASYNC->begin();
-            resultado = true;
-            vB_emExecucaoWS = true;
-            fV_imprimeSerial(" OK", true);
-        } else {
-            fV_imprimeSerial(" ERRO", true);
-        }   
-    } else {
-        fV_imprimeSerial("Erro na conexao WiFi. Servidor web nao configurado.", true);
-    }
-  return resultado;
 }
 
 //========================================
@@ -1199,7 +954,7 @@ void fV_iniciaPreference(bool force) {
   vU8_bitsProc = fU8_carregaConfigGeral(0,45,12);
   vU8_ciclosAmostra = fU8_carregaConfigGeral(0,46,8);
   vU8_colunasTabelas = fU8_carregaConfigGeral(0,40,7);
-  vU8_totTask = fU8_carregaConfigGeral(0,50,1);
+  vU8_totTask = fU8_carregaConfigGeral(0,50,5);
 }
 
 //========================================
@@ -1291,11 +1046,11 @@ void fV_modoAP(String wifi, String senha, uint16_t portaap) {
   SERVIDOR_WEB_ASYNC = new AsyncWebServer(portaap);
 
   // Cadastro inicial do WIFI necesita os dois metodos GET e POST
-  SERVIDOR_WEB_ASYNC->on("/wifiinicio", HTTP_GET, [](AsyncWebServerRequest *request) {
+  SERVIDOR_WEB_ASYNC->on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
     f_handle_ConfiguraWifiInicio(request);
     request->send(200, "text/html", "Configuracao Inicial do Wifi");
   });
-  SERVIDOR_WEB_ASYNC->on("/wifiinicio", HTTP_POST, [](AsyncWebServerRequest *request) {
+  SERVIDOR_WEB_ASYNC->on("/", HTTP_POST, [](AsyncWebServerRequest *request) {
     f_handle_SalvarWifiInicio(request);
   });
 
@@ -1311,7 +1066,7 @@ void fV_modoAP(String wifi, String senha, uint16_t portaap) {
   fV_imprimeSerial(WiFi.softAPIP().toString(), false);
   fV_imprimeSerial(":", false);
   fV_imprimeSerial(portaap, false);
-  fV_imprimeSerial("/wifiinicio pelo navegador para configurar o SSID e SENHA na placa " + vS_nomeDispositivo, true);
+  fV_imprimeSerial("/ pelo navegador para configurar o SSID e SENHA na placa " + vS_nomeDispositivo, true);
 
   // Loop de espera enquanto o modo AP está ativo
   while (1) {
@@ -1332,9 +1087,9 @@ uint8_t fU8_configuraWifi() {
         vS_nomeWifi = fS_carregaConfigGeral(0,0,"wifi"); //SSID da sua rede wifi (rede que essa placa ESP vai conectar)
         vS_senhaWifi = fS_carregaConfigGeral(0,1,"12345678"); //Senha da sua rede wifi (rede que essa placa ESP vai conectar)
         vU8_tentativaConexoes = fU8_carregaConfigGeral(0,2,4); //Tentativas de conexoes diversas antes de seguir com o boot(para nao ficar parado durante o boot esperando conetar em outros recursos)
-        vI_U16_portaWebAsync = fU16_carregaConfigGeral(0,3,8080); //Porta do servidor web desta placa ESP
+        vI_U16_portaWebAsync = fU16_carregaConfigGeral(0,3,4080); //Porta do servidor web desta placa ESP
         vS_nomeDispositivo = fS_carregaConfigGeral(0,4,"esp32modularx"); //Hostname desta placa ESP na rede    
-        vS_nomeAP_Wifi = fS_carregaConfigGeral(0,7,vS_nomeDispositivo) + " Ponto de Acesso"; //Nome do wifi (SSID) que sera gerado se esta placa ESP entrar em modo AP
+        vS_nomeAP_Wifi = fS_carregaConfigGeral(0,7,vS_nomeDispositivo+"_"+vS_mqttIdUnico); //Nome do wifi (SSID) que sera gerado se esta placa ESP entrar em modo AP
         vS_senhaAP_Wifi = fS_carregaConfigGeral(0,8, "senha12345678"); //Senha do wifi que sera gerado se esta placa ESP entrar em modo AP
         vB_modoAP = fB_carregaConfigGeral(0,9, true); //Se true esta placa ESP entra em modo AP caso nao consiga conectar no wifi definido em vS_nomeWifi
         vS_ntpServer1 = fS_carregaConfigGeral(0,10, "pool.ntp.br"); // Servidor NTP para sincronismo de horario
@@ -1408,22 +1163,23 @@ String fS_listaArquivosFilesys(bool ishtml) {
     }
 
     File foundfile = root.openNextFile();
-  
+
+    // Adicionar informações sobre o sistema de arquivos
+    returnText += "<BR>" + fS_calculaBytes(FILESYS.totalBytes()) + " de tamanho total do sistema de arquivos<BR>";
+    returnText += fS_calculaBytes(FILESYS.usedBytes()) + " usados, incluindo a estrutura de diretórios<BR>";
+
     // Verificar se a saída será em HTML
     if (ishtml) {
-        returnText += "<table border='1' cellpadding='5' cellspacing='0'><tr><th align='left'>Nome</th><th align='left'>Tamanho</th><th>Download</th><th>Excluir</th></tr>";
+        returnText += "<form method='POST' action='/manage-files'>"; // Formulário único para download e exclusão
+        returnText += "<table border='1' cellpadding='5' cellspacing='0'><tr><th align='left'>Nome</th><th align='left'>Tamanho</th><th>Selecionar</th></tr>";
     }
 
-    // Iterar sobre os arquivos no diretório 
+    // Iterar sobre os arquivos no diretório
     while (foundfile) {
         if (ishtml) {
             returnText += "<tr align='left'><td>" + String(foundfile.name()) + "</td><td>" + fS_calculaBytes(foundfile.size()) + "</td>";
-            // Botão de download
-            returnText += "<td><button onclick=\"window.location.href='/file?name=" + String(foundfile.name()) + "&action=download'\">Download</button></td>";
-            // Botão de exclusão
-            returnText += "<td><button onclick=\"window.location.href='/file?name=" + String(foundfile.name()) + "&action=delete'\">Excluir</button></td></tr>";
-        } else {
-            returnText += "Arquivo: " + String(foundfile.name()) + " Tamanho: " + fS_calculaBytes(foundfile.size()) + "\n";
+            // Checkbox para seleção do arquivo
+            returnText += "<td><input type='checkbox' name='files' value='" + String(foundfile.name()) + "'></td></tr>";
         }
         foundfile = root.openNextFile();  // Próximo arquivo
     }
@@ -1432,10 +1188,13 @@ String fS_listaArquivosFilesys(bool ishtml) {
     root.close();
     foundfile.close();
 
-    // Adicionar informações sobre o sistema de arquivos
-    returnText += "<BR>" + fS_calculaBytes(FILESYS.totalBytes()) + " de tamanho total do sistema de arquivos<BR>";
-    returnText += fS_calculaBytes(FILESYS.usedBytes()) + " usados, incluindo a estrutura de diretórios<BR>";
-    
+    // Adicionar botões para Download e Excluir
+    if (ishtml) {
+        returnText += "</table>"; // Fechamento da tabela
+        returnText += "<button type='submit' name='action' value='download'>Download Selecionados</button>"; // Botão de download
+        returnText += "<button type='submit' name='action' value='delete'>Excluir Selecionados</button>"; // Botão de exclusão
+        returnText += "</form>"; // Fechamento do formulário
+    }
     return returnText;
 }
 
@@ -2078,7 +1837,9 @@ void fV_imprimirArray2D_U16(uint16_t** array, size_t rows, size_t cols, bool lin
 
                 // Somente imprime a vírgula se não for o último elemento
                 if (j < cols - 1) {
-                    fV_imprimeSerial(",", false);
+                  fV_imprimeSerial(",", false);
+                } else {
+                    fV_imprimeSerial("/", false);
                 }
             }
         }
@@ -2087,6 +1848,7 @@ void fV_imprimirArray2D_U16(uint16_t** array, size_t rows, size_t cols, bool lin
             fV_imprimeSerial("");
         }
     }
+    fV_imprimeSerial("");
 }
 
 //========================================//

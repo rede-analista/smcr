@@ -244,12 +244,12 @@
 
      aU16_Pinos[Propriedade][Pino]
      aU16_Pinos[0][x] = Fisico - Mapeamento dos pinos fisicos
-     aU16_Pinos[1][x] = Tipo 1=DIGITAL / 0=ANALOGICO / 254=REMOTO
-     aU16_Pinos[2][x] = Modo INPUT=1 / OUTPUT=3 / PULLUP=4 / INPUT_PULLUP=5 / PULLDOWN=8 / INPUT_PULLDOWN=9 / OPEN_DRAIN=10 / OUTPUT_OPEN_DRAIN=12 / REMOTO=254
+     aU16_Pinos[1][x] = Tipo 1=DIGITAL / 0=ANALOGICO / 65534=REMOTO
+     aU16_Pinos[2][x] = Modo INPUT=1 / OUTPUT=3 / PULLUP=4 / INPUT_PULLUP=5 / PULLDOWN=8 / INPUT_PULLDOWN=9 / OPEN_DRAIN=10 / OUTPUT_OPEN_DRAIN=12 / REMOTO=65534
      aU16_Pinos[3][x] = Invertido(XOR) 1=SIM / 0=NAO
      aU16_Pinos[4][x] = Status 0=LOW / 1=HIGH
      aU16_Pinos[5][x] = Retencao 0=NAO / 1=SIM
-     aU16_Pinos[6][x] = Tempo Retencao 0 a 255
+     aU16_Pinos[6][x] = Tempo Retencao 0 a 65535
 
      size_t vU8_totPinos = 5
      size_t vI8_aU16_Pinos = 6
@@ -315,7 +315,7 @@
      aS_Preference[0][4] = "esp32modularx" = Hostname do módulo.
      aS_Preference[0][5] = "admin" = Usuário de acesso a interface web.
      aS_Preference[0][6] = "admin" = Senha de acesso a interface web.
-     aS_Preference[0][7] = aS_Preference[0][4] + " Ponto de Acesso" = Nome do ponto de acesso(SSID) para primeira configuraçao.
+     aS_Preference[0][7] = aS_Preference[0][4] + "_" + vS_mqttIdUnico = Nome do ponto de acesso(SSID) para primeira configuraçao.
      aS_Preference[0][8] = "senha12345678" = Senha do ponto de acesso para primeira configuração.
      aS_Preference[0][9] = "true" = Habilita modo AP(ponto de acesso) caso não consiga conectar no wifi.
      aS_Preference[0][10] = "pool.ntp.br" = Servidor NTP.
