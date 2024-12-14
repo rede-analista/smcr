@@ -23,6 +23,9 @@
 #include <AsyncWebSocket.h>
 #include <variant>
 #include <string.h>
+//#define DEST_FS_USES_LITTLEFS
+//#include <ESP32-targz.h>
+
 
 #include "globals.h"
 #define MAX_JSON_SIZE 6000
@@ -39,6 +42,12 @@
 #define FILESYS LittleFS
 #ifndef ESP32
 #define ESP32
+
+#ifdef ESP32
+  GZUnpacker->setPsram(true);
+#endif
+
+
 #endif
 
 
@@ -47,6 +56,9 @@ bool initFS(bool format, bool force);
 
 /*---- Declaracao de Funcoes ----*/
 void fV_mapaFuncoes();
+void compactarArquivos(AsyncWebServerRequest* request, String arquivos);
+void handleFileDownload(AsyncWebServerRequest *request);
+void handleFileDelete(AsyncWebServerRequest *request);
 void fV_recebeDados(AsyncWebServerRequest *request);
 uint16_t fU16_retornaIndicePino(uint16_t pino);
 uint8_t fU8_retornaIndiceHS(String modulo);

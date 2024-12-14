@@ -25,26 +25,26 @@ void fV_recebeDados(AsyncWebServerRequest *request) {
       Serial.println("Recebido dados da placa " + request->arg((size_t)0));
       switch (request->arg(1).toInt()) {
         case 0: // Parametro acao = 0(Nenhuma)
-          aI16_ControlHS[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
+          aI16_InterMod_CTRL_HandShake[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
           aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = request->arg(3).toInt();
           validacao = "OK_DADO_RECEBIDO";
           break;
         case 65534: // Parametro acao = 65534(status)
-          aI16_ControlHS[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
-          aI16_ControlHS[1][fU8_retornaIndiceHS(request->arg((size_t)0))] = request->arg(3).toInt();
+          aI16_InterMod_CTRL_HandShake[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
+          aI16_InterMod_CTRL_HandShake[1][fU8_retornaIndiceHS(request->arg((size_t)0))] = request->arg(3).toInt();
           aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = request->arg(3).toInt();
           vB_envia_Historico = true;
           validacao = "OK_DADO_RECEBIDO";
           break;
         case 65535: // Parametro acao = 65535(sincronismo)
-          aI16_ControlHS[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
-          aI16_ControlHS[1][fU8_retornaIndiceHS(request->arg((size_t)0))] = request->arg((size_t)0).toInt();
-          aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = aI16_ControlHS[1][fU8_retornaIndiceHS(request->arg((size_t)0))];
+          aI16_InterMod_CTRL_HandShake[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
+          aI16_InterMod_CTRL_HandShake[1][fU8_retornaIndiceHS(request->arg((size_t)0))] = request->arg((size_t)0).toInt();
+          aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = aI16_InterMod_CTRL_HandShake[1][fU8_retornaIndiceHS(request->arg((size_t)0))];
           validacao = "OK_DADO_RECEBIDO";
           break;
         default:
-          aI16_ControlHS[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
-          aI16_ControlHS[1][fU8_retornaIndiceHS(request->arg((size_t)0))] = 0;
+          aI16_InterMod_CTRL_HandShake[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
+          aI16_InterMod_CTRL_HandShake[1][fU8_retornaIndiceHS(request->arg((size_t)0))] = 0;
           aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = request->arg(3).toInt();
           validacao = "OK_DADO_RECEBIDO";
           break;
@@ -304,7 +304,7 @@ void f_handle_CadastroGeral(AsyncWebServerRequest *request) {
     // Linha para quantidade de tasks
     html += "<tr>";
     html += "<td><label for='id_tottask'>Total de Tasks em execução (de 0 a 5):<br> 0=Desligado / 5=Todas </label></td>";
-    html += "<td><input type='text' style='background-color: LightGrey' name='TOTTASK' maxlength='6' size='6' id='id_tottask' value='" + String(vU8_totTask) + "' required ></td>";
+    html += "<td><input type='text' style='background-color: Red' name='TOTTASK' maxlength='6' size='6' id='id_tottask' value='" + String(vU8_totTask) + "' required ></td>";
     html += "</tr>";
 
     html += "</table>";    
@@ -475,188 +475,6 @@ void f_handle_OpcoesGerais(AsyncWebServerRequest *request) {
 }
 
 //========================================
-void f_handle_Index(AsyncWebServerRequest *request) {
-    String html;
-    html += "<!DOCTYPE html>";
-    html += "<html lang='pt-br'>";
-    html += "<head>";
-    html += "<meta charset='UTF-8'>";
-    html += "<meta name='viewport' content='width=device-width, initial-scale=1.0' />";
-    if (VB_mostra_Status) {
-        html += "<meta http-equiv='refresh' content='"+String(vU8_tempoRefresh)+"'>";
-    }
-    html += "<title>Módulo: "+vS_nomeDispositivo+"</title>";
-    html += "</head>";
-    html += "<body>";
-    html += "<center><h1>PÁGINA STATUS [" + vS_nomeDispositivo + "]</h1>Seu ip é: ";
-    html += request->client()->remoteIP().toString();
-    html += " , ";
-    html += fS_DataHora();
-    html += "<br>Uptime: ";
-    html += fS_Uptime();
-    html += "<br>";
-    if (!vB_rodando) {
-        html += "<br><br><br><br><br><br><center><h1>!!! SISTEMA INICIANDO !!!</h1></center>";
-    } else {
-        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/configurag'> Geral</a> - ";
-        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/pinos'> Pinos</a> - ";
-        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/acoes'> Ações</a> - ";
-        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/execfuncoes'> Funções</a> - ";
-        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/files'> Arquivos</a> - ";
-        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/logout'> Sair</a> - ";
-        html += "<a href='https://github.com/rede-analista/smcr/tree/main' target='_blank'>Ajuda</a></center>";
-
-        if (VB_mostra_Status && vB_rodando) {
-            html += "<h2>PINOS(Portas)</h2>";
-            vU16_linhaPagCad = vU8_totPinos/vU8_colunasTabelas;
-            vU8_colINICIO = 0;
-            vU8_colFIM = vU8_colunasTabelas;
-
-            html += "(Usado(s): "+String(vU8_PinosCadastrados)+" de "+String(vU8_totPinos)+" pino(s))";
-            html += "<br>(Refresh a cada "+String(vU8_tempoRefresh)+"/s)";
-            html += "<table border='1'>";
-            while (vU16_linhaPagCad >= 0) {
-                html += "    <tr>";
-                html += "        <td style='background-color: LightGrey'><center>Nome</center></td>";
-                for (uint8_t z=vU8_colINICIO; z<vU8_colFIM; z++) {
-                    html += "        <td><center>"+String(aS8_Pinos[0][z])+"</center></td>";
-                }
-                html += "    </tr>";
-                html += "    <tr>";
-                html += "        <td style='background-color: LightGrey'><center>Pino</center></td>";
-                for (uint8_t a=vU8_colINICIO; a<vU8_colFIM; a++) {
-                    if (aU16_Pinos[0][a] > 0) {
-                        html += "<td><center>"+String(aU16_Pinos[0][a])+"</center></td>";
-                    } else {
-                        html += "<td><center></center></td>";
-                    }
-                }
-                html += "    </tr>";
-                html += "        <td style='background-color: LightGrey'><center>Status</center></td>";
-                for (uint8_t b=vU8_colINICIO; b<vU8_colFIM; b++) {
-                    if (aU16_Pinos_Status[0][b] >= aU16_Pinos[4][b] && aU16_Pinos[0][b] > 0) {
-                        html += "        <td style='background-color:"+vS_corStatus1+"'><center>"+String(aU16_Pinos_Status[0][b])+"</center></td>";
-                    } else if (aU16_Pinos_Status[0][b] < aU16_Pinos[4][b] && aU16_Pinos[0][b] > 0) {
-                        html += "        <td style='background-color:"+vS_corStatus0+"'><center>"+String(aU16_Pinos_Status[0][b])+"</center></td>";
-                    } else {
-                        html += "        <td><center></center></td>";
-                    }
-                }
-                html += "<tr>";
-                html += "<td colspan='"+String(vU8_colunasTabelas+1)+"' style='background-color: LightGrey'>&nbsp</td>";
-                html += "</tr>";
-                vU16_linhaPagCad--;
-                if (vU16_linhaPagCad > 0) {
-                    vU8_colINICIO = vU8_colFIM;
-                    vU8_colFIM = vU8_colFIM+vU8_colunasTabelas;
-                } else {
-                    vU8_colINICIO = vU8_colFIM;
-                    vU8_colFIM = vU8_totPinos;
-                }
-            }
-            html += "</table><br>";
-        } // if (VB_mostra_Status) {            
-        if (vB_exec_Modulos && VB_mostra_Interm) {
-            html += "<h2>COMUNICAÇÃO ENTRE MÓDULOS</h2>";
-            html += "Ciclo Handshake: ";
-            html += String(vI_cicloHandshake);
-            html += "<br> Alerta Handshake";
-            html += "<table border='1'>";
-            html += "<tr>";
-            html += "<td style='background-color: LightGrey'><center>Módulo</center></td>";
-            for (uint8_t z=0; z<vU8_totPinos; z++) {
-                if (aS_InterMod[0][z].length() > 0 && aU16_InterMod[0][z] > 0) {
-                    html += "        <td><center>"+aS_InterMod[0][z]+"</center></td>";
-                }
-            }
-            html += "</tr>";
-            for (uint8_t x=0; x<vI8_aU16_InterModHA; x++) {
-                html += "    <tr>";
-                html += "    <td style='background-color: LightGrey'><center>"+aS16_InterModHA[0][x]+"</center></td>";
-                for (uint8_t y=0; y<vU8_totPinos; y++) {
-                    if (aS_InterMod[0][y].length() > 0) {
-                        if (x == 1) {
-                            if (aI16_ControlHS[x][y] && aU16_InterMod[0][y] > 0) {
-                                html += "        <td style='background-color:"+vS_corStatus1+"'><center>"+String(aI16_ControlHS[x][y])+"</center></td>";
-                            } else {
-                                if (aU16_InterMod[0][y] > 0) {
-                                    html += "        <td style='background-color:"+vS_corStatus0+"'><center>"+String(aI16_ControlHS[x][y])+"</center></td>";
-                                } else {
-                                    html += "        <td ><center>-</td>";
-                                }
-                            }
-                        } else if (x == 3) {
-                            if (aI16_ControlHS[x][y] >= vU8_tentativaConexoes) {
-                                html += "        <td style='background-color:"+vS_corStatus1+"'><center>"+String(aI16_ControlHS[x][y])+"</center></td>";
-                            } else {
-                                html += "        <td style='background-color:"+vS_corStatus0+"'><center>"+String(aI16_ControlHS[x][y])+"</center></td>";
-                            }
-                        } else {
-                            html += "        <td ><center>"+String(aI16_ControlHS[x][y])+"</td>";
-                        }
-                    }
-                }
-                html += "</tr>";
-            }
-            html += "</table><br>";
-            html += "<p>Último recebido: (Módulo:";
-            if (vU16_ulimoModRecebido > 0) {
-                html += String(aU16_InterMod[0][vU16_ulimoModRecebido]);
-                html += ") - ";
-                html += aS_InterMod[0][vU16_ulimoModRecebido];
-            } else {
-                html += ")";
-            }
-            html += "<br>";
-            html += vS_payrec;
-            html += "<br>";
-            html += "<p>Último enviado: (Módulo:";
-            if (vU8_ultimoModEnviado > 0) {
-                html += String(vU8_ultimoModEnviado);
-                html += ") - ";
-                html += aS_InterMod[0][fU16_retornaIndiceModulo(vU8_ultimoModEnviado)];
-            } else {
-                html += ")";
-            }
-            html += GET_SERVIDOR;
-            if (vI_httpResponseCode == 200) {
-              html += "<div id='idpayload' style='background-color: lightgreen'>";
-            } else if (vI_httpResponseCode == 404) {
-              html += "<div id='idpayload' style='background-color: lightred'>";
-            } else {
-              html += "<div id='idpayload' style='background-color: lightyellow'>";
-            }
-            html += "Resposta: ";
-            html += String(vI_httpResponseCode);
-            html += "<br>";
-            html += vS_payload;
-            html += "</div>";
-            html += "<br><hr>";
-            html += "<h5>Histórico</h5>";
-            html += "<br>Últimos envios:<br>";
-            html += ULTIMOS_GET_SERVIDOR;
-            html += "<br><br>Últimos recebidos:<br>";
-            html += ULTIMOS_GET_RECEBIDOS;
-            html += "<h5>Fila Enviar Módulos</h5>";
-            for (uint8_t x=0; x<vI8_aU8_ControlMsgHist; x++){
-              html += "Índice "+String(x);
-              html += " = {";
-              for (uint8_t y=0; y<vU8_totPinos; y++) {
-                html += aU16_ControlMsgModHist[x][y];
-                if (y < vU8_totPinos-1) {
-                  html += ",";
-                }
-              }
-              html += "} (" + aS8_ControlMsgModHist[0][x] + ")<br>";
-            }
-        }
-    }
-    html += "</body>";
-    html += "</html>";
-    request->send(200, "text/html", html);
-}
-
-//========================================
 void f_handle_SalvarWifiInicio(AsyncWebServerRequest *request) {
     fV_imprimeSerial("Atualizando informacoes Wifi...", true);
 
@@ -753,3 +571,560 @@ void f_handle_NotFound(AsyncWebServerRequest *request) {
   request->send(404, "text/html", html);
 }
 
+/*========================================
+Funcao para montagem da pagina
+*/
+void f_handle_Index(AsyncWebServerRequest *request) {
+    String html;
+    html += "<!DOCTYPE html>";
+    html += "<html lang='pt-br'>";
+    html += "<head>";
+    html += "<meta charset='UTF-8'>";
+    html += "<meta name='viewport' content='width=device-width, initial-scale=1.0' />";
+    if (VB_mostra_Status) {
+        html += "<meta http-equiv='refresh' content='"+String(vU8_tempoRefresh)+"'>";
+    }
+    html += "<title>Módulo: "+vS_nomeDispositivo+"</title>";
+    html += "</head>";
+    html += "<body>";
+    html += "<center><h1>PÁGINA STATUS [" + vS_nomeDispositivo + "]</h1>Seu ip é: ";
+    html += request->client()->remoteIP().toString();
+    html += " , ";
+    html += fS_DataHora();
+    html += "<br>Uptime: ";
+    html += fS_Uptime();
+    html += "<br>";
+    if (!vB_rodando) {
+        html += "<br><br><br><br><br><br><center><h1>!!! SISTEMA INICIANDO !!!</h1></center>";
+    } else {
+        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/configurag'> Geral</a> - ";
+        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/pinos'> Pinos</a> - ";
+        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/acoes'> Ações</a> - ";
+        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/execfuncoes'> Funções</a> - ";
+        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/files'> Arquivos</a> - ";
+        html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/logout'> Sair</a> - ";
+        html += "<a href='https://github.com/rede-analista/smcr/tree/main' target='_blank'>Ajuda</a></center>";
+
+        if (VB_mostra_Status && vB_rodando) {
+            html += "<h2>PINOS(Portas)</h2>";
+            vU16_linhaPagCad = vU8_totPinos/vU8_colunasTabelas;
+            vU8_colINICIO = 0;
+            vU8_colFIM = vU8_colunasTabelas;
+
+            html += "(Usado(s): "+String(vU8_PinosCadastrados)+" de "+String(vU8_totPinos)+" pino(s))";
+            html += "<br>(Refresh a cada "+String(vU8_tempoRefresh)+"/s)";
+            html += "<table border='1'>";
+            while (vU16_linhaPagCad >= 0) {
+                html += "    <tr>";
+                html += "        <td style='background-color: LightGrey'><center>Nome</center></td>";
+                for (uint8_t z=vU8_colINICIO; z<vU8_colFIM; z++) {
+                    html += "        <td><center>"+String(aS8_Pinos[0][z])+"</center></td>";
+                }
+                html += "    </tr>";
+                html += "    <tr>";
+                html += "        <td style='background-color: LightGrey'><center>Pino</center></td>";
+                for (uint8_t a=vU8_colINICIO; a<vU8_colFIM; a++) {
+                    if (aU16_Pinos[0][a] > 0) {
+                        html += "<td><center>"+String(aU16_Pinos[0][a])+"</center></td>";
+                    } else {
+                        html += "<td><center></center></td>";
+                    }
+                }
+                html += "    </tr>";
+                html += "        <td style='background-color: LightGrey'><center>Status</center></td>";
+                for (uint8_t b=vU8_colINICIO; b<vU8_colFIM; b++) {
+                    if (aU16_Pinos_Status[0][b] >= aU16_Pinos[4][b] && aU16_Pinos[0][b] > 0) {
+                        html += "        <td style='background-color:"+vS_corStatus1+"'><center>"+String(aU16_Pinos_Status[0][b])+"</center></td>";
+                    } else if (aU16_Pinos_Status[0][b] < aU16_Pinos[4][b] && aU16_Pinos[0][b] > 0) {
+                        html += "        <td style='background-color:"+vS_corStatus0+"'><center>"+String(aU16_Pinos_Status[0][b])+"</center></td>";
+                    } else {
+                        html += "        <td><center></center></td>";
+                    }
+                }
+                html += "<tr>";
+                html += "<td colspan='"+String(vU8_colunasTabelas+1)+"' style='background-color: LightGrey'>&nbsp</td>";
+                html += "</tr>";
+                vU16_linhaPagCad--;
+                if (vU16_linhaPagCad > 0) {
+                    vU8_colINICIO = vU8_colFIM;
+                    vU8_colFIM = vU8_colFIM+vU8_colunasTabelas;
+                } else {
+                    vU8_colINICIO = vU8_colFIM;
+                    vU8_colFIM = vU8_totPinos;
+                }
+            }
+            html += "</table><br>";
+        } // if (VB_mostra_Status) {            
+        
+        if (vB_exec_Modulos && VB_mostra_Interm) {
+            html += "<h2>COMUNICAÇÃO ENTRE MÓDULOS</h2>";
+            html += "Ciclo Handshake: ";
+            html += String(vI_cicloHandshake);
+            html += "<br> Alerta Handshake";
+            html += "<table border='1'>";
+            html += "<tr>";
+            html += "<td style='background-color: LightGrey'><center>Módulo</center></td>";
+            for (uint8_t z=0; z<vU8_totModulos; z++) {
+                if (aS_InterMod[0][z].length() > 0 && aU16_InterMod[0][z] > 0) {
+                    html += "        <td><center>"+aS_InterMod[0][z]+"</center></td>";
+                }
+            }
+            html += "</tr>";
+            for (uint8_t x=0; x<vI8_aU16_InterModHA; x++) {
+                html += "    <tr>";
+                html += "    <td style='background-color: LightGrey'><center>"+aS16_InterModMenu_CTRL_HandShake[0][x]+"</center></td>";
+                for (uint8_t y=0; y<vU8_totModulos; y++) {
+                    if (aS_InterMod[0][y].length() > 0) {
+                        if (x == 1) {
+                            if (aI16_InterMod_CTRL_HandShake[x][y] && aU16_InterMod[0][y] > 0) {
+                                html += "        <td style='background-color:"+vS_corStatus1+"'><center>"+String(aI16_InterMod_CTRL_HandShake[x][y])+"</center></td>";
+                            } else {
+                                if (aU16_InterMod[0][y] > 0) {
+                                    html += "        <td style='background-color:"+vS_corStatus0+"'><center>"+String(aI16_InterMod_CTRL_HandShake[x][y])+"</center></td>";
+                                } else {
+                                    html += "        <td ><center>-</td>";
+                                }
+                            }
+                        } else if (x == 3) {
+                            if (aI16_InterMod_CTRL_HandShake[x][y] >= vU8_tentativaConexoes) {
+                                html += "        <td style='background-color:"+vS_corStatus1+"'><center>"+String(aI16_InterMod_CTRL_HandShake[x][y])+"</center></td>";
+                            } else {
+                                html += "        <td style='background-color:"+vS_corStatus0+"'><center>"+String(aI16_InterMod_CTRL_HandShake[x][y])+"</center></td>";
+                            }
+                        } else {
+                            html += "        <td ><center>"+String(aI16_InterMod_CTRL_HandShake[x][y])+"</td>";
+                        }
+                    }
+                }
+                html += "</tr>";
+            }
+            html += "</table><br>";
+            html += "<p>Último recebido: (Módulo:";
+            if (vU16_ulimoModRecebido > 0) {
+                html += String(aU16_InterMod[0][vU16_ulimoModRecebido]);
+                html += ") - ";
+                html += aS_InterMod[0][vU16_ulimoModRecebido];
+            } else {
+                html += ")";
+            }
+            html += "<br>";
+            html += vS_payrec;
+            html += "<br>";
+            html += "<p>Último enviado: (Módulo:";
+            if (vU8_ultimoModEnviado > 0) {
+                html += String(vU8_ultimoModEnviado);
+                html += ") - ";
+                html += aS_InterMod[0][fU16_retornaIndiceModulo(vU8_ultimoModEnviado)];
+            } else {
+                html += ")";
+            }
+            html += GET_SERVIDOR;
+            if (vI_httpResponseCode == 200) {
+              html += "<div id='idpayload' style='background-color: lightgreen'>";
+            } else if (vI_httpResponseCode == 404) {
+              html += "<div id='idpayload' style='background-color: lightred'>";
+            } else {
+              html += "<div id='idpayload' style='background-color: lightyellow'>";
+            }
+            html += "Resposta: ";
+            html += String(vI_httpResponseCode);
+            html += "<br>";
+            html += vS_payload;
+            html += "</div>";
+            html += "<br><hr>";
+            html += "<h5>Histórico</h5>";
+            html += "<br>Últimos envios:<br>";
+            html += ULTIMOS_GET_SERVIDOR;
+            html += "<br><br>Últimos recebidos:<br>";
+            html += ULTIMOS_GET_RECEBIDOS;
+            html += "<h5>Fila Enviar Módulos</h5>";
+            
+            
+            for (uint8_t x=0; x<vI8_aU8_ControlMsgHist; x++){
+              html += "Índice "+String(x);
+              html += " = {";
+              for (uint8_t y=0; y<vI8_aS16_InterModFila_EnviaModulo; y++) {
+                html += aS16_InterModFila_EnviaModulo[x][y];
+                if (y < vI8_aS16_InterModFila_EnviaModulo-1) {
+                  html += ",";
+                }
+              }
+              html += "} (" + aS8_ControlMsgModHist[0][x] + ")<br>";
+            }
+            
+        }
+        
+    }
+    html += "</body>";
+    html += "</html>";
+    request->send(200, "text/html", html);
+}
+
+/*========================================
+Funcao para configurar o servidor web assincrono e as entradas(rotas) para chamadas de funcoes
+*/
+bool fB_configuraServidorWEB(const uint16_t& porta, bool force) {
+    bool resultado = false;
+
+    if (WiFi.status() == WL_CONNECTED) {
+        fV_imprimeSerial("Iniciando configuracao do servidor web na porta ", false);
+        if (!force) {
+          vI_U16_portaWebAsync = fU16_carregaConfigGeral(0,3,8080);
+          fV_imprimeSerial(vI_U16_portaWebAsync, false);
+          fV_imprimeSerial("...", false);
+          vU8_tempoRefresh = fU8_carregaConfigGeral(0,41,60);
+          VB_mostra_Status = fU8_carregaConfigGeral(0,48,60);
+          VB_mostra_Interm = fU8_carregaConfigGeral(0,49,60);
+        } else {
+          vI_U16_portaWebAsync = porta;
+          fV_imprimeSerial(vI_U16_portaWebAsync, false);
+          fV_imprimeSerial("...", false);
+          vB_emExecucaoWS = false;
+          delete SERVIDOR_WEB_ASYNC;          
+        }
+
+        // Liberar a memória se o servidor já estiver criado
+        if (SERVIDOR_WEB_ASYNC != nullptr) {
+          vB_emExecucaoWS = false;
+          delete SERVIDOR_WEB_ASYNC;
+        }
+        // Criar nova instância do servidor na porta configurada
+        SERVIDOR_WEB_ASYNC = new AsyncWebServer(vI_U16_portaWebAsync);
+
+        // ---- Conjunto basico pagina inicial ---- //
+        // Pagina inicial do acesso web ao esp32
+        SERVIDOR_WEB_ASYNC->on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+          //if(!request->authenticate(vS_userWeb.c_str(), vS_passWeb.c_str()) && vB_pedeAutentica) {
+          //  return request->requestAuthentication(); // Solicita autenticação
+          //} else {
+            f_handle_Index(request);
+          //}
+          //request->send(200, "text/plain", "Acesso SMCR!<br>Necessário autenticar");
+        });
+        // Faz logout do acesso web ao esp32
+        SERVIDOR_WEB_ASYNC->on("/logout", HTTP_GET, [](AsyncWebServerRequest * request) {
+          request->requestAuthentication();
+          request->send(401);
+        });
+        // ---- Fim do conjunto basico pagina inicial ---- //
+
+        // ---- Conjunto de cadastro de rede ---- //
+        // Configuracao de rede wifi, hostname, etc.
+        SERVIDOR_WEB_ASYNC->on("/conf_rede", HTTP_GET, [](AsyncWebServerRequest *request) {
+          f_handle_ConfiguraWifi(request);
+          //request->send(200, "text/html", "Configuração de Rede");
+        });
+        // Salvar informacoes do cadastro de rede
+        SERVIDOR_WEB_ASYNC->on("/salvar_rede", HTTP_POST, [](AsyncWebServerRequest *request) {
+            fV_salvarRede(request);
+        });
+        // ---- Fim do conjunto de cadastro de rede ---- //
+
+        // ---- Conjunto de cadastro de pinos ---- //
+        // Lista as portas (pinos) para escolha do pino para cadastro
+        SERVIDOR_WEB_ASYNC->on("/pinos", HTTP_GET, [](AsyncWebServerRequest *request) {
+            request->sendChunked("text/html", f_handle_ConfiguraPortas);
+        });
+        // Formulario para cadastro de pinos (portas)
+        SERVIDOR_WEB_ASYNC->on("/configurar_pino", HTTP_GET, [](AsyncWebServerRequest *request) {
+            fV_cadastraPino(request);
+        });
+        // Salvar informacoes do cadastro de pinos
+        SERVIDOR_WEB_ASYNC->on("/salvar_pinos", HTTP_POST, [](AsyncWebServerRequest *request) {
+            fV_salvarPinos(request);
+        });
+        // ---- Fim do conjunto de cadastro de pinos ---- //
+
+        // ---- Conjunto de cadastro de acoes ---- //
+        // Lista as acoes para escolha da acao para cadastro
+        SERVIDOR_WEB_ASYNC->on("/acoes", HTTP_GET, [](AsyncWebServerRequest *request) {
+            request->sendChunked("text/html", f_handle_ConfiguraAcoes);
+        });
+        // Formulario para cadastro de pinos (portas)
+        SERVIDOR_WEB_ASYNC->on("/configurar_acoes", HTTP_GET, [](AsyncWebServerRequest *request) {
+            fV_cadastraAcoes(request);
+        });
+        // Salvar informacoes do cadastro de pinos
+        SERVIDOR_WEB_ASYNC->on("/salvar_acoes", HTTP_POST, [](AsyncWebServerRequest *request) {
+            fV_salvarAcoes(request);
+        });
+        // ---- Fim do conjunto de cadastro de acoes ---- //
+
+        // ---- Conjunto de configuracao geral ---- //
+        // Configuracao de rede wifi, hostname, etc.
+        SERVIDOR_WEB_ASYNC->on("/conf_geral", HTTP_GET, [](AsyncWebServerRequest *request) {
+          f_handle_CadastroGeral(request);
+        });
+        // Salvar informacoes do cadastro de rede
+        SERVIDOR_WEB_ASYNC->on("/salvar_conf_geral", HTTP_POST, [](AsyncWebServerRequest *request) {
+            f_handle_salvarCadastroGeral(request);
+        });
+        // ---- Fim do conjunto de configuracao geral ---- //
+
+        // ---- Conjunto de cadastro de modulos ---- //
+        // Lista os modulos para escolha do modulos para cadastro
+        SERVIDOR_WEB_ASYNC->on("/modulos", HTTP_GET, [](AsyncWebServerRequest *request) {
+            request->sendChunked("text/html", f_handle_ConfiguraModulos);
+        });
+        // Formulario para cadastro de modulos
+        SERVIDOR_WEB_ASYNC->on("/configurar_modulo", HTTP_GET, [](AsyncWebServerRequest *request) {
+            fV_cadastraModulo(request);
+        });
+        // Salvar informacoes do cadastro do modulos
+        SERVIDOR_WEB_ASYNC->on("/salvar_intermodulos", HTTP_POST, [](AsyncWebServerRequest *request) {
+            fV_salvarInterModulos(request);
+        });        
+        // Salvar informacoes do cadastro de um modulo
+        SERVIDOR_WEB_ASYNC->on("/salvar_modulos", HTTP_POST, [](AsyncWebServerRequest *request) {
+            fV_salvarModulos(request);
+        });
+        // ---- Fim do conjunto de cadastro de modulos ---- //
+
+        // ---- Conjunto para confirmacoes de execucao pela web ---- //
+        // Usado para dialogo na interface web
+        SERVIDOR_WEB_ASYNC->on("/pergunta", HTTP_GET, [](AsyncWebServerRequest *request) {
+            String funcao = "";
+            bool redirecionar = false;
+            String pagina = "";
+
+            // Verifica se o parâmetro 'funcao' foi fornecido
+            if (request->hasParam("funcao")) {
+                funcao = request->getParam("funcao")->value();
+            } else {
+                funcao = "nenhuma função especificada"; // Mensagem de fallback
+            }
+
+            // Verifica se o parâmetro 'redirecionar' foi fornecido
+            if (request->hasParam("redirecionar")) {
+                String redirParam = request->getParam("redirecionar")->value();
+                redirecionar = (redirParam == "true");  // Converte para booleano
+            }
+            if (!redirecionar) {
+                pagina += fS_cabecaHTML("Pergunta", "Deseja executar esta ação?", "/");
+                pagina += "<br><br><label id='texto'>Executar a ação: " + funcao + "</label><br>";
+                pagina += "<form action='/resposta' method='post'>";
+                pagina += "<input type='hidden' name='funcao' value='" + funcao + "'>";
+                pagina += "<br><label for='confirmacao'>Digite 'Sim' para confirmar a ação:</label>";
+                pagina += "<input type='text' id='confirmacao' name='confirmacao'>";
+                pagina += "<input type='submit' value='Confirmar'>";
+                pagina += "</form>";
+                pagina += fS_rodapeHTML("/");
+            } else {
+                pagina += "<!DOCTYPE html>";
+                pagina += "<html lang='pt-br'>";
+                pagina += "<head>";
+                pagina += "<meta charset='UTF-8'>";
+                pagina += "<meta http-equiv='refresh' content='15000; URL=/'>";
+                pagina += "<script>setTimeout(function(){ window.location = '/'; }, 15000);</script>";                
+                pagina += "<meta name='viewport' content='width=device-width, initial-scale=1.0' />";
+                pagina += "<title>"+vS_nomeDispositivo+" - Pergunta</title>";
+                pagina += "</head>";
+                pagina += "<body id='body'>";
+                pagina += "<h1>Deseja executar esta ação?</h1>";
+                pagina += "<br><a href='https://github.com/rede-analista/smcr/' target='_blank'>Ajuda</a>";
+                pagina += "<br><a href=\"/\">Página Inicial</a>";
+                pagina += "<p>Você será redirecionado para página inicial em 15 segundos.</p>";                
+                pagina += "<form action='/resposta' method='post'>";
+                pagina += "<input type='hidden' name='funcao' value='" + funcao + "'>";
+                pagina += "<br><label for='confirmacao'>Digite 'Sim' para confirmar a ação:</label>";
+                pagina += "<input type='text' id='confirmacao' name='confirmacao'>";
+                pagina += "<input type='submit' value='Confirmar'>";
+                pagina += "</form>";
+                pagina += fS_rodapeHTML("/");                
+            }
+
+            request->send(200, "text/html", pagina);
+        });
+        // Usado para executar funcao conforme resposta do dialogo na interface web
+        SERVIDOR_WEB_ASYNC->on("/resposta", HTTP_POST, [](AsyncWebServerRequest *request){
+            fV_resposta(request);
+        });
+        // ---- Fim do conjunto para confirmacoes de execucao pela web ---- //
+
+        // ---- Conjunto para gerenciamento de arquivos ---- //
+        // Pagina de gerenciamento de arquivos
+        SERVIDOR_WEB_ASYNC->on("/files", HTTP_GET, [](AsyncWebServerRequest *request) {
+          request->send_P(200, "text/html", index_html, processor);
+        });
+        // Faz upload de arquivos para LittleFS (FILESYS)
+        SERVIDOR_WEB_ASYNC->on("/upload", HTTP_POST, [](AsyncWebServerRequest *request) {
+            request->send(200, "text/plain", "Upload successful");
+        }, handleFileUpload);
+        // Lista arquivos do LittleFS (FILESYS)
+        SERVIDOR_WEB_ASYNC->on("/fS_listaArquivosFilesys", HTTP_GET, [](AsyncWebServerRequest *request) {
+          request->send(200, "text/plain", fS_listaArquivosFilesys(true));
+        });    
+        // Manipula arquivos do LittleFS (FILESYS), download, delete e lista
+        SERVIDOR_WEB_ASYNC->on("/file", HTTP_GET, [](AsyncWebServerRequest *request) {
+          if (request->hasParam("name") && request->hasParam("action")) {
+              String fileName = request->getParam("name")->value();
+              String fileAction = request->getParam("action")->value();
+              // Garantir que o nome do arquivo comece com "/"
+              if (!fileName.startsWith("/")) {
+                  fileName = "/" + fileName;
+              }
+              if (!FILESYS.exists(fileName)) {
+                  request->send(400, "text/plain", "ERROR: arquivo nao existe");
+              } else {
+                  if (fileAction == "download") {
+                      request->send(FILESYS, fileName, "application/octet-stream");
+                  } else if (fileAction == "delete") {
+                      FILESYS.remove(fileName);
+                      String html = fS_cabecaHTML("Gerência de Arquivos","Apagar Arquivos","/files");
+                      html += "Arquivo apagado: ";
+                      html += fileName;
+                      html += "<br>";
+                      html += fS_rodapeHTML("/files");
+                      request->send(200, "text/html", html);
+                  } else {
+                      request->send(400, "text/plain", "ERROR: parametro de acao invalido fornecido");
+                  }
+              }
+          } else {
+              request->send(400, "text/plain", "ERROR: nome e parametros de acao necessarios");
+          }
+
+        });
+
+
+/*
+SERVIDOR_WEB_ASYNC->on("/manage-files", HTTP_POST, [](AsyncWebServerRequest *request) {
+    if (!request->hasParam("files", true)) {
+        request->send(400, "text/plain", "Nenhum arquivo selecionado.");
+        return;
+    }
+
+    String action = request->getParam("action", true)->value(); // Ação (download ou delete)
+    String response = "";
+    response += fS_cabecaHTML("Arquivos", "Operação com arquivos", "/files");
+
+    // Obter a lista de arquivos selecionados
+    int params = request->params();
+    String firstFileName = ""; // Nome do primeiro arquivo para download
+    int fileCount = 0;         // Contador de arquivos válidos para download
+
+    for (int i = 0; i < params; i++) {
+        AsyncWebParameter* param = request->getParam(i);
+        if (param->isPost() && param->name() == "files") {
+            String fileName = param->value();
+            fileCount++;
+
+            // Garantir que o nome do arquivo comece com "/"
+            if (!fileName.startsWith("/")) {
+                fileName = "/" + fileName;
+            }
+
+            if (action == "delete") {
+                // Exclusão de arquivos
+                if (FILESYS.exists(fileName)) {
+                    FILESYS.remove(fileName);
+                    response += "Arquivo excluído: " + fileName + "<br>";
+                } else {
+                    response += "Erro: Arquivo não encontrado para exclusão: " + fileName + "<br>";
+                }
+            } else if (action == "download") {
+                // Armazena o primeiro arquivo selecionado
+                if (fileCount == 1) {
+                    firstFileName = fileName;
+                }
+            }
+        }
+    }
+
+    // Realizar o download se apenas um arquivo foi selecionado
+    if (action == "download") {
+        if (fileCount == 1 && FILESYS.exists(firstFileName)) {
+            request->send(FILESYS, firstFileName, "application/octet-stream");
+            return; // Encerra o fluxo após o download
+        } else if (fileCount > 1) {
+
+            // Criar um arquivo TAR temporário
+            String tarFileName = "download_" + String(millis()) + ".tar.gz";
+            fs::FS &fs = SPIFFS;
+            File tarFile = fs.open("/tmp/" + tarFileName, FILE_WRITE);
+            if (!tarFile) {
+                response += "Erro ao criar o arquivo TAR.GZ: " + tarFileName + "<br>";
+                return;
+            }
+    
+            // Adicionar os arquivos selecionados ao TAR
+            TarGzWriter tarWriter(tarFile);
+            for (int i = 0; i < params; i++) {
+                AsyncWebParameter* param = request->getParam(i);
+                if (param->isPost() && param->name() == "files") {
+                    String fileName = param->value();
+                    if (!fileName.startsWith("/")) {
+                        fileName = "/" + fileName;
+                    }
+                    if (!tarWriter.add(fileName.c_str(), fileName.c_str())) {
+                        response += "Erro ao adicionar o arquivo " + fileName + " ao TAR.<br>";
+                    }
+                }
+            }
+            tarWriter.close();
+    
+            // Enviar o TAR para o cliente
+            if (!request->send(FILESYS, "/tmp/" + tarFileName, "application/gzip")) {
+                response += "Erro ao enviar o arquivo TAR.GZ.<br>";
+            } else {
+                response += "Download iniciado com sucesso.<br>";
+            }
+    
+            // Remover o arquivo TAR temporário
+            fs.remove("/tmp/" + tarFileName);
+
+        } else {
+            response += "Erro: Nenhum arquivo válido encontrado para download.<br>";
+        }
+    }
+
+    response += fS_rodapeHTML("/files");
+    request->send(200, "text/html", response);
+});
+*/
+
+        // ---- Fim do conjunto para gerenciamento de arquivos ---- //
+
+        // ---- Abre pagina de monitoramento da Serial ---- //
+        SERVIDOR_WEB_ASYNC->on("/serial", HTTP_GET, [](AsyncWebServerRequest *request) {
+          f_handle_SerialOutput(request);
+        });
+
+        // Abre opcoes para configuracoes gerais do programa
+        SERVIDOR_WEB_ASYNC->on("/configurag", HTTP_GET, [](AsyncWebServerRequest *request) {
+          f_handle_OpcoesGerais(request);
+        });
+
+        // Abre opcoes para executar funcoes do programa
+        SERVIDOR_WEB_ASYNC->on("/execfuncoes", HTTP_GET, [](AsyncWebServerRequest *request) {
+          f_handle_OpcoesFuncoes(request);
+        });
+
+        // Recebe dados do intermodulos
+        SERVIDOR_WEB_ASYNC->on("/dados", HTTP_GET, [](AsyncWebServerRequest *request) {
+          fV_recebeDados(request);
+        });
+
+        // Menssagem quando a pagina solicitada nao e encontrada
+        SERVIDOR_WEB_ASYNC->onNotFound([](AsyncWebServerRequest *request) {
+          f_handle_NotFound(request);
+          //request->send(200, "text/html", "Pagina nao encontrada");
+        });
+
+        // Iniciar o servidor
+        if (SERVIDOR_WEB_ASYNC != nullptr) {
+            ws = new AsyncWebSocket("/ws");
+            ws->onEvent(fV_onEvent);
+            SERVIDOR_WEB_ASYNC->addHandler(ws);
+            SERVIDOR_WEB_ASYNC->begin();
+            resultado = true;
+            vB_emExecucaoWS = true;
+            fV_imprimeSerial(" OK", true);
+        } else {
+            fV_imprimeSerial(" ERRO", true);
+        }   
+    } else {
+        fV_imprimeSerial("Erro na conexao WiFi. Servidor web nao configurado.", true);
+    }
+  return resultado;
+}

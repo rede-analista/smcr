@@ -40,7 +40,7 @@ hw_timer_t *vHW_timer = NULL;  // Faz o controle do temporizador (interrupcao po
 bool aB_restartRotinas[5] = {0,0,0,0,0};
 String** aS_Preference = nullptr;
 uint8_t vI8_aS_Preference_ROW = 1;
-uint8_t vI8_aS_Preference_COL = 60;
+uint8_t vI8_aS_Preference_COL = 255;
 //----------------------------------------------//
 
 /*---- Inicia variaveis e arrays dias da semana e meses ----*/
@@ -62,23 +62,24 @@ uint8_t** aU8_IgnoraPino = nullptr;
 
 /*---- Inicia variaveis e arrays do InterModulos ----*/
 size_t vU8_totModulos = 0; // Total de colunas do array cadastro de modulos 
-uint8_t vI8_aU16_InterMod = 2;
-uint8_t vI8_aB_InterMod = 1;
+uint8_t vI8_aU16_InterMod = 2; // Total de "linhas" do array de inter modulos (uint_16)
+uint8_t vI8_aB_InterMod = 1; // Total de "linhas" do array de inter modulos (Boolean)
 uint8_t vI8_aS_InterMod = 2;  // Total de "linhas" do array de inter modulos (String)
-uint8_t vI8_aU8_ControlMsg = 3;  // Total de "linhas" dos arrays de controle de envio de menssagens
+uint8_t vI8_aU8_ControlMsg = 4;  // Total de "linhas" dos arrays de controle de envio de menssagens
 uint8_t vI8_aU8_ControlMsgHist = 4; // Total de "linhas" dos arrays de historico de envio de menssagens
 uint8_t vI8_aU16_InterModHA = 4; // Total de "linhas" do array de inter modulos controle handshake e status handshake
+uint8_t vI8_aS16_InterModFila_EnviaModulo = 254; // Total de "colunas" do array de inter modulos fila de envio de alertas
 String** aS_InterModMenu = nullptr; // Menu do cadastro de Intermodulos
 String** aU16_InterModMenu = nullptr;
 String** aSB_InterModMenu = nullptr;
 String** aS8_ControlMsgModHist = nullptr;
 String** aS_InterMod = nullptr;  // Cadastro de Intermodulos (Nome e IP)
-uint16_t** aU16_InterMod = nullptr; // Cadastro de Intermodulos (Controles)
+uint16_t** aU16_InterMod = nullptr; // Cadastro de Intermodulos (ID e Porta)
 uint8_t** aB_InterMod = nullptr;  // Cadastro de Intermodulos (Envia HandShake)
-String** aS16_InterModHA = nullptr; // Menu do array de controle de comunicacao Intermodulos
-uint16_t** aI16_ControlHS = nullptr; // Controle de alerta de handshake para Intermodulos
-uint16_t** aU16_ControlMsgModHist = nullptr;
-uint16_t** aU16_ControlMsgMod = nullptr;
+String** aS16_InterModMenu_CTRL_HandShake = nullptr; // Menu do array de controle de comunicacao Intermodulos
+uint16_t** aI16_InterMod_CTRL_HandShake = nullptr; // Controle de alerta de handshake para Intermodulos
+uint16_t** aS16_InterModFila_EnviaModulo = nullptr; // Controle o envio de menssagens entre os modulos ESP
+uint16_t** aS16_InterModControleRepeticao_EnviaModulo = nullptr; // Controle o envio de menssagens entre os modulos ESP
 //----------------------------------------------//
 
 /*---- Inicia variaveis e arrays das acoes ----*/
@@ -137,10 +138,10 @@ void setup() {
     Serial.begin(115200);
     delay(3000);
     fV_imprimeSerial("||||---- INICIANDO SETUP ----||||",true);
+    fS_idPlaca(); // Imprime na serial informacoes da placa
     vB_filesysIniciado = fB_montaLittleFS();  // Monta LittleFS (FILESYS)
     if (fB_verificaPrimeiraExec(false)) {
         fV_mapaFuncoes();  // Mapeia funcoes para uso nos GETS/POSTS
-        fS_idPlaca(); // Imprime na serial informacoes da placa
         fV_Preference("L",false); // Carrega configuracoes do filesys
         fV_carregaFILESYS_AS1D("/aU8_diasDaSemana.txt",aU8_diasDaSemana,vU8_diasDaSemana);  // Carregar array com os dias da semana
         fV_carregaFILESYS_AS1D("/aU8_meses.txt",aU8_meses,vU8_meses);  // // Carregar array com os meses
@@ -197,6 +198,7 @@ void setup() {
         fV_restart();
     }
     fV_imprimeSerial("!!!!---- SETUP FINALIZADO ----!!!!",true);
+    //fV_imprimirArray2D_U16(aI16_InterMod_CTRL_HandShake, vI8_aU16_InterModHA, vU8_totModulos);
 }
 
 void loop() {

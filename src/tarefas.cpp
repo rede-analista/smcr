@@ -23,7 +23,7 @@ void TaskLeituraPinos(void *pvParameters) {
         aB_restartRotinas[0] = 0;
       }
       if (!vB_pausaEXECs) {
-        if (aU16_Pinos[1][idx] != 65535) {
+        if (aU16_Pinos[1][idx] != 65534) {
           if (aU16_Pinos[0][idx] > 0) { 
             if ( aU8_IgnoraPino[0][idx] == 0) {
               aU16_Pinos_Status[0][idx] = fU16_lePino(aU16_Pinos[1][idx],aU16_Pinos[3][idx],aU16_Pinos[0][idx]);
