@@ -3,7 +3,7 @@
 
 //========================================
 void fV_salvarAcoes(AsyncWebServerRequest *request) {
-    fV_imprimeSerial("Salvando acoes...", false);
+    fV_imprimeSerial(1,"Salvando acoes...", false);
 
     String html = fS_cabecaHTML("Cadastro de Ações", "Cadastro de Ações", "/acoes", "/blob/main/manual/acoes.md");
     uint16_t acaoID = 65535;
@@ -19,7 +19,7 @@ void fV_salvarAcoes(AsyncWebServerRequest *request) {
     if (acaoID == 65535 || coluna == 65535) {
         html += "Parametro ID da ação inválido. ID: " + String(acaoID);
         html += fS_rodapeHTML("/acoes", "/blob/main/manual/acoes.md");
-        fV_imprimeSerial(" ERRO: Parametro ID da acao invalido");
+        fV_imprimeSerial(1," ERRO: Parametro ID da acao invalido");
         request->send(400, "text/html", html);
         return;
     }
@@ -138,7 +138,7 @@ void fV_salvarAcoes(AsyncWebServerRequest *request) {
     }
 
     html += fS_rodapeHTML("/acoes", "/blob/main/manual/acoes.md");
-    fV_imprimeSerial(" OK");
+    fV_imprimeSerial(1," OK");
     request->send(200, "text/html", html);
 }
 
@@ -331,8 +331,8 @@ size_t f_handle_ConfiguraAcoes(unsigned char *data, size_t len, bool final) {
         return 0;
     }
     if (vU8_estado == 0) {
-        //linha = std::ceil(static_cast<float>(vU8_totPinos) / vU8_colunasTabelas);
-        vU16_linhaPagCad = vU8_totPinos/vU8_colunasTabelas;
+        //linha = std::ceil(static_cast<float>(aU32_Variaveis[36]) / vU8_colunasTabelas);
+        vU16_linhaPagCad = aU32_Variaveis[36]/vU8_colunasTabelas;
         vU8_colINICIO = 0;
         vU8_colFIM = vU8_colunasTabelas;
         html += fS_cabecaHTML("Cadastro de Ações","Cadastro de Ações","/","/blob/main/manual/acoes.md");
@@ -342,14 +342,14 @@ size_t f_handle_ConfiguraAcoes(unsigned char *data, size_t len, bool final) {
 
         written = html.length();
         if (written > len) {
-            Serial.println("Buffer insuficiente no vU8_estado 0");
+           fV_imprimeSerial(3,"Buffer insuficiente no vU8_estado 0");
             return 0;
         }
         memcpy(data, html.c_str(), written);
         vU8_estado++;
         return written;
     }
-    if (vU8_estado == 1 && vU16_linhaPagCad >= 0 && (vU16_linhaPagCad <= std::ceil(static_cast<float>(vU8_totPinos) / vU8_colunasTabelas))) {
+    if (vU8_estado == 1 && vU16_linhaPagCad >= 0 && (vU16_linhaPagCad <= std::ceil(static_cast<float>(aU32_Variaveis[36]) / vU8_colunasTabelas))) {
         html = "";
         if (vU16_linhaPagCad >= 0) {
             html += "<tr>";
@@ -394,19 +394,19 @@ size_t f_handle_ConfiguraAcoes(unsigned char *data, size_t len, bool final) {
                 vU8_colINICIO = vU8_colFIM;
                 vU8_colFIM = vU8_colFIM + vU8_colunasTabelas;
             } else if (vU16_linhaPagCad == 0 ) {
-                if (vU8_colFIM > vU8_totPinos) {
+                if (vU8_colFIM > aU32_Variaveis[36]) {
                     vU8_colINICIO = vU8_colFIM;
                     vU8_colFIM = vU8_colFIM+1;
                 } else {
                     vU8_colINICIO = vU8_colFIM;
-                    vU8_colFIM = vU8_totPinos;
+                    vU8_colFIM = aU32_Variaveis[36];
                 }
             } 
         }
 
         written = html.length();
         if (written > len) {
-            Serial.println("Buffer insuficiente no vU8_estado 1");
+           fV_imprimeSerial(3,"Buffer insuficiente no vU8_estado 1");
             return 0;
         }
         memcpy(data, html.c_str(), written);
@@ -423,7 +423,7 @@ size_t f_handle_ConfiguraAcoes(unsigned char *data, size_t len, bool final) {
 
         written = html.length();
         if (written > len) {
-            Serial.println("Buffer insuficiente no vU8_estado 2");
+           fV_imprimeSerial(3,"Buffer insuficiente no vU8_estado 2");
             return 0;
         }
         memcpy(data, html.c_str(), written);

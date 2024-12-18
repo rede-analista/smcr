@@ -6,17 +6,17 @@ void TaskLeituraPinos(void *pvParameters) {
     // Declaração de arrays com tipos específicos como você especificou
     uint16_t** aU8_IgnoraPino = nullptr;  
 
-    // Alocação dinâmica de memória para cada array com 1 linha e vU8_totPinos colunas
+    // Alocação dinâmica de memória para cada array com 1 linha e aU32_Variaveis[36] colunas
     aU8_IgnoraPino = new uint16_t*[1];
 
     // Inicializa a única linha e preenche com zeros para cada array
-    aU8_IgnoraPino[0] = new uint16_t[vU8_totPinos]();
+    aU8_IgnoraPino[0] = new uint16_t[aU32_Variaveis[36]]();
 
     uint8_t idx=0;
     for (;;){
       if (aB_restartRotinas[0]) {
             // Reinicializa todos os arrays para zero
-            for (size_t j = 0; j < vU8_totPinos; j++) {
+            for (size_t j = 0; j < aU32_Variaveis[36]; j++) {
                 aU8_IgnoraPino[0][j] = 0;
             }
         idx=0;
@@ -40,11 +40,11 @@ void TaskLeituraPinos(void *pvParameters) {
           }
         }
         idx++;
-        if (idx >= vU8_totPinos){
+        if (idx >= aU32_Variaveis[36]){
           idx=0;
         }
       }
-      vTaskDelay(20/portTICK_PERIOD_MS);
+      vTaskDelay(900/portTICK_PERIOD_MS);
     }
 }
 
@@ -67,7 +67,7 @@ void TaskAcoes1Pinos(void *pvParameters) {
     uint16_t** aU16_AcaoTP5PulsoDelayTempoUP = nullptr;
     uint16_t** aU16_AcaoTP5PulsoDelayTempoDOWN = nullptr;
 
-    // Alocação dinâmica de memória para cada array com 1 linha e vU8_totPinos colunas
+    // Alocação dinâmica de memória para cada array com 1 linha e aU32_Variaveis[36] colunas
     aU8_AcaoTP1 = new uint16_t*[1];
     aU8_AcaoTP2DOWN = new uint16_t*[1];
     aU8_AcaoTP2LigaDelay = new uint16_t*[1];
@@ -85,28 +85,28 @@ void TaskAcoes1Pinos(void *pvParameters) {
     aU16_AcaoTP5PulsoDelayTempoDOWN = new uint16_t*[1];
 
     // Inicializa a única linha e preenche com zeros para cada array
-    aU8_AcaoTP1[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP2DOWN[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP2LigaDelay[0] = new uint16_t[vU8_totPinos]();
-    aU16_AcaoTP2LigaDelayTempo[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP3UP[0] = new uint8_t[vU8_totPinos]();
-    aU8_AcaoTP3DOWN[0] = new uint8_t[vU8_totPinos]();
-    aU16_AcaoTP3TempoUP[0] = new uint16_t[vU8_totPinos]();
-    aU16_AcaoTP3TempoDOWN[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP4DOWN[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP4Pulso[0] = new uint16_t[vU8_totPinos]();
-    aU16_AcaoTP4PulsoTempo[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP5UP[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP5DOWN[0] = new uint16_t[vU8_totPinos]();
-    aU16_AcaoTP5PulsoDelayTempoUP[0] = new uint16_t[vU8_totPinos]();
-    aU16_AcaoTP5PulsoDelayTempoDOWN[0] = new uint16_t[vU8_totPinos]();
+    aU8_AcaoTP1[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP2DOWN[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP2LigaDelay[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP2LigaDelayTempo[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP3UP[0] = new uint8_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP3DOWN[0] = new uint8_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP3TempoUP[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP3TempoDOWN[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP4DOWN[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP4Pulso[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP4PulsoTempo[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP5UP[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP5DOWN[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP5PulsoDelayTempoUP[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP5PulsoDelayTempoDOWN[0] = new uint16_t[aU32_Variaveis[36]]();
 
     // Loop infinito da task
     uint8_t idz = 0;
     for (;;) {
         if (aB_restartRotinas[1]) {
             // Reinicializa todos os arrays para zero
-            for (size_t j = 0; j < vU8_totPinos; j++) {
+            for (size_t j = 0; j < aU32_Variaveis[36]; j++) {
                 aU8_AcaoTP1[0][j] = 0;
                 aU8_AcaoTP2DOWN[0][j] = 0;
                 aU8_AcaoTP2LigaDelay[0][j] = 0;
@@ -279,11 +279,11 @@ void TaskAcoes1Pinos(void *pvParameters) {
           break;
       }
       idz++;
-      if (idz >= vU8_totPinos){
+      if (idz >= aU32_Variaveis[36]){
         idz=0;
       }
     }
-    vTaskDelay(11/portTICK_PERIOD_MS);
+    vTaskDelay(500/portTICK_PERIOD_MS);
   }
 }
 
@@ -306,7 +306,7 @@ void TaskAcoes2Pinos(void *pvParameters) {
     uint16_t** aU16_AcaoTP5PulsoDelayTempoUP = nullptr;
     uint16_t** aU16_AcaoTP5PulsoDelayTempoDOWN = nullptr;
 
-    // Alocação dinâmica de memória para cada array com 1 linha e vU8_totPinos colunas
+    // Alocação dinâmica de memória para cada array com 1 linha e aU32_Variaveis[36] colunas
     aU8_AcaoTP1 = new uint16_t*[1];
     aU8_AcaoTP2DOWN = new uint16_t*[1];
     aU8_AcaoTP2LigaDelay = new uint16_t*[1];
@@ -324,28 +324,28 @@ void TaskAcoes2Pinos(void *pvParameters) {
     aU16_AcaoTP5PulsoDelayTempoDOWN = new uint16_t*[1];
 
     // Inicializa a única linha e preenche com zeros para cada array
-    aU8_AcaoTP1[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP2DOWN[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP2LigaDelay[0] = new uint16_t[vU8_totPinos]();
-    aU16_AcaoTP2LigaDelayTempo[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP3UP[0] = new uint8_t[vU8_totPinos]();
-    aU8_AcaoTP3DOWN[0] = new uint8_t[vU8_totPinos]();
-    aU16_AcaoTP3TempoUP[0] = new uint16_t[vU8_totPinos]();
-    aU16_AcaoTP3TempoDOWN[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP4DOWN[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP4Pulso[0] = new uint16_t[vU8_totPinos]();
-    aU16_AcaoTP4PulsoTempo[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP5UP[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP5DOWN[0] = new uint16_t[vU8_totPinos]();
-    aU16_AcaoTP5PulsoDelayTempoUP[0] = new uint16_t[vU8_totPinos]();
-    aU16_AcaoTP5PulsoDelayTempoDOWN[0] = new uint16_t[vU8_totPinos]();
+    aU8_AcaoTP1[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP2DOWN[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP2LigaDelay[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP2LigaDelayTempo[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP3UP[0] = new uint8_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP3DOWN[0] = new uint8_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP3TempoUP[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP3TempoDOWN[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP4DOWN[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP4Pulso[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP4PulsoTempo[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP5UP[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP5DOWN[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP5PulsoDelayTempoUP[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP5PulsoDelayTempoDOWN[0] = new uint16_t[aU32_Variaveis[36]]();
 
     // Loop infinito da task
     uint8_t idz = 0;
     for (;;) {
         if (aB_restartRotinas[1]) {
             // Reinicializa todos os arrays para zero
-            for (size_t j = 0; j < vU8_totPinos; j++) {
+            for (size_t j = 0; j < aU32_Variaveis[36]; j++) {
                 aU8_AcaoTP1[0][j] = 0;
                 aU8_AcaoTP2DOWN[0][j] = 0;
                 aU8_AcaoTP2LigaDelay[0][j] = 0;
@@ -518,11 +518,11 @@ void TaskAcoes2Pinos(void *pvParameters) {
           break;
       }
       idz++;
-      if (idz >= vU8_totPinos){
+      if (idz >= aU32_Variaveis[36]){
         idz=0;
       }
     }
-    vTaskDelay(11/portTICK_PERIOD_MS);
+    vTaskDelay(500/portTICK_PERIOD_MS);
   }
 }
 
@@ -545,7 +545,7 @@ void TaskAcoes3Pinos(void *pvParameters) {
     uint16_t** aU16_AcaoTP5PulsoDelayTempoUP = nullptr;
     uint16_t** aU16_AcaoTP5PulsoDelayTempoDOWN = nullptr;
 
-    // Alocação dinâmica de memória para cada array com 1 linha e vU8_totPinos colunas
+    // Alocação dinâmica de memória para cada array com 1 linha e aU32_Variaveis[36] colunas
     aU8_AcaoTP1 = new uint16_t*[1];
     aU8_AcaoTP2DOWN = new uint16_t*[1];
     aU8_AcaoTP2LigaDelay = new uint16_t*[1];
@@ -563,28 +563,28 @@ void TaskAcoes3Pinos(void *pvParameters) {
     aU16_AcaoTP5PulsoDelayTempoDOWN = new uint16_t*[1];
 
     // Inicializa a única linha e preenche com zeros para cada array
-    aU8_AcaoTP1[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP2DOWN[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP2LigaDelay[0] = new uint16_t[vU8_totPinos]();
-    aU16_AcaoTP2LigaDelayTempo[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP3UP[0] = new uint8_t[vU8_totPinos]();
-    aU8_AcaoTP3DOWN[0] = new uint8_t[vU8_totPinos]();
-    aU16_AcaoTP3TempoUP[0] = new uint16_t[vU8_totPinos]();
-    aU16_AcaoTP3TempoDOWN[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP4DOWN[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP4Pulso[0] = new uint16_t[vU8_totPinos]();
-    aU16_AcaoTP4PulsoTempo[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP5UP[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP5DOWN[0] = new uint16_t[vU8_totPinos]();
-    aU16_AcaoTP5PulsoDelayTempoUP[0] = new uint16_t[vU8_totPinos]();
-    aU16_AcaoTP5PulsoDelayTempoDOWN[0] = new uint16_t[vU8_totPinos]();
+    aU8_AcaoTP1[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP2DOWN[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP2LigaDelay[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP2LigaDelayTempo[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP3UP[0] = new uint8_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP3DOWN[0] = new uint8_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP3TempoUP[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP3TempoDOWN[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP4DOWN[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP4Pulso[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP4PulsoTempo[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP5UP[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP5DOWN[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP5PulsoDelayTempoUP[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP5PulsoDelayTempoDOWN[0] = new uint16_t[aU32_Variaveis[36]]();
 
     // Loop infinito da task
     uint8_t idz = 0;
     for (;;) {
         if (aB_restartRotinas[1]) {
             // Reinicializa todos os arrays para zero
-            for (size_t j = 0; j < vU8_totPinos; j++) {
+            for (size_t j = 0; j < aU32_Variaveis[36]; j++) {
                 aU8_AcaoTP1[0][j] = 0;
                 aU8_AcaoTP2DOWN[0][j] = 0;
                 aU8_AcaoTP2LigaDelay[0][j] = 0;
@@ -757,11 +757,11 @@ void TaskAcoes3Pinos(void *pvParameters) {
           break;
       }
       idz++;
-      if (idz >= vU8_totPinos){
+      if (idz >= aU32_Variaveis[36]){
         idz=0;
       }
     }
-    vTaskDelay(11/portTICK_PERIOD_MS);
+    vTaskDelay(500/portTICK_PERIOD_MS);
   }
 }
 
@@ -784,7 +784,7 @@ void TaskAcoes4Pinos(void *pvParameters) {
     uint16_t** aU16_AcaoTP5PulsoDelayTempoUP = nullptr;
     uint16_t** aU16_AcaoTP5PulsoDelayTempoDOWN = nullptr;
 
-    // Alocação dinâmica de memória para cada array com 1 linha e vU8_totPinos colunas
+    // Alocação dinâmica de memória para cada array com 1 linha e aU32_Variaveis[36] colunas
     aU8_AcaoTP1 = new uint16_t*[1];
     aU8_AcaoTP2DOWN = new uint16_t*[1];
     aU8_AcaoTP2LigaDelay = new uint16_t*[1];
@@ -802,28 +802,28 @@ void TaskAcoes4Pinos(void *pvParameters) {
     aU16_AcaoTP5PulsoDelayTempoDOWN = new uint16_t*[1];
 
     // Inicializa a única linha e preenche com zeros para cada array
-    aU8_AcaoTP1[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP2DOWN[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP2LigaDelay[0] = new uint16_t[vU8_totPinos]();
-    aU16_AcaoTP2LigaDelayTempo[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP3UP[0] = new uint8_t[vU8_totPinos]();
-    aU8_AcaoTP3DOWN[0] = new uint8_t[vU8_totPinos]();
-    aU16_AcaoTP3TempoUP[0] = new uint16_t[vU8_totPinos]();
-    aU16_AcaoTP3TempoDOWN[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP4DOWN[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP4Pulso[0] = new uint16_t[vU8_totPinos]();
-    aU16_AcaoTP4PulsoTempo[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP5UP[0] = new uint16_t[vU8_totPinos]();
-    aU8_AcaoTP5DOWN[0] = new uint16_t[vU8_totPinos]();
-    aU16_AcaoTP5PulsoDelayTempoUP[0] = new uint16_t[vU8_totPinos]();
-    aU16_AcaoTP5PulsoDelayTempoDOWN[0] = new uint16_t[vU8_totPinos]();
+    aU8_AcaoTP1[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP2DOWN[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP2LigaDelay[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP2LigaDelayTempo[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP3UP[0] = new uint8_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP3DOWN[0] = new uint8_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP3TempoUP[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP3TempoDOWN[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP4DOWN[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP4Pulso[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP4PulsoTempo[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP5UP[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU8_AcaoTP5DOWN[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP5PulsoDelayTempoUP[0] = new uint16_t[aU32_Variaveis[36]]();
+    aU16_AcaoTP5PulsoDelayTempoDOWN[0] = new uint16_t[aU32_Variaveis[36]]();
 
     // Loop infinito da task
     uint8_t idz = 0;
     for (;;) {
         if (aB_restartRotinas[1]) {
             // Reinicializa todos os arrays para zero
-            for (size_t j = 0; j < vU8_totPinos; j++) {
+            for (size_t j = 0; j < aU32_Variaveis[36]; j++) {
                 aU8_AcaoTP1[0][j] = 0;
                 aU8_AcaoTP2DOWN[0][j] = 0;
                 aU8_AcaoTP2LigaDelay[0][j] = 0;
@@ -996,10 +996,10 @@ void TaskAcoes4Pinos(void *pvParameters) {
           break;
       }
       idz++;
-      if (idz >= vU8_totPinos){
+      if (idz >= aU32_Variaveis[36]){
         idz=0;
       }
     }
-    vTaskDelay(11/portTICK_PERIOD_MS);
+    vTaskDelay(500/portTICK_PERIOD_MS);
   }
 }

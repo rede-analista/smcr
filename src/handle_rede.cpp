@@ -14,36 +14,36 @@ void fV_salvarRede(AsyncWebServerRequest *request) {
     aS_Preference[0][9] = String(vB_modoAP);
     // Verifica e trata o SSID
     if (request->hasParam("SSID", true)) {
-        vS_nomeWifi = fS_limpaEspacoFimLinha(request->getParam("SSID", true)->value());
+        aS_Variaveis[1] = fS_limpaEspacoFimLinha(request->getParam("SSID", true)->value());
     } else {
         erro++;
-        fV_imprimeSerial("Erro: SSID não informado.");
+        fV_imprimeSerial(1,"Erro: SSID não informado.");
     }
-    aS_Preference[0][0] = vS_nomeWifi;
+    aS_Preference[0][0] = aS_Variaveis[1];
     // Verifica e trata a senha do Wifi
     if (request->hasParam("PASS", true)) {
-        vS_senhaWifi = fS_limpaEspacoFimLinha(request->getParam("PASS", true)->value());
+        aS_Variaveis[2] = fS_limpaEspacoFimLinha(request->getParam("PASS", true)->value());
     } else {
         erro++;
-        fV_imprimeSerial("Erro: Senha Wifi não informada.");
+        fV_imprimeSerial(1,"Erro: Senha Wifi não informada.");
     }
-    aS_Preference[0][1] = vS_senhaWifi;
+    aS_Preference[0][1] = aS_Variaveis[2];
     // Verifica e trata o hostname
     if (request->hasParam("HSTNAME", true)) {
-        vS_nomeDispositivo = fS_limpaEspacoFimLinha(request->getParam("HSTNAME", true)->value());
+        aS_Variaveis[0] = fS_limpaEspacoFimLinha(request->getParam("HSTNAME", true)->value());
     } else {
         erro++;
-        fV_imprimeSerial("Erro: Hostname não informado.");
+        fV_imprimeSerial(1,"Erro: Hostname não informado.");
     }
-    aS_Preference[0][4] = vS_nomeDispositivo;
-    aS_Preference[0][7] = vS_nomeDispositivo+" Ponto de Acesso";
+    aS_Preference[0][4] = aS_Variaveis[0];
+    aS_Preference[0][7] = aS_Variaveis[0]+" Ponto de Acesso";
     // Verifica e trata a porta web
     if (request->hasParam("PORTAWEB", true)) {
         int porta = request->getParam("PORTAWEB", true)->value().toInt();
         TEMP_portaWebAsync = porta;
     } else {
         erro++;
-        fV_imprimeSerial("Erro: Porta Web não informada.");
+        fV_imprimeSerial(1,"Erro: Porta Web não informada.");
     }
     aS_Preference[0][3] = String(TEMP_portaWebAsync);
     // Verifica e trata o número de tentativas de conexão
@@ -52,7 +52,7 @@ void fV_salvarRede(AsyncWebServerRequest *request) {
         vU8_tentativaConexoes = tentativas;
     } else {
         erro++;
-        fV_imprimeSerial("Erro: Número de tentativas de conexão não informado.");
+        fV_imprimeSerial(1,"Erro: Número de tentativas de conexão não informado.");
     }
     aS_Preference[0][2] = String(vU8_tentativaConexoes);
     // Verifica e trata o usuário web
@@ -60,7 +60,7 @@ void fV_salvarRede(AsyncWebServerRequest *request) {
         vS_userWeb = fS_limpaEspacoFimLinha(request->getParam("USRWEB", true)->value());
     } else {
         erro++;
-        fV_imprimeSerial("Erro: Nome de usuário web não informado.");
+        fV_imprimeSerial(1,"Erro: Nome de usuário web não informado.");
     }
     aS_Preference[0][5] = vS_userWeb;
     // Verifica e trata a senha web
@@ -68,7 +68,7 @@ void fV_salvarRede(AsyncWebServerRequest *request) {
         vS_passWeb = fS_limpaEspacoFimLinha(request->getParam("PWDWEB", true)->value());
     } else {
         erro++;
-        fV_imprimeSerial("Erro: Senha web não informada.");
+        fV_imprimeSerial(1,"Erro: Senha web não informada.");
     }
     aS_Preference[0][6] = vS_passWeb;
     // Verifica e trata a ntp 1
@@ -76,7 +76,7 @@ void fV_salvarRede(AsyncWebServerRequest *request) {
         vS_ntpServer1 = fS_limpaEspacoFimLinha(request->getParam("NTP1", true)->value());
     } else {
         erro++;
-        fV_imprimeSerial("Erro: servidor ntp 1 não informado.");
+        fV_imprimeSerial(1,"Erro: servidor ntp 1 não informado.");
     }
     aS_Preference[0][10] = vS_ntpServer1;
     // Verifica e trata a ntp 2
@@ -84,7 +84,7 @@ void fV_salvarRede(AsyncWebServerRequest *request) {
         vS_ntpServer2 = fS_limpaEspacoFimLinha(request->getParam("NTP2", true)->value());
     } else {
         erro++;
-        fV_imprimeSerial("Erro: servidor ntp 2 não informado.");
+        fV_imprimeSerial(1,"Erro: servidor ntp 2 não informado.");
     }
     aS_Preference[0][11] = vS_ntpServer2;
     // Responde com uma página HTML
@@ -107,7 +107,7 @@ void fV_salvarRede(AsyncWebServerRequest *request) {
 //========================================
 void f_handle_ConfiguraWifi(AsyncWebServerRequest *request) {
     String html = fS_cabecaHTML("Cadastro de Rede", "Configuração de Rede", "/configurag", "/blob/main/manual/rede.md");
-    html += "Insira novas informações e em seguida, clique em Aplicar para enviar os dados para o [" + vS_nomeDispositivo + "]<br><br>";
+    html += "Insira novas informações e em seguida, clique em Aplicar para enviar os dados para o [" + aS_Variaveis[0] + "]<br><br>";
     html += "<form action='/salvar_rede' method='POST' style='margin:5px'>";
     html += "<table border='1' cellpadding='5' cellspacing='0'>";
 
@@ -120,19 +120,19 @@ void f_handle_ConfiguraWifi(AsyncWebServerRequest *request) {
     // Linha para o SSID
     html += "<tr>";
     html += "<td><label for='id_ssid'>Informe o SSID: </label></td>";
-    html += "<td><input type='text' name='SSID' id='id_ssid' value='" + vS_nomeWifi + "' required></td>";
+    html += "<td><input type='text' name='SSID' id='id_ssid' value='" + aS_Variaveis[1] + "' required></td>";
     html += "</tr>";
     
     // Linha para a Senha
     html += "<tr>";
     html += "<td><label for='id_password'>Informe a Senha: </label></td>";
-    html += "<td><input type='password' name='PASS' id='id_password' value='" + vS_senhaWifi + "' required></td>";
+    html += "<td><input type='password' name='PASS' id='id_password' value='" + aS_Variaveis[2] + "' required></td>";
     html += "</tr>";
     
     // Linha para o Hostname
     html += "<tr>";
     html += "<td><label for='id_hstname'>Informe o Hostname (mDNS): </label></td>";
-    html += "<td><input type='text' name='HSTNAME' id='id_hstname' value='" + vS_nomeDispositivo + "' required></td>";
+    html += "<td><input type='text' name='HSTNAME' id='id_hstname' value='" + aS_Variaveis[0] + "' required></td>";
     html += "</tr>";
     
     // Linha para a Porta do Servidor Web

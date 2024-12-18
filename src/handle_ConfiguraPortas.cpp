@@ -30,8 +30,8 @@ void fV_salvarPinos(AsyncWebServerRequest *request) {
     if ( y == 0 || y == 65535 ) {
         html += "<br>O pino "+String(aU16_Pinos[linha][coluna])+" foi descadastrado (excluído)<br>";
         html += "<br>Descadastrando todas as ações para o pino.<br>";
-        fV_imprimeSerial("O pino "+String(aU16_Pinos[linha][coluna])+" foi descadastrado (excluido)");
-        fV_imprimeSerial("Descadastrando todas as acoes para o pino...", false);
+        fV_imprimeSerial(1,"O pino "+String(aU16_Pinos[linha][coluna])+" foi descadastrado (excluido)");
+        fV_imprimeSerial(1,"Descadastrando todas as acoes para o pino...", false);
 
         // Salvar aU16_Acao
         for (uint8_t i = 0; i < vI8_aU16_Acao; i++) {
@@ -66,7 +66,7 @@ void fV_salvarPinos(AsyncWebServerRequest *request) {
             if (paramName == "nome"){
                 aS8_Pinos[i][coluna] = "";
             } else {
-                fV_imprimeSerial("Erro:1 no parametro "+paramName);
+                fV_imprimeSerial(1,"Erro:1 no parametro "+paramName);
             }
         }
 
@@ -79,15 +79,12 @@ void fV_salvarPinos(AsyncWebServerRequest *request) {
             if (paramName == fS_limpaEspacoFimLinha(aS16_PinosMenu[0][i])){
                 aU16_Pinos[i][coluna] = 0;
             } else {
-                fV_imprimeSerial("Erro:2 no parametro "+paramName);
+                fV_imprimeSerial(1,"Erro:2 no parametro "+paramName);
             }
         }
-        if (vU8_PinosCadastrados > 0 ) {
-            vU8_PinosCadastrados--;
-        }
-        fV_imprimeSerial(" OK");
+        fV_imprimeSerial(1," OK");
     } else {
-        fV_imprimeSerial("Salvando pinos...", false);   
+        fV_imprimeSerial(1,"Salvando pinos...", false);   
         x = 2;
         for (int i = 0; i < vI8_aS8_Pinos; i++) {
             AsyncWebParameter* param = request->getParam(x);
@@ -97,7 +94,7 @@ void fV_salvarPinos(AsyncWebServerRequest *request) {
             if (paramName == "nome"){
                 aS8_Pinos[i][coluna] = paramValue;
             } else {
-                fV_imprimeSerial("Erro:1 no parametro "+paramName);
+                fV_imprimeSerial(1,"Erro:1 no parametro "+paramName);
             }
         }
 
@@ -115,15 +112,8 @@ void fV_salvarPinos(AsyncWebServerRequest *request) {
                     }
                 }
             } else {
-                fV_imprimeSerial("Erro:2 no parametro "+paramName);
+                fV_imprimeSerial(1,"Erro:2 no parametro "+paramName);
             }
-        }
-        for (uint8_t x=0; x<vI8_aU16_Pinos; x++){
-          for (uint8_t y=0; y<vU8_totPinos; y++) {
-            if (x == 0 && aU16_Pinos[x][y] > 0){
-              vU8_PinosCadastrados++;
-            }
-          }
         }
     }
     // Responde com uma página HTML
@@ -131,7 +121,7 @@ void fV_salvarPinos(AsyncWebServerRequest *request) {
     html += "<br> Nome: " + aS8_Pinos[linha][coluna];
     html += "<br> Pino: " + String(aU16_Pinos[linha][coluna]) + "<br>";
     html += fS_rodapeHTML("/pinos","/blob/main/manual/pinos.md");
-    fV_imprimeSerial(" OK");
+    fV_imprimeSerial(1," OK");
     request->send(200, "text/html", html );
 }
 
@@ -147,7 +137,7 @@ void fV_cadastraPino(AsyncWebServerRequest *request) {
 
     // Início do formulário
     html += "Insira as informações de configuração dos pinos e em seguida clique em Aplicar.<br>";
-    html += "(Usado(s): "+String(vU8_PinosCadastrados)+" de "+String(vU8_totPinos)+" pino(s))<br>";
+    html += "(Usado(s): "+String(fU16_pinosUsados())+" de "+String(aU32_Variaveis[36])+" pino(s))<br>";
     html += "<form action='/salvar_pinos' method='post'>";
     html += "<input type='hidden' id='linha' name='linha' value='" + String(linha) + "'>";
     html += "<input type='hidden' id ='coluna' name='coluna' value='" + String(coluna) + "'>";
@@ -196,26 +186,26 @@ size_t f_handle_ConfiguraPortas(unsigned char *data, size_t len, bool final) {
         return 0;
     }
     if (vU8_estado == 0) {
-        //linha = std::ceil(static_cast<float>(vU8_totPinos) / vU8_colunasTabelas);
-        vU16_linhaPagCad = vU8_totPinos/vU8_colunasTabelas;
+        //linha = std::ceil(static_cast<float>(aU32_Variaveis[36]) / vU8_colunasTabelas);
+        vU16_linhaPagCad = aU32_Variaveis[36]/vU8_colunasTabelas;
         vU8_colINICIO = 0;
         vU8_colFIM = vU8_colunasTabelas;
         html += fS_cabecaHTML("Cadastro do Pinos","Cadastro de Pinos (Portas)","/","/blob/main/manual/pinos.md");
         html += "Escolha um pino para configurar os parâmetros.<br>";
-        html += "(Usado(s): "+String(vU8_PinosCadastrados)+" de "+String(vU8_totPinos)+" pino(s))<br>";
+        html += "(Usado(s): "+String(fU16_pinosUsados())+" de "+String(aU32_Variaveis[36])+" pino(s))<br>";
         html += "<form action='/configurar_pino' method='GET' style='margin:5px'>";
         html += "<table border='1'>";
 
         written = html.length();
         if (written > len) {
-            Serial.println("Buffer insuficiente no vU8_estado 0");
+           fV_imprimeSerial(3,"Buffer insuficiente no vU8_estado 0");
             return 0;
         }
         memcpy(data, html.c_str(), written);
         vU8_estado++;
         return written;
     }
-    if (vU8_estado == 1 && vU16_linhaPagCad >= 0 && (vU16_linhaPagCad <= std::ceil(static_cast<float>(vU8_totPinos) / vU8_colunasTabelas))) {
+    if (vU8_estado == 1 && vU16_linhaPagCad >= 0 && (vU16_linhaPagCad <= std::ceil(static_cast<float>(aU32_Variaveis[36]) / vU8_colunasTabelas))) {
         html = "";
         if (vU16_linhaPagCad >= 0) {
             html += "<tr>";
@@ -236,19 +226,19 @@ size_t f_handle_ConfiguraPortas(unsigned char *data, size_t len, bool final) {
                 vU8_colINICIO = vU8_colFIM;
                 vU8_colFIM = vU8_colFIM + vU8_colunasTabelas;
             } else if (vU16_linhaPagCad == 0 ) {
-                if (vU8_colFIM > vU8_totPinos) {
+                if (vU8_colFIM > aU32_Variaveis[36]) {
                     vU8_colINICIO = vU8_colFIM;
                     vU8_colFIM = vU8_colFIM+1;
                 } else {
                     vU8_colINICIO = vU8_colFIM;
-                    vU8_colFIM = vU8_totPinos;
+                    vU8_colFIM = aU32_Variaveis[36];
                 }
             } 
         }
 
         written = html.length();
         if (written > len) {
-            Serial.println("Buffer insuficiente no vU8_estado 1");
+           fV_imprimeSerial(3,"Buffer insuficiente no vU8_estado 1");
             return 0;
         }
         memcpy(data, html.c_str(), written);
@@ -265,7 +255,7 @@ size_t f_handle_ConfiguraPortas(unsigned char *data, size_t len, bool final) {
 
         written = html.length();
         if (written > len) {
-            Serial.println("Buffer insuficiente no vU8_estado 2");
+           fV_imprimeSerial(3,"Buffer insuficiente no vU8_estado 2");
             return 0;
         }
         memcpy(data, html.c_str(), written);
