@@ -2,6 +2,65 @@
 #include "globals.h"
 
 //========================================
+// Ajustado para incluir timeout e verificação de tamanho
+void fV_enviarArquivo(const char* ipDestino, const char* nomeArquivo) {
+    if (!LittleFS.exists(nomeArquivo)) {
+        Serial.printf("Erro: O arquivo %s não existe no sistema de arquivos.\n", nomeArquivo);
+        return;
+    }
+
+    String url = String("http://") + ipDestino + "/copia_arq";
+    Serial.printf("URL para enviar arquivo: %s\n", url.c_str());
+
+    File arquivo = LittleFS.open(nomeArquivo, "r");
+    if (!arquivo) {
+        Serial.printf("Falha ao abrir o arquivo %s para leitura.\n", nomeArquivo);
+        return;
+    }
+
+    if (CLIENTE_WEB_ASYNC != nullptr) {
+        delete CLIENTE_WEB_ASYNC;
+        CLIENTE_WEB_ASYNC = nullptr;
+    }
+    CLIENTE_WEB_ASYNC = new asyncHTTPrequest;
+
+    CLIENTE_WEB_ASYNC->setTimeout(10000); // Timeout de 10 segundos
+
+    CLIENTE_WEB_ASYNC->onReadyStateChange([](void* optParm, asyncHTTPrequest* request, int readyState) {
+        if (readyState == 4) {
+            int httpCode = request->responseHTTPcode();
+            if (httpCode == 200) {
+               fV_imprimeSerial(3,"Arquivo enviado com sucesso!");
+            } else {
+                Serial.printf("Falha ao enviar arquivo. Código HTTP: %d\n", httpCode);
+            }
+        }
+    });
+
+    if (CLIENTE_WEB_ASYNC->open("POST", url.c_str())) {
+        CLIENTE_WEB_ASYNC->setReqHeader("Content-Type", "application/octet-stream");
+        CLIENTE_WEB_ASYNC->setReqHeader("File-Name", nomeArquivo);
+
+        size_t tamanho = arquivo.size();
+        if (tamanho > 0) {
+            char* conteudo = new char[tamanho];
+            arquivo.readBytes(conteudo, tamanho);
+
+            CLIENTE_WEB_ASYNC->send(reinterpret_cast<const uint8_t*>(conteudo), tamanho);
+            delete[] conteudo;
+
+            Serial.printf("Enviando arquivo %s (%d bytes) para %s\n", nomeArquivo, tamanho, ipDestino);
+        } else {
+           fV_imprimeSerial(3,"Erro: Arquivo vazio, não foi enviado.");
+        }
+    } else {
+       fV_imprimeSerial(3,"Falha ao iniciar o envio do arquivo.");
+    }
+
+    arquivo.close();
+}
+
+//========================================
 void fV_recebeDados(AsyncWebServerRequest *request) {
 /*
  Argumento 0 = Nome do Dispositivo
@@ -9,57 +68,63 @@ void fV_recebeDados(AsyncWebServerRequest *request) {
  Argumento 2 = Numero do Pino
  Argumento 3 = Status do Pino
 */
-  vS_uri = request->url();
-  if (request->args() == 4) {
-    if (ULTIMOS_GET_RECEBIDOS.length() > 260) {
-      ULTIMOS_GET_RECEBIDOS = "";
-    }
-    vS_payrec = vS_uri + "?" + request->argName(0) + "=" + request->arg((size_t)0) + "&" + request->argName(1) + "=" + request->arg(1) + "&" + request->argName(2) + "=" + request->arg(2) + "&" + request->argName(3) + "=" + request->arg(3);
-    ULTIMOS_GET_RECEBIDOS += fS_DataHora();
-    ULTIMOS_GET_RECEBIDOS += " -> ";
-    ULTIMOS_GET_RECEBIDOS += vS_payrec;
-    ULTIMOS_GET_RECEBIDOS += "<br><br>";
-    String validacao = "_SEM_DADOS_";
-    vU16_ulimoModRecebido = fI_retornaModulo(request->arg((size_t)0));
-    if ( vU16_ulimoModRecebido < vU8_totModulos) {
-      Serial.println("Recebido dados da placa " + request->arg((size_t)0));
-      switch (request->arg(1).toInt()) {
-        case 0: // Parametro acao = 0(Nenhuma)
-          aI16_InterMod_CTRL_HandShake[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
-          aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = request->arg(3).toInt();
-          validacao = "OK_DADO_RECEBIDO";
-          break;
-        case 65534: // Parametro acao = 65534(status)
-          aI16_InterMod_CTRL_HandShake[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
-          aI16_InterMod_CTRL_HandShake[1][fU8_retornaIndiceHS(request->arg((size_t)0))] = request->arg(3).toInt();
-          aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = request->arg(3).toInt();
-          vB_envia_Historico = true;
-          validacao = "OK_DADO_RECEBIDO";
-          break;
-        case 65535: // Parametro acao = 65535(sincronismo)
-          aI16_InterMod_CTRL_HandShake[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
-          aI16_InterMod_CTRL_HandShake[1][fU8_retornaIndiceHS(request->arg((size_t)0))] = request->arg((size_t)0).toInt();
-          aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = aI16_InterMod_CTRL_HandShake[1][fU8_retornaIndiceHS(request->arg((size_t)0))];
-          validacao = "OK_DADO_RECEBIDO";
-          break;
-        default:
-          aI16_InterMod_CTRL_HandShake[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
-          aI16_InterMod_CTRL_HandShake[1][fU8_retornaIndiceHS(request->arg((size_t)0))] = 0;
-          aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = request->arg(3).toInt();
-          validacao = "OK_DADO_RECEBIDO";
-          break;
+  if (vB_exec_Modulos) {
+    vS_uri = request->url();
+    if (request->args() == 4) {
+      if (ULTIMOS_GET_RECEBIDOS.length() > 260) {
+        ULTIMOS_GET_RECEBIDOS = "";
       }
-      Serial.println("Acao/Indice/Status " + request->arg(1) + " " + request->arg(2) + " " + request->arg(3));
-      request->send(200, "text/plain", validacao);
+      vS_payrec = vS_uri + "?" + request->argName(0) + "=" + request->arg((size_t)0) + "&" + request->argName(1) + "=" + request->arg(1) + "&" + request->argName(2) + "=" + request->arg(2) + "&" + request->argName(3) + "=" + request->arg(3);
+      ULTIMOS_GET_RECEBIDOS += fS_DataHora();
+      ULTIMOS_GET_RECEBIDOS += " -> ";
+      ULTIMOS_GET_RECEBIDOS += vS_payrec;
+      ULTIMOS_GET_RECEBIDOS += "<br><br>";
+      String validacao = "_SEM_DADOS_";
+      vU16_ulimoModRecebido = fI_retornaModulo(request->arg((size_t)0));
+      if ( vU16_ulimoModRecebido < vU8_totModulos) {
+        fV_imprimeSerial(3,"Recebido dados da placa " + request->arg((size_t)0));
+        switch (request->arg(1).toInt()) {
+          //case 0: // Parametro acao = 0(Nenhuma)
+          //  aI16_InterMod_CTRL_HandShake[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
+          //  aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = request->arg(3).toInt();
+          //  validacao = "OK_DADO_RECEBIDO";
+          //  break;
+          case 65534: // Parametro acao = 65534(status)
+            aI16_InterMod_CTRL_HandShake[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
+            aI16_InterMod_CTRL_HandShake[1][fU8_retornaIndiceHS(request->arg((size_t)0))] = request->arg(3).toInt();
+            aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = request->arg(3).toInt();
+            vB_envia_Historico = true;
+            validacao = "OK_DADO_RECEBIDO";
+            break;
+          case 65535: // Parametro acao = 65535(sincronismo)
+            aI16_InterMod_CTRL_HandShake[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
+            aI16_InterMod_CTRL_HandShake[1][fU8_retornaIndiceHS(request->arg((size_t)0))] = request->arg((size_t)0).toInt();
+            aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = aI16_InterMod_CTRL_HandShake[1][fU8_retornaIndiceHS(request->arg((size_t)0))];
+            validacao = "OK_DADO_RECEBIDO";
+            break;
+          default:
+            aI16_InterMod_CTRL_HandShake[0][fU8_retornaIndiceHS(request->arg((size_t)0))] = vI_cicloHandshake;
+            aI16_InterMod_CTRL_HandShake[1][fU8_retornaIndiceHS(request->arg((size_t)0))] = 0;
+            aU16_Pinos_Status[0][fU16_retornaIndicePino(request->arg(2).toInt())] = request->arg(3).toInt();
+            validacao = "OK_DADO_RECEBIDO";
+            break;
+        }
+        fV_imprimeSerial(3,"Acao/Indice/Status " + request->arg(1) + " " + request->arg(2) + " " + request->arg(3));
+        request->send(200, "text/plain", validacao);
+      } else {
+        fV_imprimeSerial(1,"Rejeitado dados da placa " + request->arg((size_t)0));
+        fV_imprimeSerial(1,"Acao/Indice/Status " + request->arg(1) + " " + request->arg(2) + " " + request->arg(3));
+        request->send(401, "text/plain", "ERRO - PLACA NAO CADASTRADA\n");
+      }
     } else {
-      Serial.println("Rejeitado dados da placa " + request->arg((size_t)0));
-      Serial.println("Acao/Indice/Status " + request->arg(1) + " " + request->arg(2) + " " + request->arg(3));
-      request->send(401, "text/plain", "ERRO - PLACA NAO CADASTRADA\n");
+      fV_imprimeSerial(1,"Erro dados da placa " + request->arg((size_t)0));
+      fV_imprimeSerial(1,"Acao/Indice/Status " + request->arg(1) + " " + request->arg(2) + " " + request->arg(3));
+      request->send(400, "text/plain", "ERRO - PARAMETROS INVALIDOS\n");
     }
   } else {
-    Serial.println("Erro dados da placa " + request->arg((size_t)0));
-    Serial.println("Acao/Indice/Status " + request->arg(1) + " " + request->arg(2) + " " + request->arg(3));
-    request->send(400, "text/plain", "ERRO - PARAMETROS INVALIDOS\n");
+    fV_imprimeSerial(3,"Intermodulos desabilitado " + request->arg((size_t)0));
+    fV_imprimeSerial(3,"Acao/Indice/Status " + request->arg(1) + " " + request->arg(2) + " " + request->arg(3));
+    request->send(503, "text/plain", "ERRO - INTERMODULOS REMOTO DESABILITADO\n");
   }
 }
 
@@ -136,7 +201,7 @@ void f_handle_SerialOutput(AsyncWebServerRequest *request) {
 //========================================
 void f_handle_OpcoesFuncoes(AsyncWebServerRequest *request) {
     String html = fS_cabecaHTML("Opções Gerais", "Opções Gerais","/","/blob/main/manual/execgeral.md");
-    html += "Escolha sua opção para ["+vS_nomeDispositivo+"]<br>";
+    html += "Escolha sua opção para [" + aS_Variaveis[0] + "]<br>";
     html += "<br><button id='openWebSerial'>Serial Web</button><script>document.getElementById('openWebSerial').addEventListener('click', function() { window.location.href = '/serial'; });</script><br>";
     html += "<br><button id='openPausarExecs'>Pausar/Retornar Execuções</button><script>document.getElementById('openPausarExecs').addEventListener('click', function() { window.location.href = '/pergunta?funcao=fV_mudaExec'; });</script>";
     if (vB_pausaEXECs) {
@@ -176,21 +241,21 @@ void f_handle_salvarCadastroGeral(AsyncWebServerRequest *request) {
         vS_corStatus1 = fS_limpaEspacoFimLinha(request->getParam("CORSTAT1", true)->value());
     } else {
         erro++;
-        fV_imprimeSerial("Erro no parametro CORSTAT1");
+        fV_imprimeSerial(1,"Erro no parametro CORSTAT1");
     }
     aS_Preference[0][13] = vS_corStatus1;
     if (request->hasParam("CORSTAT0", true)) {
         vS_corStatus0 = fS_limpaEspacoFimLinha(request->getParam("CORSTAT0", true)->value());
     } else {
         erro++;
-        fV_imprimeSerial("Erro no parametro CORSTAT0");
+        fV_imprimeSerial(1,"Erro no parametro CORSTAT0");
     }
     aS_Preference[0][14] = vS_corStatus0;
     if (request->hasParam("TREFRESH", true)) {
         vU8_tempoRefresh = request->getParam("TREFRESH", true)->value().toInt();
     } else {
         erro++;
-        fV_imprimeSerial("Erro no parametro TREFRESH");
+        fV_imprimeSerial(1,"Erro no parametro TREFRESH");
     }
     aS_Preference[0][41] = String(vU8_tempoRefresh);
     if (request->hasParam("EXECWDOG", true)) {
@@ -203,30 +268,30 @@ void f_handle_salvarCadastroGeral(AsyncWebServerRequest *request) {
         vU16_clockESP32 = request->getParam("CLOCKESP", true)->value().toInt();
     } else {
         erro++;
-        fV_imprimeSerial("Erro no parametro CLOCKESP");
+        fV_imprimeSerial(1,"Erro no parametro CLOCKESP");
     }
     aS_Preference[0][42] = String(vU16_clockESP32);
     if (request->hasParam("TEMPOWDOG", true)) {
-        vU32_tempoWatchDog = request->getParam("TEMPOWDOG", true)->value().toInt();
+        aU32_Variaveis[21] = request->getParam("TEMPOWDOG", true)->value().toInt();
     } else {
         erro++;
-        fV_imprimeSerial("Erro no parametro TEMPOWDOG");
+        fV_imprimeSerial(1,"Erro no parametro TEMPOWDOG");
     }
-    aS_Preference[0][44] = String(vU32_tempoWatchDog);
+    aS_Preference[0][44] = String(aU32_Variaveis[21]);
     if (request->hasParam("TOTPIN", true)) {
-        vU8_totPinos = request->getParam("TOTPIN", true)->value().toInt();
+        aU32_Variaveis[36] = request->getParam("TOTPIN", true)->value().toInt();
     } else {
         erro++;
-        fV_imprimeSerial("Erro no parametro TOTPIN");
+        fV_imprimeSerial(1,"Erro no parametro TOTPIN");
     }
-    aS_Preference[0][39] = String(vU8_totPinos);
+    aS_Preference[0][39] = String(aU32_Variaveis[36]);
     if (request->hasParam("TOTTASK", true)) {
-        vU8_totTask = request->getParam("TOTTASK", true)->value().toInt();
+        aU32_Variaveis[35] = request->getParam("TOTTASK", true)->value().toInt();
     } else {
         erro++;
-        fV_imprimeSerial("Erro no parametro TOTTASK");
+        fV_imprimeSerial(1,"Erro no parametro TOTTASK");
     }
-    aS_Preference[0][50] = String(vU8_totTask);
+    aS_Preference[0][50] = String(aU32_Variaveis[35]);
     // Responde com uma página HTML
     String html = "";
     if (erro == 0) {
@@ -243,7 +308,7 @@ void f_handle_salvarCadastroGeral(AsyncWebServerRequest *request) {
 //========================================
 void f_handle_CadastroGeral(AsyncWebServerRequest *request) {
     String html = fS_cabecaHTML("Cadastro Geral", "Configuração de Geral", "/configurag", "/blob/main/manual/configgeral.md");
-    html += "Insira novas informações e em seguida, clique em Aplicar para enviar os dados para o [" + vS_nomeDispositivo + "]<br><br>";
+    html += "Insira novas informações e em seguida, clique em Aplicar para enviar os dados para o [" + aS_Variaveis[0] + "]<br><br>";
     html += "<form action='/salvar_conf_geral' method='POST' style='margin:5px'>";
     html += "<table border='1' cellpadding='5' cellspacing='0'>";
 
@@ -292,19 +357,19 @@ void f_handle_CadastroGeral(AsyncWebServerRequest *request) {
     // tempo para watchdoh
     html += "<tr>";
     html += "<td><label for='id_tempowdog'>Tempo para wathDog (µs): </label></td>";
-    html += "<td><input type='text' name='TEMPOWDOG' maxlength='12' size='12' id='id_tempowdog' value='" + String(vU32_tempoWatchDog) + "' required></td>";
+    html += "<td><input type='text' name='TEMPOWDOG' maxlength='12' size='12' id='id_tempowdog' value='" + String(aU32_Variaveis[21]) + "' required></td>";
     html += "</tr>";
 
     // Linha para quantidade de pinos
     html += "<tr>";
     html += "<td><label for='id_totpin'>Informe a Quantidade Total de Pinos: </label></td>";
-    html += "<td><input type='text' style='background-color: Red' name='TOTPIN' maxlength='6' size='6' id='id_totpin' value='" + String(vU8_totPinos) + "' required></td>";
+    html += "<td><input type='text' style='background-color: Red' name='TOTPIN' maxlength='6' size='6' id='id_totpin' value='" + String(aU32_Variaveis[36]) + "' required></td>";
     html += "</tr>";
 
     // Linha para quantidade de tasks
     html += "<tr>";
     html += "<td><label for='id_tottask'>Total de Tasks em execução (de 0 a 5):<br> 0=Desligado / 5=Todas </label></td>";
-    html += "<td><input type='text' style='background-color: Red' name='TOTTASK' maxlength='6' size='6' id='id_tottask' value='" + String(vU8_totTask) + "' required ></td>";
+    html += "<td><input type='text' style='background-color: Red' name='TOTTASK' maxlength='6' size='6' id='id_tottask' value='" + String(aU32_Variaveis[35]) + "' required ></td>";
     html += "</tr>";
 
     html += "</table>";    
@@ -319,13 +384,13 @@ void f_handle_CadastroGeral(AsyncWebServerRequest *request) {
 //========================================
 void executarFuncaoSim() {
     // Coloque aqui o código que será executado quando a resposta for "Sim"
-    fV_imprimeSerial("executar");
+    fV_imprimeSerial(1,"executar");
 }
 
 //========================================
 void executarFuncaoNao() {
     // Coloque aqui o código que será executado quando a resposta for "Não"
-    fV_imprimeSerial("não executar");
+    fV_imprimeSerial(1,"não executar");
 }
 
 //========================================
@@ -344,7 +409,7 @@ void fV_resposta(AsyncWebServerRequest *request) {
     confirmacao.trim();  // Remove espaços extras
 
     String pagina = fS_cabecaHTML("Resposta", "", "/");
-    fV_imprimeSerial("Execucao de: " + funcao, false);
+    fV_imprimeSerial(1,"Execucao de: " + funcao, false);
 
     // Separar nome da função e parâmetros
     int pos = funcao.indexOf('(');
@@ -364,14 +429,14 @@ void fV_resposta(AsyncWebServerRequest *request) {
         // Verifica se a função existe no mapa e a executa
         auto it = mapaFuncoesSemParam.find(funcao);
         if (it != mapaFuncoesSemParam.end()) {
-            fV_imprimeSerial(" SIM");
+            fV_imprimeSerial(1," SIM");
             it->second();  // Chama a função
             pagina += "<p>Função '" + funcao + "' executada com sucesso!</p>";
         } else {
             //auto it2 = mapaFuncoesComParam.find(funcao);
             auto it2 = mapaFuncoesComParam.find(nomeFuncao);
             if (it2 != mapaFuncoesComParam.end()) {
-                fV_imprimeSerial(" SIM");
+                fV_imprimeSerial(1," SIM");
                 if (funcao.startsWith("f_handle_")) {
                     it2->second(request);  // Chama a função COM parametro 'request'
                     pagina += "<p>Função " + nomeFuncao + " executada com sucesso!</p>";
@@ -380,7 +445,7 @@ void fV_resposta(AsyncWebServerRequest *request) {
                     pagina += "<p>Função " + nomeFuncao + "("+parametros+") executada com sucesso!</p>";
                 }
             } else {
-                fV_imprimeSerial(" NAO");
+                fV_imprimeSerial(1," NAO");
                 pagina += "<p>Função " + nomeFuncao + "("+parametros+") desconhecida.</p>";
             }
         }
@@ -393,7 +458,7 @@ void fV_resposta(AsyncWebServerRequest *request) {
 
 //========================================
 void f_handle_SalvaFlash(AsyncWebServerRequest *request) {
-    fV_imprimeSerial("Salvando informações na flash... ");
+    fV_imprimeSerial(1,"Salvando informações na flash... ");
         
     request->send(200, "text/html", fS_cabecaHTML("!! SALVAR CONFIGURAÇÕES NA FLASH !!", "Você confirma salvar as informações na flash?","/files")+fS_rodapeHTML("/files"));
 }
@@ -405,7 +470,7 @@ String fS_cabecaHTML(String titulo, String h1, String url, String ajuda) {
     resposta += "<head>";
     resposta += "<meta charset='UTF-8'>";
     resposta += "<meta name='viewport' content='width=device-width, initial-scale=1.0' />";
-    resposta += "<title>"+vS_nomeDispositivo+" - "+titulo+"</title>";
+    resposta += "<title>"+aS_Variaveis[0]+" - "+titulo+"</title>";
     resposta += "</head>";
     resposta += "<body id='body'>";
     resposta += "<h1>"+h1+"</h1>";
@@ -435,7 +500,7 @@ void f_handle_OTA(AsyncWebServerRequest *request) {
   html += "<head>";
   html += "<meta charset='UTF-8'>";
   html += "<meta name='viewport' content='width=device-width, initial-scale=1.0' />";
-  html += "<title>" + vS_nomeDispositivo + "</title>";
+  html += "<title>" + aS_Variaveis[0] + "</title>";
   html += "</head>";
   html += "<body id='body'>";
   html += "<div id='telarecarrega'> ";
@@ -463,7 +528,7 @@ void f_handle_OTA(AsyncWebServerRequest *request) {
 //========================================
 void f_handle_OpcoesGerais(AsyncWebServerRequest *request) {
     String html = fS_cabecaHTML("Cadastro Geral", "Configuração de Parâmetros Gerais","/","/blob/main/manual/configgeral.md");
-    html += "Escolha sua opção de configuração para ["+vS_nomeDispositivo+"]<br>";
+    html += "Escolha sua opção de configuração para ["+aS_Variaveis[0]+"]<br>";
     html += "<br><button id='openConfGeral'>Confirugação Geral</button><script>document.getElementById('openConfGeral').addEventListener('click', function() { window.location.href = '/conf_geral'; });</script><br>";
     html += "<br><button id='openConfRede'>Confirugação de Rede</button><script>document.getElementById('openConfRede').addEventListener('click', function() { window.location.href = '/conf_rede'; });</script><br>";
     html += "<br><button id='openConfInterMod'>Confirugação de Inter Módulos</button><script>document.getElementById('openConfInterMod').addEventListener('click', function() { window.location.href = '/modulos'; });</script><br>";
@@ -476,38 +541,38 @@ void f_handle_OpcoesGerais(AsyncWebServerRequest *request) {
 
 //========================================
 void f_handle_SalvarWifiInicio(AsyncWebServerRequest *request) {
-    fV_imprimeSerial("Atualizando informacoes Wifi...", true);
+    fV_imprimeSerial(1,"Atualizando informacoes Wifi...", true);
 
     String html = fS_cabecaHTML("Modo AP", "Modo AP - Salvando Configuração do WIFI", "/", "/smcr");
 
-    vS_nomeWifi = request->arg("SSID");
-    vS_senhaWifi = request->arg("PASS");
-    aS_Preference[0][0] = fS_limpaEspacoFimLinha(vS_nomeWifi);
-    aS_Preference[0][1] = fS_limpaEspacoFimLinha(vS_senhaWifi);
+    aS_Variaveis[1] = request->arg("SSID");
+    aS_Variaveis[2] = request->arg("PASS");
+    aS_Preference[0][0] = fS_limpaEspacoFimLinha(aS_Variaveis[1]);
+    aS_Preference[0][1] = fS_limpaEspacoFimLinha(aS_Variaveis[2]);
 
     html += "<br> Informações do wifi salvas na FLASH.<br>Reinicie o módulo!<br>";
     fV_Preference("E",false);
 
     html += fS_rodapeHTML("/", "smcr");
-    vB_finalizaModoAP = true;
+    aB_Variaveis[6] = true;
     request->send(200, "text/html", html);
 }
 
 //========================================
 void f_handle_ConfiguraWifiInicio(AsyncWebServerRequest *request) {
     String html = fS_cabecaHTML("Modo AP", "Modo AP - Configuração do WIFI", "/", "/smcr");
-    html += "<form action='/wifiinicio' method='POST' style='margin:5px'>";
+    html += "<form action='/' method='POST' style='margin:5px'>";
     html += "<label for='id_ssid'>Informe o SSID: </label>";
-    html += "<input type='text' name='SSID' id='id_ssid' value='" + vS_nomeWifi + "' required>";
+    html += "<input type='text' name='SSID' id='id_ssid' value='" + aS_Variaveis[1] + "' required>";
     html += "<br>";
     html += "<br><label for='id_password'>Informe a Senha: </label>";
-    html += "<input type='password' name='PASS' id='id_password' value='" + vS_senhaWifi + "' required>";
+    html += "<input type='password' name='PASS' id='id_password' value='" + aS_Variaveis[2] + "' required>";
     html += "<br>";
     html += "<br>";
     html += "<input type='submit' name='SUBMIT_SALVAR' value='Salvar' id='id_salvar'>";
     html += "</form>";
     html += fS_rodapeHTML("/", "smcr");
-    fV_imprimeSerial("Aguardando informacoes... f_handle_ConfiguraWifi()", true);
+    fV_imprimeSerial(1,"Aguardando informacoes... f_handle_ConfiguraWifi()", true);
     request->send(200, "text/html", html);
 }
 
@@ -519,7 +584,7 @@ void f_handle_NotFound(AsyncWebServerRequest *request) {
   html += "<head>";
   html += "<meta charset='UTF-8'>";
   html += "<meta name='viewport' content='width=device-width, initial-scale=1.0' />";
-  html += "<title>" + vS_nomeDispositivo + "</title>";
+  html += "<title>" + aS_Variaveis[0] + "</title>";
   html += "</head>";
   html += "<body>";
   html += "<h1>Página Não encontrada</h1>";
@@ -584,17 +649,17 @@ void f_handle_Index(AsyncWebServerRequest *request) {
     if (VB_mostra_Status) {
         html += "<meta http-equiv='refresh' content='"+String(vU8_tempoRefresh)+"'>";
     }
-    html += "<title>Módulo: "+vS_nomeDispositivo+"</title>";
+    html += "<title>Módulo: "+aS_Variaveis[0]+"</title>";
     html += "</head>";
     html += "<body>";
-    html += "<center><h1>PÁGINA STATUS [" + vS_nomeDispositivo + "]</h1>Seu ip é: ";
+    html += "<center><h1>PÁGINA STATUS [" + aS_Variaveis[0] + "]</h1>Seu ip é: ";
     html += request->client()->remoteIP().toString();
     html += " , ";
     html += fS_DataHora();
     html += "<br>Uptime: ";
     html += fS_Uptime();
     html += "<br>";
-    if (!vB_rodando) {
+    if (!aB_Variaveis[13]) {
         html += "<br><br><br><br><br><br><center><h1>!!! SISTEMA INICIANDO !!!</h1></center>";
     } else {
         html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/configurag'> Geral</a> - ";
@@ -605,13 +670,13 @@ void f_handle_Index(AsyncWebServerRequest *request) {
         html += "<a href='http://" + WiFi.localIP().toString() + ":" + String(vI_U16_portaWebAsync) + "/logout'> Sair</a> - ";
         html += "<a href='https://github.com/rede-analista/smcr/tree/main' target='_blank'>Ajuda</a></center>";
 
-        if (VB_mostra_Status && vB_rodando) {
+        if (VB_mostra_Status && aB_Variaveis[13]) {
             html += "<h2>PINOS(Portas)</h2>";
-            vU16_linhaPagCad = vU8_totPinos/vU8_colunasTabelas;
+            vU16_linhaPagCad = aU32_Variaveis[36]/vU8_colunasTabelas;
             vU8_colINICIO = 0;
             vU8_colFIM = vU8_colunasTabelas;
 
-            html += "(Usado(s): "+String(vU8_PinosCadastrados)+" de "+String(vU8_totPinos)+" pino(s))";
+            html += "(Usado(s): "+String(fU16_pinosUsados())+" de "+String(aU32_Variaveis[36])+" pino(s))";
             html += "<br>(Refresh a cada "+String(vU8_tempoRefresh)+"/s)";
             html += "<table border='1'>";
             while (vU16_linhaPagCad >= 0) {
@@ -650,7 +715,7 @@ void f_handle_Index(AsyncWebServerRequest *request) {
                     vU8_colFIM = vU8_colFIM+vU8_colunasTabelas;
                 } else {
                     vU8_colINICIO = vU8_colFIM;
-                    vU8_colFIM = vU8_totPinos;
+                    vU8_colFIM = aU32_Variaveis[36];
                 }
             }
             html += "</table><br>";
@@ -711,10 +776,10 @@ void f_handle_Index(AsyncWebServerRequest *request) {
             html += vS_payrec;
             html += "<br>";
             html += "<p>Último enviado: (Módulo:";
-            if (vU8_ultimoModEnviado > 0) {
-                html += String(vU8_ultimoModEnviado);
+            if (aU32_Variaveis[28] > 0) {
+                html += String(aU32_Variaveis[28]);
                 html += ") - ";
-                html += aS_InterMod[0][fU16_retornaIndiceModulo(vU8_ultimoModEnviado)];
+                html += aS_InterMod[0][fU16_retornaIndiceModulo(aU32_Variaveis[28])];
             } else {
                 html += ")";
             }
@@ -767,18 +832,18 @@ bool fB_configuraServidorWEB(const uint16_t& porta, bool force) {
     bool resultado = false;
 
     if (WiFi.status() == WL_CONNECTED) {
-        fV_imprimeSerial("Iniciando configuracao do servidor web na porta ", false);
+        fV_imprimeSerial(1,"Iniciando configuracao do servidor web na porta ", false);
         if (!force) {
           vI_U16_portaWebAsync = fU16_carregaConfigGeral(0,3,8080);
-          fV_imprimeSerial(vI_U16_portaWebAsync, false);
-          fV_imprimeSerial("...", false);
+          fV_imprimeSerial(1,vI_U16_portaWebAsync, false);
+          fV_imprimeSerial(1,"...", false);
           vU8_tempoRefresh = fU8_carregaConfigGeral(0,41,60);
           VB_mostra_Status = fU8_carregaConfigGeral(0,48,60);
           VB_mostra_Interm = fU8_carregaConfigGeral(0,49,60);
         } else {
           vI_U16_portaWebAsync = porta;
-          fV_imprimeSerial(vI_U16_portaWebAsync, false);
-          fV_imprimeSerial("...", false);
+          fV_imprimeSerial(1,vI_U16_portaWebAsync, false);
+          fV_imprimeSerial(1,"...", false);
           vB_emExecucaoWS = false;
           delete SERVIDOR_WEB_ASYNC;          
         }
@@ -917,7 +982,7 @@ bool fB_configuraServidorWEB(const uint16_t& porta, bool force) {
                 pagina += "<meta http-equiv='refresh' content='15000; URL=/'>";
                 pagina += "<script>setTimeout(function(){ window.location = '/'; }, 15000);</script>";                
                 pagina += "<meta name='viewport' content='width=device-width, initial-scale=1.0' />";
-                pagina += "<title>"+vS_nomeDispositivo+" - Pergunta</title>";
+                pagina += "<title>"+aS_Variaveis[0]+" - Pergunta</title>";
                 pagina += "</head>";
                 pagina += "<body id='body'>";
                 pagina += "<h1>Deseja executar esta ação?</h1>";
@@ -986,102 +1051,176 @@ bool fB_configuraServidorWEB(const uint16_t& porta, bool force) {
 
         });
 
+    SERVIDOR_WEB_ASYNC->on("/manage-files", HTTP_POST, [](AsyncWebServerRequest *request) {
+        if (!request->hasParam("files", true)) {
+            request->send(400, "text/plain", "Nenhum arquivo selecionado.");
+            return;
+        }
 
-/*
-SERVIDOR_WEB_ASYNC->on("/manage-files", HTTP_POST, [](AsyncWebServerRequest *request) {
-    if (!request->hasParam("files", true)) {
-        request->send(400, "text/plain", "Nenhum arquivo selecionado.");
-        return;
-    }
+        String action = request->getParam("action", true)->value(); // Ação (download, delete ou copia)
+        String ipDestino = request->getParam("ipInput", true)->value(); // Obter o IP de destino
+        String response = "";
+        response += fS_cabecaHTML("Arquivos", "Operação com arquivos", "/files");
 
-    String action = request->getParam("action", true)->value(); // Ação (download ou delete)
-    String response = "";
-    response += fS_cabecaHTML("Arquivos", "Operação com arquivos", "/files");
+        // Obter a lista de arquivos selecionados
+        int params = request->params();
+        String firstFileName = ""; // Nome do primeiro arquivo para download
+        int fileCount = 0;         // Contador de arquivos válidos para download
 
-    // Obter a lista de arquivos selecionados
-    int params = request->params();
-    String firstFileName = ""; // Nome do primeiro arquivo para download
-    int fileCount = 0;         // Contador de arquivos válidos para download
+        for (int i = 0; i < params; i++) {
+            AsyncWebParameter* param = request->getParam(i);
+            if (param->isPost() && param->name() == "files") {
+                String fileName = param->value();
+                fileCount++;
 
-    for (int i = 0; i < params; i++) {
-        AsyncWebParameter* param = request->getParam(i);
-        if (param->isPost() && param->name() == "files") {
-            String fileName = param->value();
-            fileCount++;
-
-            // Garantir que o nome do arquivo comece com "/"
-            if (!fileName.startsWith("/")) {
-                fileName = "/" + fileName;
-            }
-
-            if (action == "delete") {
-                // Exclusão de arquivos
-                if (FILESYS.exists(fileName)) {
-                    FILESYS.remove(fileName);
-                    response += "Arquivo excluído: " + fileName + "<br>";
-                } else {
-                    response += "Erro: Arquivo não encontrado para exclusão: " + fileName + "<br>";
+                // Garantir que o nome do arquivo comece com "/"
+                if (!fileName.startsWith("/")) {
+                    fileName = "/" + fileName;
                 }
-            } else if (action == "download") {
-                // Armazena o primeiro arquivo selecionado
-                if (fileCount == 1) {
-                    firstFileName = fileName;
+
+                if (action == "delete") {
+                    // Exclusão de arquivos
+                    if (FILESYS.exists(fileName)) {
+                        FILESYS.remove(fileName);
+                        response += "Arquivo excluído: " + fileName + "<br>";
+                    } else {
+                        response += "Erro: Arquivo não encontrado para exclusão: " + fileName + "<br>";
+                    }
+                } else if (action == "download") {
+                    // Armazena o primeiro arquivo selecionado
+                    if (fileCount == 1) {
+                        firstFileName = fileName;
+                    }
+                } else if (action == "copia") {
+                    // Copiar arquivos
+                    if (FILESYS.exists(fileName)) {
+                        // O nome do arquivo copiado será o mesmo da origem
+                        String copiedFileName = fileName; // Usando o mesmo nome da origem
+                        File originalFile = FILESYS.open(fileName, "r");
+                        File copiedFile = FILESYS.open(copiedFileName, FILE_WRITE);
+
+                        if (originalFile && copiedFile) {
+                            // Copiar o conteúdo do arquivo
+                            while (originalFile.available()) {
+                                copiedFile.write(originalFile.read());
+                            }
+                            originalFile.close();
+                            copiedFile.close();
+                            //response += "Arquivo copiado com sucesso: " + fileName + " para " + copiedFileName + "<br>";
+
+                            // Enviar o arquivo copiado para outro ESP32, se necessário
+                            if (ipDestino.length() > 0) {
+                                fV_enviarArquivo(ipDestino.c_str(), copiedFileName.c_str()); // Envia o arquivo copiado
+                                response += "Arquivo copiado para o destino: " + copiedFileName + "<br>";
+                            }
+                        } else {
+                            response += "Erro ao copiar o arquivo: " + fileName + "<br>";
+                        }
+                    } else {
+                        response += "Erro: Arquivo não encontrado para cópia: " + fileName + "<br>";
+                    }
                 }
             }
         }
-    }
 
-    // Realizar o download se apenas um arquivo foi selecionado
-    if (action == "download") {
-        if (fileCount == 1 && FILESYS.exists(firstFileName)) {
-            request->send(FILESYS, firstFileName, "application/octet-stream");
-            return; // Encerra o fluxo após o download
-        } else if (fileCount > 1) {
+        // Realizar o download se apenas um arquivo foi selecionado
+        if (action == "download") {
+            if (fileCount == 1 && FILESYS.exists(firstFileName)) {
+                request->send(FILESYS, firstFileName, "application/octet-stream");
+                return; // Encerra o fluxo após o download
+            } else if (fileCount > 1) {
+            
+                // Criar um arquivo TAR temporário
+                String tarFileName = "download_" + String(millis()) + ".tar.gz";
+                fs::FS &fs = SPIFFS;
+                File tarFile = fs.open("/tmp/" + tarFileName, FILE_WRITE);
+                if (!tarFile) {
+                    response += "Erro ao criar o arquivo TAR.GZ: " + tarFileName + "<br>";
+                    return;
+                }
 
-            // Criar um arquivo TAR temporário
-            String tarFileName = "download_" + String(millis()) + ".tar.gz";
-            fs::FS &fs = SPIFFS;
-            File tarFile = fs.open("/tmp/" + tarFileName, FILE_WRITE);
-            if (!tarFile) {
-                response += "Erro ao criar o arquivo TAR.GZ: " + tarFileName + "<br>";
+            } else {
+                response += "Erro: Nenhum arquivo válido encontrado para download.<br>";
+            }
+        }
+
+        response += fS_rodapeHTML("/files");
+        request->send(200, "text/html", response);
+    });
+
+    SERVIDOR_WEB_ASYNC->on("/copia_arq", HTTP_POST, [](AsyncWebServerRequest *request) {}, 
+    NULL, 
+    [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+        static File arquivo;
+
+        if (index == 0) {
+            const String nomeArquivo = "/" + request->getHeader("File-Name")->value();
+
+            arquivo = LittleFS.open(nomeArquivo, "w");
+            if (!arquivo) {
+                Serial.printf("Erro ao abrir o arquivo %s para escrita.\n", nomeArquivo.c_str());
+                request->send(500, "text/plain", "Erro ao salvar o arquivo");
                 return;
             }
-    
-            // Adicionar os arquivos selecionados ao TAR
-            TarGzWriter tarWriter(tarFile);
-            for (int i = 0; i < params; i++) {
-                AsyncWebParameter* param = request->getParam(i);
-                if (param->isPost() && param->name() == "files") {
-                    String fileName = param->value();
-                    if (!fileName.startsWith("/")) {
-                        fileName = "/" + fileName;
-                    }
-                    if (!tarWriter.add(fileName.c_str(), fileName.c_str())) {
-                        response += "Erro ao adicionar o arquivo " + fileName + " ao TAR.<br>";
-                    }
-                }
-            }
-            tarWriter.close();
-    
-            // Enviar o TAR para o cliente
-            if (!request->send(FILESYS, "/tmp/" + tarFileName, "application/gzip")) {
-                response += "Erro ao enviar o arquivo TAR.GZ.<br>";
-            } else {
-                response += "Download iniciado com sucesso.<br>";
-            }
-    
-            // Remover o arquivo TAR temporário
-            fs.remove("/tmp/" + tarFileName);
 
-        } else {
-            response += "Erro: Nenhum arquivo válido encontrado para download.<br>";
+            Serial.printf("Iniciando recepção do arquivo: %s\n", nomeArquivo.c_str());
         }
-    }
 
-    response += fS_rodapeHTML("/files");
-    request->send(200, "text/html", response);
-});
-*/
+        if (arquivo) {
+            size_t bytesEscritos = arquivo.write(data, len);
+            if (bytesEscritos != len) {
+                Serial.printf("Erro ao escrever dados no arquivo. Esperado: %d, Escrito: %d\n", len, bytesEscritos);
+            } else {
+                Serial.printf("Escrito: %d bytes no arquivo.\n", len);
+            }
+        }
+
+        if (index + len == total) {
+            Serial.printf("Finalizada recepção do arquivo: %d bytes recebidos.\n", total);
+            arquivo.close();
+            request->send(200, "text/plain", "Arquivo recebido com sucesso");
+        }
+    });
+
+
+
+// Configuração da rota para receber e salvar arquivos
+//ERVIDOR_WEB_ASYNC->on("/copia_arq", HTTP_POST, [](AsyncWebServerRequest *request) {
+//   // Você pode enviar uma resposta inicial, se necessário, mas os dados já serão manipulados na parte de onData
+//, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+//   // Salvando o arquivo recebido
+//   String nomeArquivo = "/recebido.txt"; // Nome fixo ou dinâmico, pode ser alterado conforme necessário
+//   // No início da transmissão, abre o arquivo para escrita
+//  fV_imprimeSerial(3,"Recebendo arquivos: ");
+//   File arquivo = LittleFS.open(nomeArquivo, index == 0 ? "w" : "a");
+//   if (!arquivo) {
+//      fV_imprimeSerial(3,"Falha ao abrir arquivo para escrita.");
+//       return;
+//   }
+//
+//   // Escreve o conteúdo recebido no arquivo
+//   arquivo.write(data, len);
+//   arquivo.close();
+//
+//   // Se todo o arquivo foi recebido, envia uma resposta de sucesso
+//   if (index + len == total) {
+//       request->send(200, "text/plain", "Arquivo recebido com sucesso.");
+//       Serial.printf("Arquivo %s recebido e salvo\n", nomeArquivo.c_str());
+//   }
+//);
+
+//// Rota para receber os arquivos
+//SERVIDOR_WEB_ASYNC->on("/enviar_arquivos", HTTP_POST, [](AsyncWebServerRequest *request) {
+//    // Extrair os arquivos do corpo da solicitação
+//    String body = "";
+//    if (request->hasParam("arquivos", true)) {
+//        body = request->getParam("arquivos", true)->value();
+//        // Aqui você pode processar o envio dos arquivos
+//        // Você pode usar o corpo para extrair os arquivos e salvá-los
+//       fV_imprimeSerial(3,"Arquivos recebidos: " + body);
+//    }
+//    request->send(200, "application/json", "{\"status\": \"sucesso\"}");
+//});
 
         // ---- Fim do conjunto para gerenciamento de arquivos ---- //
 
@@ -1119,12 +1258,12 @@ SERVIDOR_WEB_ASYNC->on("/manage-files", HTTP_POST, [](AsyncWebServerRequest *req
             SERVIDOR_WEB_ASYNC->begin();
             resultado = true;
             vB_emExecucaoWS = true;
-            fV_imprimeSerial(" OK", true);
+            fV_imprimeSerial(1," OK", true);
         } else {
-            fV_imprimeSerial(" ERRO", true);
+            fV_imprimeSerial(1," ERRO", true);
         }   
     } else {
-        fV_imprimeSerial("Erro na conexao WiFi. Servidor web nao configurado.", true);
+        fV_imprimeSerial(1,"Erro na conexao WiFi. Servidor web nao configurado.", true);
     }
   return resultado;
 }

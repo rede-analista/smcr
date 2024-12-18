@@ -55,7 +55,7 @@ bool handleFileRead(String path, AsyncWebServerRequest *request){
     File file = FILESYS.open(path, "r");
     request->send(file, path, contentType);
     file.close();
-    Serial.println("Read OK");
+   fV_imprimeSerial(3,"Read OK");
     return true;
   }
   Serial.printf("Read failed '%s', type '%s'\n", path.c_str(), contentType.c_str());
@@ -77,7 +77,7 @@ void handleFileUpload(AsyncWebServerRequest *request, String filename, size_t in
             vF_arquivoUpload.write(data, len);
             Serial.printf_P(PSTR("Gravando dados: %zu bytes\r\n"), len);
         } else {
-            Serial.println("Arquivo não está aberto para gravação.");
+           fV_imprimeSerial(3,"Arquivo não está aberto para gravação.");
         }
     }
 
@@ -88,7 +88,7 @@ void handleFileUpload(AsyncWebServerRequest *request, String filename, size_t in
             sprintf(aC_bufferTemp, "File upload [%s] OK\n", filename.c_str());
             vS_logStr += aC_bufferTemp;
         } else {
-            Serial.println("Arquivo não foi fechado corretamente.");
+           fV_imprimeSerial(3,"Arquivo não foi fechado corretamente.");
         }
     }
 }

@@ -16,9 +16,9 @@ void fV_handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
                 String value = message.substring(spaceIndex + 1);
 
                 if (setVariable(varName, value)) {
-                    fV_imprimeSerial("Variável alterada e removida: " + varName + " = " + value);
+                    fV_imprimeSerial(1,"Variável alterada e removida: " + varName + " = " + value);
                 } else {
-                    fV_imprimeSerial("Nome da variável inválido: " + varName);
+                    fV_imprimeSerial(1,"Nome da variável inválido: " + varName);
                 }
             }
         } else if (message.startsWith("GET_TYPE ")) {
@@ -28,14 +28,14 @@ void fV_handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
                 VarType type = getVariableType(varName);
                 
                 switch (type) {
-                    case VarType::STRING: fV_imprimeSerial(varName + " é do tipo STRING"); break;
-                    case VarType::UINT8: fV_imprimeSerial(varName + " é do tipo UINT8"); break;
-                    case VarType::UINT16: fV_imprimeSerial(varName + " é do tipo UINT16"); break;
-                    case VarType::UINT32: fV_imprimeSerial(varName + " é do tipo UINT32"); break;
-                    case VarType::UINT64: fV_imprimeSerial(varName + " é do tipo UINT64"); break;
-                    case VarType::INT16: fV_imprimeSerial(varName + " é do tipo INT16"); break;
-                    case VarType::BOOL: fV_imprimeSerial(varName + " é do tipo BOOL"); break;
-                    default: fV_imprimeSerial(varName + " tem tipo desconhecido"); break;
+                    case VarType::STRING: fV_imprimeSerial(1,varName + " é do tipo STRING"); break;
+                    case VarType::UINT8: fV_imprimeSerial(1,varName + " é do tipo UINT8"); break;
+                    case VarType::UINT16: fV_imprimeSerial(1,varName + " é do tipo UINT16"); break;
+                    case VarType::UINT32: fV_imprimeSerial(1,varName + " é do tipo UINT32"); break;
+                    case VarType::UINT64: fV_imprimeSerial(1,varName + " é do tipo UINT64"); break;
+                    case VarType::INT16: fV_imprimeSerial(1,varName + " é do tipo INT16"); break;
+                    case VarType::BOOL: fV_imprimeSerial(1,varName + " é do tipo BOOL"); break;
+                    default: fV_imprimeSerial(1,varName + " tem tipo desconhecido"); break;
                 }
             }
         } else if (message.startsWith("ALT_PINO(")) {
@@ -56,20 +56,81 @@ void fV_handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
                     valor = parametros.substring(secondComma + 1).toInt();
 
                     // Verificar limites de índices
-                    if (prop >= 0 && prop < vI8_aU16_Pinos && pino >= 0 && pino < vU8_totPinos) {
+                    if (prop >= 0 && prop < vI8_aU16_Pinos && pino >= 0 && pino < aU32_Variaveis[36]) {
                         aU16_Pinos[prop][pino] = valor; // Alterar o valor no array
-                        fV_imprimeSerial("Array alterado: [" + String(prop) + "][" + String(pino) + "] = " + String(valor));
+                        fV_imprimeSerial(1,"Array alterado: [" + String(prop) + "][" + String(pino) + "] = " + String(valor));
                     } else {
-                        fV_imprimeSerial("Erro: Indices fora dos limites!");
+                        fV_imprimeSerial(1,"Erro: Indices fora dos limites!");
                     }
                 } else {
-                    fV_imprimeSerial("Erro: Parâmetros inválidos!");
+                    fV_imprimeSerial(1,"Erro: Parâmetros inválidos!");
                 }
             } else {
-                fV_imprimeSerial("Erro: Sintaxe inválida!");
+                fV_imprimeSerial(1,"Erro: Sintaxe inválida!");
             }
+        } else if (message.startsWith("ALT_STATUS(")) {
+            // Extrair os parâmetros
+            int startIdx = message.indexOf('(');
+            int endIdx = message.indexOf(')');
+            if (startIdx != -1 && endIdx != -1) {
+                String parametros = message.substring(startIdx + 1, endIdx); // Extrai os parâmetros
+                int prop, pino, valor;
+
+                // Dividir os parâmetros pelo delimitador ','
+                int firstComma = parametros.indexOf(',');
+                int secondComma = parametros.indexOf(',', firstComma + 1);
+
+                if (firstComma != -1 && secondComma != -1) {
+                    prop = parametros.substring(0, firstComma).toInt();
+                    pino = parametros.substring(firstComma + 1, secondComma).toInt();
+                    valor = parametros.substring(secondComma + 1).toInt();
+
+                    // Verificar limites de índices
+                    if (prop == 0 && pino >= 0 && pino < aU32_Variaveis[36]) {
+                        aU16_Pinos_Status[prop][pino] = valor; // Alterar o valor no array
+                        fV_imprimeSerial(1,"Array alterado: [" + String(prop) + "][" + String(pino) + "] = " + String(valor));
+                    } else {
+                        fV_imprimeSerial(1,"Erro: Indices fora dos limites!");
+                    }
+                } else {
+                    fV_imprimeSerial(1,"Erro: Parâmetros inválidos!");
+                }
+            } else {
+                fV_imprimeSerial(1,"Erro: Sintaxe inválida!");
+            }
+
+        } else if (message.startsWith("ALT_ENVIO(")) {
+            // Extrair os parâmetros
+            int startIdx = message.indexOf('(');
+            int endIdx = message.indexOf(')');
+            if (startIdx != -1 && endIdx != -1) {
+                String parametros = message.substring(startIdx + 1, endIdx); // Extrai os parâmetros
+                int prop, pino, valor;
+
+                // Dividir os parâmetros pelo delimitador ','
+                int firstComma = parametros.indexOf(',');
+                int secondComma = parametros.indexOf(',', firstComma + 1);
+
+                if (firstComma != -1 && secondComma != -1) {
+                    prop = parametros.substring(0, firstComma).toInt();
+                    pino = parametros.substring(firstComma + 1, secondComma).toInt();
+                    valor = parametros.substring(secondComma + 1).toInt();
+
+                    // Verificar limites de índices
+                    if (prop >= 0 && prop < vI8_aU16_InterModHA && pino >= 0 && pino < vU8_totModulos) {
+                        aI16_InterMod_CTRL_HandShake[prop][pino] = valor; // Alterar o valor no array
+                        fV_imprimeSerial(1,"Array alterado: [" + String(prop) + "][" + String(pino) + "] = " + String(valor));
+                    } else {
+                        fV_imprimeSerial(1,"Erro: Indices fora dos limites!");
+                    }
+                } else {
+                    fV_imprimeSerial(1,"Erro: Parâmetros inválidos!");
+                }
+            } else {
+                fV_imprimeSerial(1,"Erro: Sintaxe inválida!");
+            } 
         } else {
-            fV_imprimeSerial(message); // Se não for um comando reconhecido, apenas imprime na Serial
+            fV_imprimeSerial(1,message); // Se não for um comando reconhecido, apenas imprime na Serial
         } 
     }
 }

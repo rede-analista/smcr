@@ -1,11 +1,62 @@
+
+
 #ifndef INCLUDE_H
 #define INCLUDE_H
 
+/*=======================================
+Definições para uso em bibliotecas e programa
+*/
+#define HTTP_PARSER_NO_STDIO
+#define HTTP_PARSER_NO_GETADDRINFO
+#define MAX_JSON_SIZE 6000
+#define FORMAT_SPIFFS_IF_FAILED true
+#define LITTLE_FS 0
+#define SPIFFS_FS 1
+#define FILESYSTYPE SPIFFS_FS
+#define FILEBUFSIZ 4096
+#define FILESYS LittleFS
+#define DEST_FS_USES_LITTLEFS
+
+#ifndef ARRAY_MESES
+#define ARRAY_MESES 12
+#endif
+
+#ifndef ARRAY_PREFERENCE_COL
+#define ARRAY_PREFERENCE_COL 255
+#endif
+
+#ifndef ARRAY_DIA_SEMANA
+#define ARRAY_DIA_SEMANA 7
+#endif
+
+#ifndef ARRAY_STRING
+#define ARRAY_STRING 50
+#endif
+
+#ifndef ARRAY_UINT32
+#define ARRAY_UINT32 3
+#endif
+
+#ifndef ARRAY_BOOL
+#define ARRAY_BOOL 4
+#endif
+
+#ifndef ARRAY_UINT64
+#define ARRAY_UINT64 4
+#endif
+
+#ifndef ARRAY_INT32
+#define ARRAY_INT32 50
+#endif
+
+/*=======================================
+Inclusão de bibliotecas
+*/
 #include <Arduino.h>
 #include <stdint.h>
 #include <Preferences.h>
 #include <FS.h>
-#include "SPIFFS.h"
+#include "SPIFFS.h" // Use apenas SPIFFS ou LittleFS
 #include "LittleFS.h"
 #include <nvs_flash.h>
 #include <WiFi.h>
@@ -23,39 +74,17 @@
 #include <AsyncWebSocket.h>
 #include <variant>
 #include <string.h>
-//#define DEST_FS_USES_LITTLEFS
-//#include <ESP32-targz.h>
-
-
-#include "globals.h"
-#define MAX_JSON_SIZE 6000
-#define FORMAT_SPIFFS_IF_FAILED true
-#define HTTP_PARSER_NO_STDIO
-#define HTTP_PARSER_NO_GETADDRINFO
-
-/*---- Declaracao de Funcoes Manipulacao Gerenciamento de Arquivos----*/
+#include <ESP32-targz.h>
+//#include "globals.h"
 #include "WEB_Gerencia_Arquivos.h"
-#define LITTLE_FS 0
-#define SPIFFS_FS 1
-#define FILESYSTYPE SPIFFS_FS
-#define FILEBUFSIZ 4096
-#define FILESYS LittleFS
-#ifndef ESP32
-#define ESP32
 
-#ifdef ESP32
-  GZUnpacker->setPsram(true);
-#endif
-
-
-#endif
-
-
+/*=======================================
+Declaracao de Funcoes
+*/
+void fV_mapaFuncoes();
 void fsList(void);
 bool initFS(bool format, bool force);
-
-/*---- Declaracao de Funcoes ----*/
-void fV_mapaFuncoes();
+uint16_t fU16_pinosUsados();
 void compactarArquivos(AsyncWebServerRequest* request, String arquivos);
 void handleFileDownload(AsyncWebServerRequest *request);
 void handleFileDelete(AsyncWebServerRequest *request);
@@ -137,26 +166,32 @@ void fV_imprimirArray2D_U16(uint16_t** array, size_t rows, size_t cols, bool lin
 String fS_limpaEspacoFimLinha(const String& str);
 void fV_salvaFlash_AUint(const char* filename, uint8_t** arr, size_t rows, size_t cols);
 void fV_carregaFlash_AUint(const char* filename, uint8_t**& array, size_t rows, size_t cols, String sol = "");
-void fV_imprimeSerial(const String& mensagem, bool pularLinha = true);
-void fV_imprimeSerial(const char* mensagem, bool pularLinha = true);
-void fV_imprimeSerial(int valor, bool pularLinha = true);
-void fV_imprimeSerial(size_t valor, bool pularLinha = true);
-void fV_imprimeSerial(uint8_t valor, bool pularLinha = true);
-void fV_imprimeSerial(uint16_t valor, bool pularLinha = true);
-void fV_imprimeSerial(bool valor, bool pularLinha = true);
-void fV_imprimeSerial(float valor, bool pularLinha = true, int casasDecimais = 2);
-void fV_imprimeSerial(double valor, bool pularLinha = true, int casasDecimais = 2);
-void fV_imprimeSerial(String mensagem, uint16_t numero, bool pularLinha);
-void fV_imprimeSerial(const uint16_t** array, size_t rows, size_t cols, bool pularLinha = true);
-void fV_imprimeSerial(const String** array, size_t rows, size_t cols, bool pularLinha = true);
-//------------------------------------------------
+void fV_imprimeSerial(uint8_t nivelLog, const String& mensagem, bool pularLinha = true);
+void fV_imprimeSerial(uint8_t nivelLog, const char* mensagem, bool pularLinha = true);
+void fV_imprimeSerial(uint8_t nivelLog, int valor, bool pularLinha = true);
+void fV_imprimeSerial(uint8_t nivelLog, size_t valor, bool pularLinha = true);
+void fV_imprimeSerial(uint8_t nivelLog, uint8_t valor, bool pularLinha = true);
+void fV_imprimeSerial(uint8_t nivelLog, uint16_t valor, bool pularLinha = true);
+void fV_imprimeSerial(uint8_t nivelLog, bool valor, bool pularLinha = true);
+void fV_imprimeSerial(uint8_t nivelLog, float valor, bool pularLinha = true, int casasDecimais = 2);
+void fV_imprimeSerial(uint8_t nivelLog, double valor, bool pularLinha = true, int casasDecimais = 2);
+void fV_imprimeSerial(uint8_t nivelLog, String mensagem, uint16_t numero, bool pularLinha);
+void fV_imprimeSerial(uint8_t nivelLog, const uint16_t** array, size_t rows, size_t cols, bool pularLinha = true);
+void fV_imprimeSerial(uint8_t nivelLog, const String** array, size_t rows, size_t cols, bool pularLinha = true);
+
+/*=======================================
+Declaracao de Funcoes TASKS
+*/
 void TaskLeituraPinos(void *pvParameters);
 void TaskAcoes1Pinos(void *pvParameters);
 void TaskAcoes2Pinos(void *pvParameters);
 void TaskAcoes3Pinos(void *pvParameters);
 void TaskAcoes4Pinos(void *pvParameters);
 
-/*---- Declaracao de Funcoes HTML ----*/
+/*=======================================
+Declaracao de Funcoes HTML
+*/
+void fV_enviarArquivo(const char* ipDestino, const char* nomeArquivo);
 void f_handle_SerialOutput(AsyncWebServerRequest *request);
 void f_handle_SerialWeb(AsyncWebServerRequest *request);
 void f_handle_OpcoesFuncoes(AsyncWebServerRequest *request);

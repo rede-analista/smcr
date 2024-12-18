@@ -3,7 +3,7 @@
 
 //========================================
 void fV_salvarModulos(AsyncWebServerRequest *request) {
-    fV_imprimeSerial("Salvando Modulos...", false);    
+    fV_imprimeSerial(1,"Salvando Modulos...", false);    
 
     String params = "";
     uint16_t moduloID = 65535;
@@ -60,7 +60,7 @@ void fV_salvarModulos(AsyncWebServerRequest *request) {
     html += "<br> Nome: " + aS_InterMod[0][moduloID];
     html += "<br> IP: " + aS_InterMod[1][moduloID] + "<br>";
     html += fS_rodapeHTML("/modulos","/blob/main/manual/modulos.md");
-    fV_imprimeSerial(" OK");
+    fV_imprimeSerial(1," OK");
     request->send(200, "text/html", html );
 }
 
@@ -81,16 +81,25 @@ void fV_salvarInterModulos(AsyncWebServerRequest *request) {
         vU8_totModulos = totmod;
     } else {
         erro++;
-        fV_imprimeSerial("Erro: Total de modulos nao informado.");
+        fV_imprimeSerial(1,"Erro: Total de modulos nao informado.");
     }
     aS_Preference[0][47] = String(vU8_totModulos);
+    // Verifica e trata o yamanho da fila de envios
+    if (request->hasParam("TAMFILA", true)) {
+        int fila = request->getParam("TAMFILA", true)->value().toInt();
+        vI8_aS16_InterModFila_EnviaModulo = fila;
+    } else {
+        erro++;
+        fV_imprimeSerial(1,"Erro: Tamanho da fila nao informado.");
+    }
+    aS_Preference[0][51] = String(vI8_aS16_InterModFila_EnviaModulo);    
     // Verifica e trata o tempo de handshake
     if (request->hasParam("TEMPOHANDSHK", true)) {
         int porta = request->getParam("TEMPOHANDSHK", true)->value().toInt();
         vU16_modulos_HandShake = porta;
     } else {
         erro++;
-        fV_imprimeSerial("Erro: Tempo de handshake nao informado.");
+        fV_imprimeSerial(1,"Erro: Tempo de handshake nao informado.");
     }
     aS_Preference[0][36] = String(vU16_modulos_HandShake);
     // Verifica e trata o ciclos de handshake
@@ -99,7 +108,7 @@ void fV_salvarInterModulos(AsyncWebServerRequest *request) {
         vI_cicloHandshake = porta;
     } else {
         erro++;
-        fV_imprimeSerial("Erro: Ciclos de handshake nao informado.");
+        fV_imprimeSerial(1,"Erro: Ciclos de handshake nao informado.");
     }
     aS_Preference[0][38] = String(vI_cicloHandshake);
     // Verifica e trata o tempo de envio
@@ -108,7 +117,7 @@ void fV_salvarInterModulos(AsyncWebServerRequest *request) {
         vU16_modulos_MTBS_Acoes = porta;
     } else {
         erro++;
-        fV_imprimeSerial("Erro: Tempo de envio nao informado.");
+        fV_imprimeSerial(1,"Erro: Tempo de envio nao informado.");
     }
     aS_Preference[0][37] = String(vU16_modulos_MTBS_Acoes);
     // Responde com uma página HTML
@@ -211,6 +220,12 @@ size_t f_handle_ConfiguraModulos(unsigned char *data, size_t len, bool final) {
         html += "<td><input type='text' style='background-color: Red' name='TOTMODUlOS' maxlength='12' size='12' id='id_totmodulos' value='" + String(vU8_totModulos) + "' required></td>";
         html += "</tr>";
 
+        // Tamanho Fila de envios
+        html += "<tr>";
+        html += "<td><label for='id_tamfila'>Tamanho da Fila de Envios: </label></td>";
+        html += "<td><input type='text' name='TAMFILA' maxlength='12' size='12' id='id_tamfila' value='" + String(vI8_aS16_InterModFila_EnviaModulo) + "' required></td>";
+        html += "</tr>";        
+
         // Tempo de handshake
         html += "<tr>";
         html += "<td><label for='id_tempohandshake'>Tempo de Handshake: </label></td>";
@@ -236,7 +251,7 @@ size_t f_handle_ConfiguraModulos(unsigned char *data, size_t len, bool final) {
 
         written = html.length();
         if (written > len) {
-            Serial.println("Buffer insuficiente no vU8_estado 0");
+           fV_imprimeSerial(3,"Buffer insuficiente no vU8_estado 0");
             return 0;
         }
         memcpy(data, html.c_str(), written);
@@ -276,7 +291,7 @@ size_t f_handle_ConfiguraModulos(unsigned char *data, size_t len, bool final) {
 
         written = html.length();
         if (written > len) {
-            Serial.println("Buffer insuficiente no vU8_estado 1");
+           fV_imprimeSerial(3,"Buffer insuficiente no vU8_estado 1");
             return 0;
         }
         memcpy(data, html.c_str(), written);
@@ -293,7 +308,7 @@ size_t f_handle_ConfiguraModulos(unsigned char *data, size_t len, bool final) {
 
         written = html.length();
         if (written > len) {
-            Serial.println("Buffer insuficiente no vU8_estado 2");
+           fV_imprimeSerial(3,"Buffer insuficiente no vU8_estado 2");
             return 0;
         }
         memcpy(data, html.c_str(), written);
