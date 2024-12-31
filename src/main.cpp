@@ -15,23 +15,7 @@ Inclusão de bibliotecas
 /*=======================================
 Variaveis Globais e Controles Internos
 */
-String vS_ass_Alerta, vS_ass_Normal, vS_corStatus1, vS_corStatus0, 
-       vS_ntpServer1, vS_ntpServer2, vS_timeZone, vS_userWeb, vS_passWeb, vS_uri, GET_SERVIDOR, vS_payload,
-       ULTIMOS_GET_RECEBIDOS, ULTIMOS_GET_SERVIDOR, vS_payrec = "";
-
-uint8_t vU8_tentativaConexoes, vI_cicloHandshake, vU8_crtl_ModHist, vU8_colunasTabelas, vU8_colINICIO, vU8_colFIM,
-       vU8_tempoRefresh, vU8_estado, vI8_ControlAcoesGroups = 0;
-
-uint16_t vU16_bot_MTBS, vU16_mqttPorta, vU16_mqtt_MTBS, vI_U16_portaWebAsync,
-         vU16_ass_MTBS, vU16_modulos_HandShake, vU16_modulos_MTBS_Acoes, vU16_clockESP32, vU16_ulimoModRecebido = 0;
-
-int16_t vU16_linhaPagCad, vI_httpResponseCode, vI_controleCicloHandshake, vI_respostaHTTP = 0;
-
-bool vB_exec_Telegram, vB_modoAP, vB_exec_MqTT, vB_exec_Assistente, vB_exec_Modulos, VB_mostra_Status,
-     vB_executaReboot, vB_filesysIniciado, vB_exec_WatchDog, vB_emExecucaoWDog, vB_emExecucaoWS,
-     vB_envia_Historico, vB_pausaEXECs, request_in_progress, VB_mostra_Interm,
-     vB_pedeAutentica = false;
-
+String ULTIMOS_GET_SERVIDOR, ULTIMOS_GET_RECEBIDOS = "";
 /*=======================================
 variáveis de controle para uso durante execucao
 */
@@ -41,12 +25,11 @@ bool aB_restartRotinas[5] = {0,0,0,0,0}; //Indica qual task deve se auto reconfi
 /*=======================================
 Arrays de configuracao para uso durante execucao
 */
-String aS_Variaveis[ARRAY_STRING] = {""}; //Contem valores de variaveis string
+String* aS_Variaveis = nullptr; //Contem valores de variaveis string
 uint32_t aU32_Variaveis[ARRAY_UINT32] = {}; //Contem valores de variaveis uint32_t
 bool aB_Variaveis[ARRAY_BOOL] = {}; //Contem valores de variaveis bool
 uint64_t aU64_Variaveis[ARRAY_UINT64] = {}; //Contem valores de variaveis uint64_t
 int32_t aI32_Variaveis[ARRAY_INT32] = {}; //Contem valores de variaveis uint64_t
-uint8_t vU8_diasDaSemana = ARRAY_DIA_SEMANA; //Tamanho do array dias da semana
 uint8_t vU8_meses = ARRAY_MESES; //Tamanho do array meses do ano
 String* aU8_diasDaSemana = nullptr; //Contem o índice do dia da semana 0 a 6
 String* aU8_meses = nullptr; //Contem o índice do mês 0 a 11
@@ -54,7 +37,7 @@ String* aU8_meses = nullptr; //Contem o índice do mês 0 a 11
 /*=======================================
 Arrays de cadastro e controle de configurações gerais
 */
-String** aS_Preference = nullptr;
+String* aS_Preference = nullptr;
 
 /*=======================================
 Arrays de cadastro e controle dos pinos
@@ -70,14 +53,6 @@ uint8_t** aU8_IgnoraPino = nullptr;
 /*=======================================
 Arrays de cadastro e controle dos modulos
 */
-size_t vU8_totModulos = 0; //Total de colunas do array cadastro de modulos 
-uint8_t vI8_aU16_InterMod = 2; //Total de "linhas" do array de inter modulos (uint_16)
-uint8_t vI8_aB_InterMod = 1; //Total de "linhas" do array de inter modulos (Boolean)
-uint8_t vI8_aS_InterMod = 2;  //Total de "linhas" do array de inter modulos (String)
-uint8_t vI8_aU8_ControlMsg = 4;  //Total de "linhas" dos arrays de controle de envio de menssagens
-uint8_t vI8_aU8_ControlMsgHist = 4; //Total de "linhas" dos arrays de historico de envio de menssagens
-uint8_t vI8_aU16_InterModHA = 4; //Total de "linhas" do array de inter modulos controle handshake e status handshake
-uint8_t vI8_aS16_InterModFila_EnviaModulo = 0; //Total de "colunas" do array de inter modulos fila de envio de alertas
 String** aS_InterModMenu = nullptr; //Menu do cadastro de Intermodulos
 String** aU16_InterModMenu = nullptr;
 String** aSB_InterModMenu = nullptr;
@@ -93,9 +68,6 @@ uint16_t** aS16_InterModControleRepeticao_EnviaModulo = nullptr; //Controle o en
 /*=======================================
 Arrays de cadastro e controle das acoes
 */
-uint8_t vI8_aU16_Acao = 6;
-uint8_t vI8_aU8_AcaoRede = 4;
-uint8_t vI8_aS8_Acao = 2; //Total de "linhas" dos arrays de acoes (String)
 String** aS8_Acao1 = nullptr;  //Cadastro de acoes 1
 String** aS8_Acao2 = nullptr;  //Cadastro de acoes 2
 String** aS8_Acao3 = nullptr;  //Cadastro de acoes 3
@@ -116,18 +88,18 @@ uint16_t** aU16_ControlAcoesGroups = nullptr; //Grupos de acoes, identifica se o
 /*=======================================
 Declaração de objetos, tipos e structs
 */
-File jsonFile;
+//File jsonFile;
 std::map<String, Funcao> mapaFuncoesSemParam;
 std::map<String, std::function<void(AsyncWebServerRequest*)>> mapaFuncoesComParam;
-std::map<String, Variable> variables;
-Preferences CONFIG_FLASH;
+//std::map<String, Variable> variables;
+//Preferences CONFIG_FLASH;
 AsyncWebServer* SERVIDOR_WEB_ASYNC = nullptr;
 asyncHTTPrequest* CLIENTE_WEB_ASYNC = nullptr;
+HTTPClient CLIENTE_WEB_SYNC; 
 ESPAsyncHTTPUpdateServer* SERVIDOR_UPDATE = nullptr;
 AsyncWebSocket* ws = nullptr;
-Config config;
+//Config config;
 struct tm timeinfo;
-String vS_logStr = "Session start:\n";
 char aC_bufferTemp[256];
 char aC_filesysName[] = "LittleFS";
 File vF_arquivoUpload;
@@ -136,81 +108,84 @@ File vF_arquivoUpload;
 SETUP() - Configurações iniciais
 */
 void setup() {
-    Serial.begin(115200); //Configura serial com velocidade de 115200
-    delay(3000);
-    fV_imprimeSerial(1,"||||---- INICIANDO SETUP ----||||",true);
-    fS_idPlaca(); //Imprime na serial informacoes da placa
-    vB_filesysIniciado = fB_montaLittleFS();  //Monta LittleFS (FILESYS)
-    if (fB_verificaPrimeiraExec(false)) { //Verifica se existem os arquivos de configurações se não existir cria
-        fV_mapaFuncoes();  //Mapeia funcoes para uso nos GETS/POSTS
-        fV_Preference("L",false); //Carrega configuracoes do filesys
-        fV_carregaFILESYS_AS1D("/aU8_diasDaSemana.txt",aU8_diasDaSemana,vU8_diasDaSemana);  //Carrega array com os dias da semana
-        fV_carregaFILESYS_AS1D("/aU8_meses.txt",aU8_meses,vU8_meses);  //Carrega array com os meses
-        fV_imprimeSerial(1,fS_DataHora(),true); //Imprime na serial data e hora
-        fS_listDir("/",4); //Lista arquivos em salvos em SPIFFS(LittleFS)
-        fV_iniciaPreference(false); //Inicia configurações dos pinos
-        fV_iniciaPinos(false); //Inicia configurações dos pinos
-        fV_iniciaAcoes(false);  //Inicia configuracoes das acoes
-        fU8_configuraWifi(); //Configurar o wifi ou colocar em modo AP caso nao consiga conexao com wifi
-        fB_configuraServidorWEB(false); //Configura servidor web para acesso ao esp32
-        fV_configuraModulos(false);  //Configura intermodulos
-        fV_imprimeSerial(1,"Iniciando tarefas... ");
-        xTaskCreate(TaskLeituraPinos, "t_LePinos", 2560, NULL, 3, NULL); //Inicia tarefa(task) para execução continua de leitura de portas(pinos)
-        fV_imprimeSerial(1," - ativando task leitura pinos - ");
+  Serial.begin(115200); //Configura serial com velocidade de 115200
+  delay(3000);
+  Serial.println("Executando verificacoes iniciais.");
+  aB_Variaveis[3] = fB_montaLittleFS();  //Monta LittleFS (FILESYS)
+  if (fB_verificaPrimeiraExec(false)) { //Verifica se existem os arquivos de configurações se não existir cria
+    fV_Preference("LER"); //Carrega configuracoes do filesys
+    fV_imprimeSerial(1,"||||---- INICIANDO SETUP ----||||",true);  
+    fS_infoPlaca(); //Imprime na serial informacoes da placa
+    fV_infoMemoria(); //Imprime na serial informações da memória    
+    fV_mapaFuncoes();  //Mapeia funcoes para uso nos GETS/POSTS
+    fV_carregaFILESYS_AS1D("/aU8_diasDaSemana.txt",aU8_diasDaSemana,ARRAY_DIA_SEMANA);  //Carrega array com os dias da semana
+    fV_carregaFILESYS_AS1D("/aU8_meses.txt",aU8_meses,vU8_meses);  //Carrega array com os meses
+    fV_imprimeSerial(1,fS_DataHora(),true); //Imprime na serial data e hora
+    fS_listDir("/",4); //Lista arquivos em salvos em SPIFFS(LittleFS)
+    fV_iniciaControles(false); //Inicia configurações dos pinos
+    fV_iniciaPinos(false); //Inicia configurações dos pinos
+    fV_iniciaAcoes(false);  //Inicia configuracoes das acoes
+    fU8_configuraWifi(); //Configurar o wifi
+    fU8_verificaWifi(); //Conecta o módulo no wifi ou coloca em modo AP(se habilitado) caso nao consiga conexao com wifi
+    fB_configuraServidorWEB(false); //Configura servidor web para acesso ao esp32
+    fV_configuraModulos(false);  //Configura intermodulos
+    fV_imprimeSerial(1,"Iniciando tarefas... ");
+    xTaskCreate(TaskLeituraPinos, "t_LePinos", 2560, NULL, 3, NULL); //Inicia tarefa(task) para execução continua de leitura de portas(pinos)
+    fV_imprimeSerial(1," - ativando task leitura pinos - ");
+    delay(600);
+    switch (fU8_carregaConfigGeral(50,5)) {
+      case 0:
+        fV_imprimeSerial(1," - sem tasks ativas - ");
+      case 1:
+        xTaskCreate(TaskAcoes1Pinos, "t_Ac1Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 1
+        fV_imprimeSerial(1," - ativando task acoes 1 - ");
+        break;
+      case 2:
+        xTaskCreate(TaskAcoes2Pinos, "t_Ac2Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 2
+        fV_imprimeSerial(1," - ativando task acoes 2 - ");
+        break;
+      case 3:
+        xTaskCreate(TaskAcoes3Pinos, "t_Ac3Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 3
+        fV_imprimeSerial(1," - ativando task acoes 3 - ");
+        break;
+      case 4:
+        xTaskCreate(TaskAcoes4Pinos, "t_Ac4Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 4
+        fV_imprimeSerial(1," - ativando task acoes 4 - ");
+        break;
+      case 5:
+        fV_imprimeSerial(1," - ativando tasks acoes 1 a 4 - ");
+        xTaskCreate(TaskAcoes1Pinos, "t_Ac1Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 1
         delay(600);
-        switch (aU32_Variaveis[35]) {
-          case 0:
-            fV_imprimeSerial(1," - sem tasks ativas - ");
-          case 1:
-            xTaskCreate(TaskAcoes1Pinos, "t_Ac1Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 1
-            fV_imprimeSerial(1," - ativando task acoes 1 - ");
-            break;
-          case 2:
-            xTaskCreate(TaskAcoes2Pinos, "t_Ac2Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 2
-            fV_imprimeSerial(1," - ativando task acoes 2 - ");
-            break;
-          case 3:
-            xTaskCreate(TaskAcoes3Pinos, "t_Ac3Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 3
-            fV_imprimeSerial(1," - ativando task acoes 3 - ");
-            break;
-          case 4:
-            xTaskCreate(TaskAcoes4Pinos, "t_Ac4Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 4
-            fV_imprimeSerial(1," - ativando task acoes 4 - ");
-            break;
-          case 5:
-            fV_imprimeSerial(1," - ativando tasks acoes 1 a 4 - ");
-            xTaskCreate(TaskAcoes1Pinos, "t_Ac1Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 1
-            delay(600);
-            xTaskCreate(TaskAcoes2Pinos, "t_Ac2Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 2
-            delay(600);
-            xTaskCreate(TaskAcoes3Pinos, "t_Ac3Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 3
-            delay(600);
-            xTaskCreate(TaskAcoes4Pinos, "t_Ac4Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 4
-            delay(600);
-            break;            
-        }
-        fV_configuraWatchDog(false);  //Configura watchdog
-        if (vB_exec_Modulos) { //Se intermodulos estiver habilitado marca para enviar histórico de alertas
-            vB_envia_Historico = true;
-        }
-    } else { //Reboota se faltou algum arquivo de configuração e precisou ser recriado
-        fV_imprimeSerial(1,"Arquivos de configuracao nao encontrados e foram criados. Reiniciando o modulo.");
-        delay(2000);
-        fV_restart();
+        xTaskCreate(TaskAcoes2Pinos, "t_Ac2Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 2
+        delay(600);
+        xTaskCreate(TaskAcoes3Pinos, "t_Ac3Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 3
+        delay(600);
+        xTaskCreate(TaskAcoes4Pinos, "t_Ac4Pinos", 2560, NULL, 2, NULL); //Inicia tarefa(task) para execução continua de das acoes 4
+        delay(600);
+        break;            
+    }
+    fV_configuraWatchDog(false);  //Configura watchdog
+    if (fB_carregaConfigGeral(35, false)) { //Se intermodulos estiver habilitado marca para enviar histórico de alertas
+        aB_Variaveis[7] = true;
     }
     fV_imprimeSerial(1,"!!!!---- SETUP FINALIZADO ----!!!!",true);
+    aB_Variaveis[0] = true;
+  } else { //Reboota se faltou algum arquivo de configuração e precisou ser recriado
+    Serial.print("Arquivos de configuracao nao encontrados e foram criados. Reiniciando o modulo.");
+    delay(2000);
+    fV_restart();
+  }
 }
 
 /*=======================================
 LOOP() - Execução contínua
 */
 void loop() {
-    fB_atualizaHora();
-    fV_resetarWatchdog();
-    fV_checkSerialInput();
-    fV_checkAcoesModulos();
-    fV_enviaAcoesModulos();
-    fV_checkHandShake();
-    delay(2);
-    aB_Variaveis[13] = true;
+  fB_atualizaHora();
+  fV_resetarWatchdog();
+  fV_checkSerialInput();
+  fV_checkAcoesModulos();
+  fV_enviaAcoesModulos();
+  fV_checkHandShake();
+  delay(2);
 }

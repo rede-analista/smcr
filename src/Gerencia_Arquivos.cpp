@@ -86,7 +86,7 @@ void handleFileUpload(AsyncWebServerRequest *request, String filename, size_t in
             vF_arquivoUpload.close();
             Serial.printf_P(PSTR("Upload concluído. Tamanho do arquivo: %d bytes\r\n"), index + len);
             sprintf(aC_bufferTemp, "File upload [%s] OK\n", filename.c_str());
-            vS_logStr += aC_bufferTemp;
+            aS_Variaveis[26] += aC_bufferTemp;
         } else {
            fV_imprimeSerial(3,"Arquivo não foi fechado corretamente.");
         }
@@ -111,7 +111,7 @@ void handleFileDelete(AsyncWebServerRequest *request) {
     }
     FILESYS.remove(path);
     request->send(200, "text/html", "<meta http-equiv='refresh' content='1;url=/main'>File deleted. <a href=/main>Back to list</a>");
-    vS_logStr += "Deleted " + path + "\n";
+    aS_Variaveis[26] += "Deleted " + path + "\n";
 }
 
 
@@ -135,7 +135,7 @@ void handleFileCreate(AsyncWebServerRequest *request){
   if(file) {
     file.close();
     request->send(200, "text/html", "<meta http-equiv='refresh' content='1;url=/main'>File created. <a href=/main>Back to list</a>");
-    vS_logStr += "Created " + path + "\n";
+    aS_Variaveis[26] += "Created " + path + "\n";
   } else {
     request->send(500, "text/plain", "CREATE FAILED");
   }

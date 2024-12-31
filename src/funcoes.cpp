@@ -20,10 +20,55 @@ void fV_mapaFuncoes() {
 
 }
 
+/*========================================
+Função para exibir informações de memória
+*/
+void fV_infoMemoria(uint8_t nivelLog) {
+  fV_imprimeSerial(nivelLog,"============ M E M O R I A ============");
+  
+  // Memória disponível no heap
+  fV_imprimeSerial(nivelLog, "Memória disponível: ", false);
+  fV_imprimeSerial(nivelLog, ESP.getFreeHeap(), false);
+  fV_imprimeSerial(nivelLog, " bytes");
+  
+  // Menor memória livre já registrada
+  fV_imprimeSerial(nivelLog, "Menor memória livre registrada: ", false);
+  fV_imprimeSerial(nivelLog, ESP.getMinFreeHeap(), false);
+  fV_imprimeSerial(nivelLog, " bytes");
+  
+  // Tamanho total do heap
+  fV_imprimeSerial(nivelLog, "Tamanho total do heap: ", false);
+  fV_imprimeSerial(nivelLog, ESP.getHeapSize(), false);
+  fV_imprimeSerial(nivelLog, " bytes");
+  
+  // Verificação da PSRAM, se disponível
+  #if CONFIG_ESP32_SPIRAM_SUPPORT  // Verifica se a PSRAM está disponível no seu projeto
+  fV_imprimeSerial(nivelLog, "Tamanho total da PSRAM: ", false);
+  fV_imprimeSerial(nivelLog, ESP.getPsramSize(), false);
+  fV_imprimeSerial(nivelLog, " bytes");
+  fV_imprimeSerial(nivelLog, "PSRAM livre: ", false);
+  fV_imprimeSerial(nivelLog, ESP.getFreePsram(), false);
+  fV_imprimeSerial(nivelLog, " bytes");
+  #endif
+  
+  // Heap para alocações gerais
+  fV_imprimeSerial(nivelLog, "Heap disponível para alocações gerais: ", false);
+  fV_imprimeSerial(nivelLog, heap_caps_get_free_size(MALLOC_CAP_8BIT), false);
+  fV_imprimeSerial(nivelLog, " bytes");
+  
+  if (nivelLog > fU8_carregaConfigGeral(52,2)) {
+    // Informações detalhadas do heap
+    fV_imprimeSerial(nivelLog, "Informações detalhadas do heap:", true);
+    heap_caps_print_heap_info(MALLOC_CAP_8BIT);  // Isso imprime diretamente na serial
+  }
+
+  fV_imprimeSerial(nivelLog,"=======================================");  
+}
+
 //========================================
 uint16_t fU16_pinosUsados() {
   uint16_t resultado = 0;
-  for (int x=0;x<aU32_Variaveis[36];x++) {
+  for (int x=0;x<fU16_carregaConfigGeral(39, 15);x++) {
     if (aU16_Pinos[0][x] > 0) {
       resultado++;
     }
@@ -41,7 +86,7 @@ uint16_t fU16_separaPinos(String pinos) {
 //========================================
 uint8_t fU8_retornaIndiceHS(String modulo) {
   uint8_t resultado = 0;
-  for (uint8_t x=0; x<vU8_totModulos; x++) {
+  for (uint8_t x=0; x<fU16_carregaConfigGeral(47, 65535); x++) {
     if (aS_InterMod[0][x] == modulo) {
       resultado = x;
       break;
@@ -52,9 +97,9 @@ uint8_t fU8_retornaIndiceHS(String modulo) {
 
 //========================================
 int fI_retornaModulo(String modulo) {
-  int resultado = vU8_totModulos+1;
+  int resultado = fU16_carregaConfigGeral(47, 65535)+1;
   if (modulo.length() > 0) {
-    for (int x=0; x<vU8_totModulos; x++) {
+    for (int x=0; x<fU16_carregaConfigGeral(47, 65535); x++) {
       if (modulo == aS_InterMod[0][x]) {
         resultado = x;
         break;
@@ -69,21 +114,22 @@ Funcao HandShake, envia sinal de handshake para testar comunicacao entrte modulo
 */
 void fV_checkHandShake() {
   uint64_t agora = millis();
-  if (!vB_pausaEXECs && vB_exec_Modulos) {
-    if ((agora - aU64_Variaveis[2]) > vU16_modulos_HandShake) {
-      for (uint8_t y=0; y<vU8_totModulos; y++) {
+  if (!aB_Variaveis[8] && fB_carregaConfigGeral(35, false)) {
+    if ((agora - aU64_Variaveis[2]) > fU16_carregaConfigGeral(36, 65535)) {
+      for (uint8_t y=0; y<fU16_carregaConfigGeral(47, 65535); y++) {
         if (aI16_InterMod_CTRL_HandShake[0][y] < 1) {
           aI16_InterMod_CTRL_HandShake[1][y] = 1;
-          //vB_envia_Historico = true;
+          //aB_Variaveis[7] = true;
+          //aB_Variaveis[9] = false;
         } else {
           aI16_InterMod_CTRL_HandShake[0][y]--;
         }
         if ( aB_InterMod[0][y] && aU16_InterMod[0][y] > 0 ) {
-          aI16_InterMod_CTRL_HandShake[2][y] = fI_enviaModulo(aU16_InterMod[0][y],"65535", String(aU16_InterMod[0][fU8_retornaIndiceHS(aS_Variaveis[0])]), "0");
+          aI16_InterMod_CTRL_HandShake[2][y] = fI_enviaModulo(aU16_InterMod[0][y],"65535", String(aU16_InterMod[0][fU8_retornaIndiceHS(aS_Preference[4])]), "0");
           if (aI16_InterMod_CTRL_HandShake[2][y] == 200) {
-            aI16_InterMod_CTRL_HandShake[0][y] = vI_cicloHandshake;
+            aI16_InterMod_CTRL_HandShake[0][y] = fU16_carregaConfigGeral(38, 65535);
             aI16_InterMod_CTRL_HandShake[1][y] = 0;
-            aI16_InterMod_CTRL_HandShake[3][fI_retornaModulo(aS_Variaveis[0])] = 0;
+            aI16_InterMod_CTRL_HandShake[3][fI_retornaModulo(aS_Preference[4])] = 0;
           }
         }
         if ( fU16_retornaIndicePino(aU16_InterMod[0][y]) > 0 && fU16_retornaIndicePino(aU16_InterMod[0][y]) < 65535 ) {
@@ -99,7 +145,7 @@ void fV_checkHandShake() {
 String fS_retornaIpModulo(uint16_t modulo) {
   String resultado = "";
   if (modulo > 0) {
-    for (int x=0; x<vU8_totModulos; x++) {
+    for (int x=0; x<fU16_carregaConfigGeral(47, 65535); x++) {
       if (modulo == aU16_InterMod[0][x]) {
         resultado = aS_InterMod[1][x]; //f_formataIp(aS_InterMod[1][x]);
         break;
@@ -113,7 +159,7 @@ String fS_retornaIpModulo(uint16_t modulo) {
 uint16_t fU16_retornaIndiceModulo(uint16_t modulo) {
   int resultado = 0;
   if (modulo > 0) {
-    for (int x=0; x<vU8_totModulos; x++) {
+    for (int x=0; x<fU16_carregaConfigGeral(47, 65535); x++) {
       if (modulo == aU16_InterMod[0][x]) {
         resultado = x;
         break;
@@ -127,26 +173,85 @@ uint16_t fU16_retornaIndiceModulo(uint16_t modulo) {
 Funcao enviar informacoes para outro modulo
 */
 int fI_enviaModulo(uint16_t idmodulo, String acao, String pino, String valor) {
-  vI_httpResponseCode = 0;
+  aI32_Variaveis[1] = 0;
+  int resposta =  504;
+  uint16_t moduloIdx = fU16_retornaIndiceModulo(idmodulo);
+  if (aI16_InterMod_CTRL_HandShake[3][fU16_retornaIndiceModulo(idmodulo)] < fU8_carregaConfigGeral(2,4)) {
+    if (fU8_verificaWifi() == WL_CONNECTED) {
+      String GET_SERVIDOR;
+      if (aU16_InterMod[1][fU16_retornaIndiceModulo(idmodulo)] > 0) {
+        GET_SERVIDOR = "http://" + fS_retornaIpModulo(idmodulo) + ":" + aU16_InterMod[1][fU16_retornaIndiceModulo(idmodulo)] +
+                       "/dados?pl=" + aS_Preference[4] + "&ac=" + acao + "&pn=" + pino + "&vl=" + valor;
+      } else {
+        GET_SERVIDOR = "http://" + fS_retornaIpModulo(idmodulo) + ":" + fU16_carregaConfigGeral(3,4080) +
+                       "/dados?pl=" + aS_Preference[4] + "&ac=" + acao + "&pn=" + pino + "&vl=" + valor;
+      }
+      if (ULTIMOS_GET_SERVIDOR.length() > 260) {
+        ULTIMOS_GET_SERVIDOR = "";
+      }
+      ULTIMOS_GET_SERVIDOR += fS_DataHora();
+      ULTIMOS_GET_SERVIDOR += " -> ";
+      ULTIMOS_GET_SERVIDOR += GET_SERVIDOR;
+      ULTIMOS_GET_SERVIDOR += "<br><br>";    
+      if (!CLIENTE_WEB_SYNC.connected()) {
+        CLIENTE_WEB_SYNC.setTimeout(fU16_carregaConfigGeral(36, 5000));
+        CLIENTE_WEB_SYNC.setConnectTimeout(fU16_carregaConfigGeral(36, 5000));
+        CLIENTE_WEB_SYNC.setReuse(true);
+        CLIENTE_WEB_SYNC.begin(GET_SERVIDOR.c_str());
+      } else {
+        CLIENTE_WEB_SYNC.setURL(GET_SERVIDOR.c_str());
+      }
+      resposta = aI32_Variaveis[1] = CLIENTE_WEB_SYNC.GET();
+      String payload = CLIENTE_WEB_SYNC.getString();
+      String vS_payload = payload;
+      CLIENTE_WEB_SYNC.end();
+      if (resposta == 200 && payload == "OK_DADO_RECEBIDO") {
+        // Atualiza o controle de handshake com o código de resposta
+        aI16_InterMod_CTRL_HandShake[0][moduloIdx] = fU16_carregaConfigGeral(38, 65535);
+        aI16_InterMod_CTRL_HandShake[1][moduloIdx] = 0;
+        aI16_InterMod_CTRL_HandShake[2][moduloIdx] = resposta;
+        aI16_InterMod_CTRL_HandShake[3][moduloIdx] = 0;
+        aU32_Variaveis[28] = idmodulo;
+      } else {
+          // Caso de erro, aumenta o contador de falhas
+          aI16_InterMod_CTRL_HandShake[2][moduloIdx] = resposta;
+          aI16_InterMod_CTRL_HandShake[3][moduloIdx] += 1;
+      }
+      fV_imprimeSerial(3,"\nEnviado: "+GET_SERVIDOR);
+      fV_imprimeSerial(3,"HTTP Response code: " + String(resposta));
+      fV_imprimeSerial(3,payload);
+      fV_imprimeSerial(3,"Pausa no envio: ",false);
+      fV_imprimeSerial(3,aI16_InterMod_CTRL_HandShake[3][fU16_retornaIndiceModulo(idmodulo)]);
+    } 
+  } else {
+    aI16_InterMod_CTRL_HandShake[3][moduloIdx] = aI16_InterMod_CTRL_HandShake[3][moduloIdx] +1;
+    if (aI16_InterMod_CTRL_HandShake[3][moduloIdx] > fU16_carregaConfigGeral(51, 30)) {
+      aI16_InterMod_CTRL_HandShake[3][moduloIdx] = 0;
+    }
+  }
+  return resposta;
+}
+/*int fI_enviaModulo(uint16_t idmodulo, String acao, String pino, String valor) {
+  aI32_Variaveis[1] = 0;
   int resposta = 504;
   uint16_t moduloIdx = fU16_retornaIndiceModulo(idmodulo);
- if (aI16_InterMod_CTRL_HandShake[3][fU16_retornaIndiceModulo(idmodulo)] < vU8_tentativaConexoes) {
-    if (WiFi.status() != WL_CONNECTED) {
-        fU8_configuraWifi();
-    } else {
-      if (CLIENTE_WEB_ASYNC != nullptr) {
-        delete CLIENTE_WEB_ASYNC;
-        CLIENTE_WEB_ASYNC = nullptr;
-      }
-      if (!request_in_progress) {
-        request_in_progress = true;
+  if (aI16_InterMod_CTRL_HandShake[3][fU16_retornaIndiceModulo(idmodulo)] < fU8_carregaConfigGeral(2,4)) {
+    if (fU8_verificaWifi() == WL_CONNECTED) {
+      //Se já houver um cliente HTTP, desaloca a memória para evitar vazamentos
+      //if (CLIENTE_WEB_ASYNC != nullptr) {
+      //  CLIENTE_WEB_ASYNC->abort();  //Aborta qualquer requisição em andamento
+      //  delete CLIENTE_WEB_ASYNC;    //Libera a memória
+      //  CLIENTE_WEB_ASYNC = nullptr; //Zera o ponteiro
+      //}
+      if (!aB_Variaveis[9] || acao == "65535") {
+        aB_Variaveis[9] = true;
         String GET_SERVIDOR;
         if (aU16_InterMod[1][fU16_retornaIndiceModulo(idmodulo)] > 0) {
             GET_SERVIDOR = "http://" + fS_retornaIpModulo(idmodulo) + ":" + aU16_InterMod[1][fU16_retornaIndiceModulo(idmodulo)] +
-                           "/dados?pl=" + aS_Variaveis[0] + "&ac=" + acao + "&pn=" + pino + "&vl=" + valor;
+                           "/dados?pl=" + aS_Preference[4] + "&ac=" + acao + "&pn=" + pino + "&vl=" + valor;
         } else {
-          GET_SERVIDOR = "http://" + fS_retornaIpModulo(idmodulo) + ":" + vI_U16_portaWebAsync +
-                        "/dados?pl=" + aS_Variaveis[0] + "&ac=" + acao + "&pn=" + pino + "&vl=" + valor;
+          GET_SERVIDOR = "http://" + fS_retornaIpModulo(idmodulo) + ":" + fU16_carregaConfigGeral(3,4080) +
+                        "/dados?pl=" + aS_Preference[4] + "&ac=" + acao + "&pn=" + pino + "&vl=" + valor;
         }
         if (!CLIENTE_WEB_ASYNC) {
           CLIENTE_WEB_ASYNC = new asyncHTTPrequest;
@@ -155,63 +260,67 @@ int fI_enviaModulo(uint16_t idmodulo, String acao, String pino, String valor) {
         if (ULTIMOS_GET_SERVIDOR.length() > 260) {
           ULTIMOS_GET_SERVIDOR = "";
         }
-          ULTIMOS_GET_SERVIDOR += fS_DataHora();
-          ULTIMOS_GET_SERVIDOR += " -> ";
-          ULTIMOS_GET_SERVIDOR += GET_SERVIDOR;
-          ULTIMOS_GET_SERVIDOR += "<br><br>";
-         CLIENTE_WEB_ASYNC->open("GET", GET_SERVIDOR.c_str());
-        // Captura de variáveis para a lambda
- 
+        ULTIMOS_GET_SERVIDOR += fS_DataHora();
+        ULTIMOS_GET_SERVIDOR += " -> ";
+        ULTIMOS_GET_SERVIDOR += GET_SERVIDOR;
+        ULTIMOS_GET_SERVIDOR += "<br><br>";
+        CLIENTE_WEB_ASYNC->open("GET", GET_SERVIDOR.c_str());  //Abre a requisição GET
+        CLIENTE_WEB_ASYNC->setTimeout(5000);  //Timeout de 5 segundos
+
         // Define o callback para quando a resposta for recebida
         CLIENTE_WEB_ASYNC->onReadyStateChange([=](void* optParm, asyncHTTPrequest* req, int readyState) {
-            if (readyState == 4) {  // Use o valor inteiro diretamente
-              int statusCode = req->responseHTTPcode();
-              String payload = req->responseText();
-              // Armazena o código da resposta e o payload
-              vI_httpResponseCode = statusCode;
-              vS_payload = payload;
-              if (statusCode == 200 && payload == "OK_DADO_RECEBIDO") {
-                // Atualiza o controle do handshake
-                aI16_InterMod_CTRL_HandShake[0][moduloIdx] = vI_cicloHandshake;
-                aI16_InterMod_CTRL_HandShake[1][moduloIdx] = 0;
+          if (readyState == 4) {  // Se a requisição estiver completa
+            int statusCode = req->responseHTTPcode();
+            String payload = req->responseText();
+
+            // Processa a resposta do servidor
+            aI32_Variaveis[1] = statusCode;
+            fV_imprimeSerial(1, "HTTP Response code: " + String(statusCode));
+            fV_imprimeSerial(1, "Payload: " + payload);
+
+            if (statusCode == 200 && payload == "OK_DADO_RECEBIDO") {
+              // Atualiza o controle de handshake com o código de resposta
+              aI16_InterMod_CTRL_HandShake[0][moduloIdx] = fU16_carregaConfigGeral(38, 65535);
+              aI16_InterMod_CTRL_HandShake[1][moduloIdx] = 0;
+              aI16_InterMod_CTRL_HandShake[2][moduloIdx] = statusCode;
+              aI16_InterMod_CTRL_HandShake[3][moduloIdx] = 0;
+              aU32_Variaveis[28] = idmodulo;
+            } else {
+                // Caso de erro, aumenta o contador de falhas
                 aI16_InterMod_CTRL_HandShake[2][moduloIdx] = statusCode;
-                aI16_InterMod_CTRL_HandShake[3][moduloIdx] = 0;
-                aU32_Variaveis[28] = idmodulo;
-              } else {
-                  aI16_InterMod_CTRL_HandShake[2][moduloIdx] = statusCode;
-                  aI16_InterMod_CTRL_HandShake[3][moduloIdx] = aI16_InterMod_CTRL_HandShake[3][moduloIdx] + 1;
-                  //(aI16_InterMod_CTRL_HandShake[3][moduloIdx] < vU8_tentativaConexoes)  //32766
-                  //                                ? aI16_InterMod_CTRL_HandShake[3][moduloIdx] + 1 
-                  //                                : 1;
-              }
-              fV_imprimeSerial(3,"HTTP Response code: " + String(statusCode));
-              fV_imprimeSerial(3,"Payload: " + payload);
+                aI16_InterMod_CTRL_HandShake[3][moduloIdx] += 1;
             }
-        }, nullptr);  // Passar nullptr como argumento para a lambda
+
+            // Libera a flag de operação em andamento
+            __sync_lock_release(&aB_Variaveis[9]);
+          }
+        }, nullptr);  // Passa nullptr para o parâmetro opcional
+        
         CLIENTE_WEB_ASYNC->send();  // Envia a requisição assíncrona
-        fV_imprimeSerial(3,"Enviado: " + GET_SERVIDOR);
-        request_in_progress = false;
+        fV_imprimeSerial(1,"Enviado: " + GET_SERVIDOR);
+        //aB_Variaveis[9] = false;
       } else {
         fV_imprimeSerial(1,"Aguardando para enviar informacoes");
       }
     }
   } else {
     aI16_InterMod_CTRL_HandShake[3][moduloIdx] = aI16_InterMod_CTRL_HandShake[3][moduloIdx] +1;
-    if (aI16_InterMod_CTRL_HandShake[3][moduloIdx] > vI8_aS16_InterModFila_EnviaModulo) {
+    if (aI16_InterMod_CTRL_HandShake[3][moduloIdx] > fU16_carregaConfigGeral(51, 30)) {
       aI16_InterMod_CTRL_HandShake[3][moduloIdx] = 0;
     }
   }
   return resposta;
 }
+*/
 
 /*========================================
 Funcao para enviar a outro modulo a fila de status dos alertas
 */
 void fV_enviaAcoesModulos() {
   uint64_t agora = millis();
-  if (!vB_pausaEXECs && vB_exec_Modulos) {
-    if ((agora - aU64_Variaveis[1]) > (vU16_modulos_MTBS_Acoes+500)) {
-      for (uint8_t x=0; x<aU32_Variaveis[36]; x++) {
+  if (!aB_Variaveis[8] && fB_carregaConfigGeral(35, false)) {
+    if ((agora - aU64_Variaveis[1]) > (fU16_carregaConfigGeral(37, 65535)+500)) {
+      for (uint8_t x=0; x<fU16_carregaConfigGeral(39, 15); x++) {
         if (aS16_InterModFila_EnviaModulo[0][x] > 0) {
           if ( fI_enviaModulo(aS16_InterModFila_EnviaModulo[0][x], String(aS16_InterModFila_EnviaModulo[1][x]), String(aS16_InterModFila_EnviaModulo[2][x]), String(aS16_InterModFila_EnviaModulo[3][x])) == 200) {
             aS16_InterModFila_EnviaModulo[0][x] = 0;
@@ -238,175 +347,207 @@ void fV_restartTasks() {
 
 //========================================
 void fV_mudaExec() {
-  vB_pausaEXECs = !vB_pausaEXECs;
-  if (vB_pausaEXECs) {
+  aB_Variaveis[8] = !aB_Variaveis[8];
+  if (aB_Variaveis[8]) {
     fV_imprimeSerial(1,"A execucao das rotinas foi pausada.");
   } else {
     fV_imprimeSerial(1,"A execucao das rotinas foi retomada.");
   }
 }
 
-//========================================
-void fV_Preference(String op, bool force) {
-  fV_imprimeSerial(1,"Iniciando configuracao de parametros...", false);
-  if (op == "L") {
-    fV_carregaFILESYS_AS2D("/aS_Preference.txt",aS_Preference,1,ARRAY_PREFERENCE_COL);
-  } else if (op == "E") {
-    fV_salvaFILESYS_AS2D("/aS_Preference.txt",aS_Preference,1,ARRAY_PREFERENCE_COL);
+/*========================================
+Carrega array aS_Preference de configuração com informações salvas na flash ou
+salva as informação do array aS_Preference na flash.
+*/
+void fV_Preference(String op) {
+  Serial.println("Iniciando configuracao de parametros essenciais...");
+  if (op == "LER") {
+    Serial.print("Carregando arquivo: /aS_Preference.txt");
+
+    //Aloca memória para o array e preenche com strings vazias.
+    aS_Preference = new String[ARRAY_PREFERENCE_COL];
+    for (size_t i = 0; i < ARRAY_PREFERENCE_COL; i++) {
+      aS_Preference[i] = "";
+    }
+    
+    // Abre o arquivo para leitura com FILESYS
+    File file = FILESYS.open("/aS_Preference.txt", FILE_READ);
+    if (!file) { //Se tiver eero ao abrir o arquivo.
+      Serial.println("Arquivo /aS_Preference.txt nao encontrado ou erro ao abrir.");
+    } else {
+      size_t index = 0;
+      while (file.available() && index < ARRAY_PREFERENCE_COL) {
+        String line = file.readStringUntil('\n');  //Lê uma linha do arquivo.
+        int startIndex = 0;
+        while (startIndex < line.length() && index < ARRAY_PREFERENCE_COL) {
+             int endIndex = line.indexOf(',', startIndex); //Vírgula como separador de campos.
+             if (endIndex == -1) {  //Último item da linha.
+                 endIndex = line.length();
+             }
+             aS_Preference[index] = fS_limpaEspacoFimLinha(line.substring(startIndex, endIndex));
+             startIndex = endIndex + 1;
+             index++;
+         }
+      }
+      file.close();
+      Serial.println(" - OK");
+    }
+  } else if (op == "SALVAR") {
+    fV_salvaFILESYS_AS1D("/aS_Preference.txt",aS_Preference,ARRAY_PREFERENCE_COL);
   }
-  fV_imprimeSerial(1," OK");
 }
 
-//========================================
+/*========================================
+Verifica se os arquivos de configurações essenciais existem,
+Caso não exsitam ou falte algum arquivo será criado com valor padrão.
+*/
 bool fB_verificaPrimeiraExec(bool force) {
-  bool resultado = false; // Inicialmente, assume que nem todos os arquivos existem
-  int arquivosExistentes = 0; // Contador para arquivos existentes
-  int totalArquivos = 13;
-  fV_imprimeSerial(1,"Verificando arquivos de configuracao...");
-  String aS_checkFiles[totalArquivos] = {
-      "aU8_diasDaSemana", "aU8_meses", "aS16_PinosMenu", "aS8_AcoesMenu", 
-      "aS8_AcoesStringMenu", "aS8_AcoesRedeMenu", "aS_InterModMenu",
-      "aU16_InterModMenu", "aSB_InterModMenu", "nulo","aS_Preference",
-      "aS16_InterModMenu_CTRL_HandShake", "aS8_ControlMsgModHist" };
+  bool resultado = false; //Inicialmente, assume que nem todos os arquivos existem.
+  int arquivosExistentes = 0; //Contador para arquivos existentes.
+  int totalArquivos = 13; //Total de arquivos básicos de configuração.
+  Serial.println("Verificando arquivos de configuracao essenciais...");
+  String aS_checkFiles[totalArquivos] = { //Lista de arquivos que devem existir.
+    "aU8_diasDaSemana", "aU8_meses", "aS16_PinosMenu", "aS8_AcoesMenu", 
+    "aS8_AcoesStringMenu", "aS8_AcoesRedeMenu", "aS_InterModMenu",
+    "aU16_InterModMenu", "aSB_InterModMenu", "nulo","aS_Preference",
+    "aS16_InterModMenu_CTRL_HandShake", "aS8_ControlMsgModHist" };
+ 
+  for (uint8_t i = 0; i < totalArquivos; i++) { //Percorre cada arquivo do array.
+    String fileName = "/" + aS_checkFiles[i] + ".txt"; // Adiciona extensão .txt ao nome do arquivo.
+    bool fileExists = FILESYS.exists(fileName); // Verifica se o arquivo existe.
+    Serial.println("Verificando arquivo: "+ String(i) + " - " + fileName);
 
-  // Percorre cada arquivo do array
-  for (uint8_t i = 0; i < totalArquivos; i++) {
-      String fileName = "/" + aS_checkFiles[i] + ".txt"; // Adiciona extensão .txt ao nome do arquivo
-      bool fileExists = FILESYS.exists(fileName); // Verifica se o arquivo existe
-      // Se o arquivo não existir ou se "force" for verdadeiro, recria o arquivo
-      fV_imprimeSerial(1,"Verificando arquivo: "+ String(i) + " - " + fileName);
-      if (!fileExists || force) {
-          fV_imprimeSerial(1,"Recriando arquivo: " + fileName);
-          File file = FILESYS.open(fileName, FILE_WRITE);
-         if (file) {
-              String defaultValues;
-             // Define os valores padrão para cada arquivo baseado no nome
-              if (aS_checkFiles[i] == "aU8_diasDaSemana") {
-                  defaultValues = "Domingo,Segunda,Terça,Quarta,Quinta,Sexta,Sábado";
-              } else if (aS_checkFiles[i] == "aU8_meses") {
-                  defaultValues = "Janeiro,Fevereiro,Março,Abril,Maio,Junho,Julho,Agosto,Setembro,Outubro,Novembro,Dezembro";
-              } else if (aS_checkFiles[i] == "aS16_PinosMenu") {
-                  defaultValues = "Pino,Tipo,pinMode(),XoR,Nível Acionamento,Tempo Retenção";
-              } else if (aS_checkFiles[i] == "aS8_AcoesMenu") {
-                  defaultValues = "Pino Origem,Pino Destino,Ação,Tempo ON,Tempo OFF,Pino Destino Remoto (máscara)";
-              } else if (aS_checkFiles[i] == "aS8_AcoesStringMenu") {
-                  defaultValues = "Classe MqTT,Ícone_MqTT";
-              } else if (aS_checkFiles[i] == "aS8_AcoesRedeMenu") {
-                  defaultValues = "Envia Para Módulo,Envia Telegram,Notifica Assistentes,Envia MqTT";
-              } else if (aS_checkFiles[i] == "aS_InterModMenu") {
-                  defaultValues = "Nome,IP";
-              } else if (aS_checkFiles[i] == "aU16_InterModMenu") {
-                  defaultValues = "ID-Pino HandShake,Porta do Receptor";
-              } else if (aS_checkFiles[i] == "aSB_InterModMenu") {
-                  defaultValues = "Enviar Handshake";
-              } else if (aS_checkFiles[i] == "aS16_InterModMenu_CTRL_HandShake") {
-                  defaultValues = "Ciclo,Status,Código HTTP,Envio Pausado";
-              } else if (aS_checkFiles[i] == "aS8_ControlMsgModHist") {
-                  defaultValues = "Módulo,Ação,Pino,Valor";
-              } else if (aS_checkFiles[i] == "nulo") {
-                  defaultValues = "";
-              } else if (aS_checkFiles[i] == "aS_Preference") {
-                  defaultValues = String("wifi,") + //0
-                                  String("12345678,") + //1
-                                  String("4,") + //2
-                                  String("4080,") + //3
-                                  String("esp32modularx,") + //4
-                                  String("admin,") + //5
-                                  String("admin,") + //6
-                                  String("esp32modularx_" + aS_Variaveis[13] + ",") + //7
-                                  String("senha12345678,") + //8
-                                  String("true,") + //9
-                                  String("pool.ntp.br,") + //10
-                                  String("pool.ntp.org,") + //1
-                                  String("<-03>3,") + //12
-                                  String("Tomato,") + //13
-                                  String("LightGreen,") + //14
-                                  String("false,") + //15
-                                  String(":,") + //16
-                                  String("-,") + //17
-                                  String("@,") + //18
-                                  String("65535,") + //19
-                                  String("false,") + //20
-                                  String("pubsub,") + //21
-                                  String("10.10.10.10,") + //22
-                                  String("usr,") + //23
-                                  String("123,") + //24
-                                  String("65535,") + //25
-                                  String("65535,") + //26
-                                  String("1833,") + //27
-                                  String("false,") + //28
-                                  String("65535,") + //29
-                                  String("caixas,") + //30
-                                  String("caixas,") + //31
-                                  String("pt_br,") + //32
-                                  String("Alerta para,") + //33
-                                  String("Normalização para,") + //34
-                                  String("false,") + //35
-                                  String("65535,") + //36
-                                  String("65535,") + //37
-                                  String("10,") + //38
-                                  String("15,") + //39
-                                  String("7,") + //40
-                                  String("120,") + //41
-                                  String("80,") + //42
-                                  String("false,") + //43
-                                  String("2147483647") + //44
-                                  String("12") + //45
-                                  String("8") + //46
-                                  String("7") + //47
-                                  String("false") + //48
-                                  String("0") + //49
-                                  String("5") + //50
-                                  String("50") + //51
-                                  String("0") + //52 sem uso
-                                  String("0") + //53 sem uso
-                                  String("0") + //54 sem uso
-                                  String("0") + //55 sem uso
-                                  String("0") + //56 sem uso
-                                  String("0") + //57 sem uso
-                                  String("0") + //58 sem uso
-                                  String("0"); //59 sem uso
-              }
-             // Escreve os valores padrões no arquivo
-              file.println(defaultValues);
-              file.close();
-              fV_imprimeSerial(1,"Arquivo recriado: " + fileName);
-          } else {
-              fV_imprimeSerial(1,"Erro ao criar arquivo: " + fileName);
-          }
+    if (!fileExists || force) { //Se o arquivo não existe, ou se o parâmetro force = true.
+      Serial.println("Recriando arquivo: " + fileName);
+      File file = FILESYS.open(fileName, FILE_WRITE);
+      if (file) {
+        String defaultValues;
+        //Define os valores padrão para cada arquivo baseado no nome.
+        if (aS_checkFiles[i] == "aU8_diasDaSemana") {
+          defaultValues = "Domingo,Segunda,Terça,Quarta,Quinta,Sexta,Sábado";
+        } else if (aS_checkFiles[i] == "aU8_meses") {
+          defaultValues = "Janeiro,Fevereiro,Março,Abril,Maio,Junho,Julho,Agosto,Setembro,Outubro,Novembro,Dezembro";
+        } else if (aS_checkFiles[i] == "aS16_PinosMenu") {
+          defaultValues = "Pino,Tipo,pinMode(),XoR,Nível Acionamento,Tempo Retenção";
+        } else if (aS_checkFiles[i] == "aS8_AcoesMenu") {
+          defaultValues = "Pino Origem,Pino Destino,Ação,Tempo ON,Tempo OFF,Pino Destino Remoto (máscara)";
+        } else if (aS_checkFiles[i] == "aS8_AcoesStringMenu") {
+          defaultValues = "Classe MqTT,Ícone_MqTT";
+        } else if (aS_checkFiles[i] == "aS8_AcoesRedeMenu") {
+          defaultValues = "Envia Para Módulo,Envia Telegram,Notifica Assistentes,Envia MqTT";
+        } else if (aS_checkFiles[i] == "aS_InterModMenu") {
+          defaultValues = "Nome,IP";
+        } else if (aS_checkFiles[i] == "aU16_InterModMenu") {
+          defaultValues = "ID-Pino HandShake,Porta do Receptor";
+        } else if (aS_checkFiles[i] == "aSB_InterModMenu") {
+          defaultValues = "Enviar Handshake";
+        } else if (aS_checkFiles[i] == "aS16_InterModMenu_CTRL_HandShake") {
+          defaultValues = "Ciclo,Status,Código HTTP,Envio Pausado";
+        } else if (aS_checkFiles[i] == "aS8_ControlMsgModHist") {
+          defaultValues = "Módulo,Ação,Pino,Valor";
+        } else if (aS_checkFiles[i] == "nulo") {
+          defaultValues = "";
+        } else if (aS_checkFiles[i] == "aS_Preference") {
+          defaultValues = String("wifi,") + //0
+                          String("12345678,") + //1
+                          String("4,") + //2
+                          String("4080,") + //3
+                          String("esp32modularx,") + //4
+                          String("admin,") + //5
+                          String("admin,") + //6
+                          String("esp32modularx_" + fS_idModulo() + ",") + //7
+                          String("senha12345678,") + //8
+                          String("true,") + //9
+                          String("pool.ntp.br,") + //10
+                          String("pool.ntp.org,") + //1
+                          String("<-03>3,") + //12
+                          String("Tomato,") + //13
+                          String("LightGreen,") + //14
+                          String("false,") + //15
+                          String(":,") + //16
+                          String("-,") + //17
+                          String("@,") + //18
+                          String("65535,") + //19
+                          String("false,") + //20
+                          String("pubsub,") + //21
+                          String("10.10.10.10,") + //22
+                          String("usr,") + //23
+                          String("123,") + //24
+                          String("65535,") + //25
+                          String("65535,") + //26
+                          String("1833,") + //27
+                          String("false,") + //28
+                          String("65535,") + //29
+                          String("caixas,") + //30
+                          String("caixas,") + //31
+                          String("pt_br,") + //32
+                          String("Alerta para,") + //33
+                          String("Normalização para,") + //34
+                          String("false,") + //35
+                          String("65535,") + //36
+                          String("65535,") + //37
+                          String("10,") + //38
+                          String("15,") + //39
+                          String("7,") + //40
+                          String("120,") + //41
+                          String("80,") + //42
+                          String("false,") + //43
+                          String("120000000,") + //44
+                          String("12,") + //45
+                          String("8,") + //46
+                          String("7,") + //47
+                          String("false,") + //48
+                          String("0,") + //49
+                          String("5,") + //50
+                          String("30,") + //51
+                          String("2,") + //52
+                          String("25,") + //53
+                          String("12345,") + //54
+                          String("false,") + //55
+                          String("0,") + //56 sem uso
+                          String("0,") + //57 sem uso
+                          String("0,") + //58 sem uso
+                          String("0"); //59 sem uso
+        }
+        //Escreve os valores padrões no arquivo, fecha o arquivo e vai para o próximo arquivo do loop for.
+         file.println(defaultValues);
+         file.close();
+         Serial.print("Arquivo recriado: " + fileName);
       } else {
-          // Se o arquivo existe, incrementa o contador
-          arquivosExistentes++;
+          Serial.println("Erro ao criar arquivo: " + fileName);
       }
+    } else { //Se o arquivo já existe ou force = false, incrementa o contador.
+      arquivosExistentes++;
+    }
+  }  
+  if (arquivosExistentes == totalArquivos) { //Se todos os 11 arquivos existem, define resultado como true.
+    resultado = true;
   }
-
-  // Se todos os 11 arquivos existem, define resultado como true
-  if (arquivosExistentes == totalArquivos) {
-      resultado = true;
-  }
-  fV_imprimeSerial(1,"Verificação de arquivos finalizada.");
+  Serial.println("Verificação de arquivos essenciais finalizada.");
   return resultado;
 }
 
 //========================================
 bool fV_regModHist(uint16_t idmodulo, uint16_t acao, uint16_t pino, uint16_t valor) {
-  aS16_InterModFila_EnviaModulo[0][vU8_crtl_ModHist] = idmodulo;
-  aS16_InterModFila_EnviaModulo[1][vU8_crtl_ModHist] = acao;
-  aS16_InterModFila_EnviaModulo[2][vU8_crtl_ModHist] = pino;
-  aS16_InterModFila_EnviaModulo[3][vU8_crtl_ModHist] = valor;
-  vU8_crtl_ModHist++;
-  if (vU8_crtl_ModHist >= vI8_aS16_InterModFila_EnviaModulo) {
-    vU8_crtl_ModHist = 0;
+  aS16_InterModFila_EnviaModulo[0][aU32_Variaveis[2]] = idmodulo;
+  aS16_InterModFila_EnviaModulo[1][aU32_Variaveis[2]] = acao;
+  aS16_InterModFila_EnviaModulo[2][aU32_Variaveis[2]] = pino;
+  aS16_InterModFila_EnviaModulo[3][aU32_Variaveis[2]] = valor;
+  aU32_Variaveis[2]++;
+  if (aU32_Variaveis[2] >= fU16_carregaConfigGeral(51, 30)) {
+    aU32_Variaveis[2] = 0;
   }
   return true;
 }
 
-//========================================
+/*========================================
+
+*/
 void fV_checkAcoesModulos() {
   uint64_t agora = millis();
-  if (!vB_pausaEXECs && vB_exec_Modulos) {
-    if ((agora - aU64_Variaveis[0]) > vU16_modulos_MTBS_Acoes) {
-      for (uint8_t x=0; x<aU32_Variaveis[36]; x++) {
+  if (!aB_Variaveis[8] && fB_carregaConfigGeral(35, false)) {
+    if ((agora - aU64_Variaveis[0]) > fU16_carregaConfigGeral(37, 65535)) {
+      for (uint8_t x=0; x<fU16_carregaConfigGeral(39, 15); x++) {
         if ((aU8_AcaoRede1[0][x] > 0 ) && (aU16_Pinos_Status[0][x] >= aU16_Pinos[4][x]) && (aS16_InterModControleRepeticao_EnviaModulo[0][x] < 1)) {
           if (fV_regModHist(aU8_AcaoRede1[0][x],aU16_Acao1[2][x], aU16_Acao1[5][x], aU16_Pinos_Status[0][x])) {
             aS16_InterModControleRepeticao_EnviaModulo[0][x] = 1;
@@ -415,7 +556,7 @@ void fV_checkAcoesModulos() {
           if (fV_regModHist(aU8_AcaoRede1[0][x],aU16_Acao1[2][x], aU16_Acao1[5][x], aU16_Pinos_Status[0][x])) {
             aS16_InterModControleRepeticao_EnviaModulo[0][x] = 0;
           }
-        } else if (vB_envia_Historico && (aU8_AcaoRede1[0][x] >0)){
+        } else if (aB_Variaveis[7] && (aU8_AcaoRede1[0][x] >0)){
           fV_regModHist(aU8_AcaoRede1[0][x],aU16_Acao1[2][x], aU16_Acao1[5][x], aU16_Pinos_Status[0][x]);
         }
 
@@ -428,7 +569,7 @@ void fV_checkAcoesModulos() {
           if (fV_regModHist(aU8_AcaoRede2[0][x],aU16_Acao2[2][x], aU16_Acao2[5][x], aU16_Pinos_Status[0][x])) {
             aS16_InterModControleRepeticao_EnviaModulo[1][x] = 0;
           }
-        } else if (vB_envia_Historico && (aU8_AcaoRede2[0][x] >0)){
+        } else if (aB_Variaveis[7] && (aU8_AcaoRede2[0][x] >0)){
           fV_regModHist(aU8_AcaoRede2[0][x],aU16_Acao2[2][x], aU16_Acao2[5][x], aU16_Pinos_Status[0][x]);
         }
 
@@ -441,7 +582,7 @@ void fV_checkAcoesModulos() {
           if (fV_regModHist(aU8_AcaoRede3[0][x], aU16_Acao3[2][x], aU16_Acao3[5][x], aU16_Pinos_Status[0][x])) {
             aS16_InterModControleRepeticao_EnviaModulo[2][x] = 0;
           }
-        } else if (vB_envia_Historico && (aU8_AcaoRede3[0][x] >0)){
+        } else if (aB_Variaveis[7] && (aU8_AcaoRede3[0][x] >0)){
           fV_regModHist(aU8_AcaoRede3[0][x],aU16_Acao3[2][x], aU16_Acao3[5][x], aU16_Pinos_Status[0][x]);
 
 
@@ -453,13 +594,13 @@ void fV_checkAcoesModulos() {
           if (fV_regModHist(aU8_AcaoRede4[0][x], aU16_Acao4[2][x], aU16_Acao4[5][x], aU16_Pinos_Status[0][x])) {
             aS16_InterModControleRepeticao_EnviaModulo[3][x] = 0;
           }
-        } else if (vB_envia_Historico && (aU8_AcaoRede4[0][x] >0)){
+        } else if (aB_Variaveis[7] && (aU8_AcaoRede4[0][x] >0)){
           fV_regModHist(aU8_AcaoRede4[0][x],aU16_Acao4[2][x], aU16_Acao4[5][x], aU16_Pinos_Status[0][x]);
         }
 
         }
       }
-      vB_envia_Historico = false;
+      aB_Variaveis[7] = false;
       aU64_Variaveis[0] = agora;
     }
   }
@@ -510,7 +651,7 @@ bool fB_retornaStatusGrupoAcao(String pinos, uint8_t status) {
 String fS_retornaGrupoAcao(uint16_t pino) {
   String resultado = "";
   int cont = 0;
-  for (uint16_t x=1; x<vI8_ControlAcoesGroups; x++){ 
+  for (uint16_t x=1; x<aU32_Variaveis[5]; x++){ 
     if (aU16_ControlAcoesGroups[x][fU16_retornaIndicePino(pino)] >0 ) {
       resultado += String(aU16_ControlAcoesGroups[x][fU16_retornaIndicePino(pino)]);
       resultado += ",";
@@ -568,7 +709,7 @@ String fS_traduzAcoes(uint16_t cod) {
 //========================================
 uint16_t fU16_retornaIndicePino(uint16_t pino) {
   uint16_t resultado = 65535;
-  for (uint8_t x=0; x<aU32_Variaveis[36]; x++) {
+  for (uint8_t x=0; x<fU16_carregaConfigGeral(39, 15); x++) {
     if (aU16_Pinos[0][x] == pino) {
       resultado = x;
     }
@@ -576,18 +717,20 @@ uint16_t fU16_retornaIndicePino(uint16_t pino) {
   return resultado;
 }
 
-//========================================
+/*========================================
+Rotina para verificar e atualizar hoŕario se preciso
+*/
 bool fB_atualizaHora() {
   bool resultado = false;  
-  if (!vB_pausaEXECs) {
-    static uint64_t hora_lasttime = 0;  // Variável local estática para manter o último tempo
+  if (!aB_Variaveis[8]) {
+    static uint64_t hora_lasttime = 0;  //Variável local estática para manter o último tempo.
     uint64_t agora = millis();
-    if ((agora - hora_lasttime) > 120000) {  // Se já se passou mais de 1 minuto
-        resultado = getLocalTime(&timeinfo);  // Atualiza a hora
-        if (!resultado) {
-            fV_imprimeSerial(1,"Hora ainda nao ajustada.");
-        }
-        hora_lasttime = agora;  // Atualiza o último tempo da execução
+    if ((agora - hora_lasttime) > 120000) {  //Se já se passou mais de 1 minuto.
+      resultado = getLocalTime(&timeinfo);  //Atualiza a hora;
+      if (!resultado) {
+        fV_imprimeSerial(1,"Falha na atualizacao do relogio.");
+      }
+      hora_lasttime = agora;  // Atualiza o último tempo da execução
     }
   }
   return resultado;  
@@ -598,12 +741,12 @@ void fV_grupoAcoes(bool force) {
   // Zerar array de grupo de acoes
   fV_imprimeSerial(1,"Iniciando formacoes de grupos de acoes...");
   if (force) {
-    for (uint8_t i = 0; i < vI8_ControlAcoesGroups; i++) {
-      for (uint8_t j = 0; j < aU32_Variaveis[36]; j++) {
+    for (uint8_t i = 0; i < aU32_Variaveis[5]; i++) {
+      for (uint8_t j = 0; j < fU16_carregaConfigGeral(39, 15); j++) {
         aU16_ControlAcoesGroups[i][j] = 0;
       }
     }
-    for (uint8_t x = 0; x < aU32_Variaveis[36]; x++) {
+    for (uint8_t x = 0; x < fU16_carregaConfigGeral(39, 15); x++) {
       if (aU16_Pinos[0][x] > 0) {
         aU16_ControlAcoesGroups[0][x] = aU16_Pinos[0][x];
       }
@@ -615,12 +758,12 @@ void fV_grupoAcoes(bool force) {
 
   fV_imprimeSerial(1,"Formando grupo acoes1: ",false);
   // Para cada pino de destino
-  for (uint8_t destIndex = 0; destIndex < aU32_Variaveis[36]; destIndex++) {
+  for (uint8_t destIndex = 0; destIndex < fU16_carregaConfigGeral(39, 15); destIndex++) {
     uint16_t destPin = aU16_ControlAcoesGroups[0][destIndex];
     // Se o pino de destino estiver cadastrado
     if (destPin != 0) {
       // Para cada ação associada a esse pino de destino
-      for (uint8_t actionIndex = 0; actionIndex < aU32_Variaveis[36]; actionIndex++) {
+      for (uint8_t actionIndex = 0; actionIndex < fU16_carregaConfigGeral(39, 15); actionIndex++) {
         // Verifica se há uma ação associada a esse pino de destino
         if (aU16_Acao1[1][actionIndex] == destPin) {
           // Associa o pino de origem ao pino de destino no array de grupo de ações
@@ -630,16 +773,16 @@ void fV_grupoAcoes(bool force) {
       }
     }
   }
-  fV_imprimeSerial(1,1,xyz-1);
+  fV_imprimeSerial(1,xyz-1);
 
   fV_imprimeSerial(1,"Formando grupo acoes2: ",false);
   // Para cada pino de destino
-  for (uint8_t destIndex = 0; destIndex < aU32_Variaveis[36]; destIndex++) {
+  for (uint8_t destIndex = 0; destIndex < fU16_carregaConfigGeral(39, 15); destIndex++) {
     uint16_t destPin = aU16_ControlAcoesGroups[0][destIndex];
     // Se o pino de destino estiver cadastrado
     if (destPin != 0) {
       // Para cada ação associada a esse pino de destino
-      for (uint8_t actionIndex = 0; actionIndex < aU32_Variaveis[36]; actionIndex++) {
+      for (uint8_t actionIndex = 0; actionIndex < fU16_carregaConfigGeral(39, 15); actionIndex++) {
         // Verifica se há uma ação associada a esse pino de destino
         if (aU16_Acao2[1][actionIndex] == destPin) {
           // Associa o pino de origem ao pino de destino no array de grupo de ações
@@ -649,16 +792,16 @@ void fV_grupoAcoes(bool force) {
       }
     }
   }
-  fV_imprimeSerial(1,1,xyz-1);
+  fV_imprimeSerial(1,xyz-1);
 
   fV_imprimeSerial(1,"Formando grupo acoes3: ",false);
   // Para cada pino de destino
-  for (uint8_t destIndex = 0; destIndex < aU32_Variaveis[36]; destIndex++) {
+  for (uint8_t destIndex = 0; destIndex < fU16_carregaConfigGeral(39, 15); destIndex++) {
     uint16_t destPin = aU16_ControlAcoesGroups[0][destIndex];
     // Se o pino de destino estiver cadastrado
     if (destPin != 0) {
       // Para cada ação associada a esse pino de destino
-      for (uint8_t actionIndex = 0; actionIndex < aU32_Variaveis[36]; actionIndex++) {
+      for (uint8_t actionIndex = 0; actionIndex < fU16_carregaConfigGeral(39, 15); actionIndex++) {
         // Verifica se há uma ação associada a esse pino de destino
         if (aU16_Acao3[1][actionIndex] == destPin) {
           // Associa o pino de origem ao pino de destino no array de grupo de ações
@@ -668,16 +811,16 @@ void fV_grupoAcoes(bool force) {
       }
     }
   }
-  fV_imprimeSerial(1,1,xyz-1);
+  fV_imprimeSerial(1,xyz-1);
 
   fV_imprimeSerial(1,"Formando grupo acoes4: ",false);
   // Para cada pino de destino
-  for (uint8_t destIndex = 0; destIndex < aU32_Variaveis[36]; destIndex++) {
+  for (uint8_t destIndex = 0; destIndex < fU16_carregaConfigGeral(39, 15); destIndex++) {
     uint16_t destPin = aU16_ControlAcoesGroups[0][destIndex];
     // Se o pino de destino estiver cadastrado
     if (destPin != 0) {
       // Para cada ação associada a esse pino de destino
-      for (uint8_t actionIndex = 0; actionIndex < aU32_Variaveis[36]; actionIndex++) {
+      for (uint8_t actionIndex = 0; actionIndex < fU16_carregaConfigGeral(39, 15); actionIndex++) {
         // Verifica se há uma ação associada a esse pino de destino
         if (aU16_Acao4[1][actionIndex] == destPin) {
           // Associa o pino de origem ao pino de destino no array de grupo de ações
@@ -687,14 +830,14 @@ void fV_grupoAcoes(bool force) {
       }
     }
   }
-  fV_imprimeSerial(1,1,xyz-1);  
+  fV_imprimeSerial(1,xyz-1);  
   fV_imprimeSerial(1,"Formacao de grupos de acoes finalizado.");
 }
 
 //========================================
 void fV_restart() {
     fV_imprimeSerial(1,"Reiniciando o modulo ",false);
-    fV_imprimeSerial(1,aS_Variaveis[0]);
+    fV_imprimeSerial(1,aS_Preference[4]);
     delay(20000);
     esp_restart();
 }
@@ -715,27 +858,26 @@ uint64_t fU64_stringToULong64(const String& str) {
 
 //========================================
 void fV_configuraWatchDog(const bool force) {
-    if (vB_exec_WatchDog || force) {
+    if (fB_carregaConfigGeral(43, false) || force) {
         fV_imprimeSerial(1,"Configurando watchdog e iniciando...",false);
-        vU16_clockESP32 = fU16_carregaConfigGeral(0,42,80); // clock do ESP32 para whatchdog
-        aU32_Variaveis[21] = fU32_carregaConfigGeral(0,44,2147483647); // Tempo para whatchdog
-        vHW_timer = timerBegin(0, vU16_clockESP32, true);  // TimerID 0, div 80 (clock do esp), contador progressivo
+        aU32_Variaveis[33] = fU16_carregaConfigGeral(42,80); // clock do ESP32 para whatchdog
+        aU32_Variaveis[21] = fU32_carregaConfigGeral(0,44,120000000); // Tempo para whatchdog
+        vHW_timer = timerBegin(0, aU32_Variaveis[33], true);  // TimerID 0, div 80 (clock do esp), contador progressivo
         timerAttachInterrupt(vHW_timer, &fV_resetModule, true);
         timerAlarmWrite(vHW_timer, aU32_Variaveis[21], true);  // Timer, tempo (us), repeticao
         timerAlarmEnable(vHW_timer);  // Habilita a interrupcao
-        vB_emExecucaoWDog = true;
+        aB_Variaveis[11] = true;
     } else {
         fV_imprimeSerial(1,"Configurando watchdog...",false);
-        vB_exec_WatchDog = fB_carregaConfigGeral(0,43,false);        
-        vU16_clockESP32 = fU16_carregaConfigGeral(0,42,80); // clock do ESP32 para whatchdog
-        aU32_Variaveis[21] = fU32_carregaConfigGeral(0,44,2147483647); // Tempo para whatchdog
+        aU32_Variaveis[33] = fU16_carregaConfigGeral(42,80); // clock do ESP32 para whatchdog
+        aU32_Variaveis[21] = fU32_carregaConfigGeral(0,44,120000000); // Tempo para whatchdog
     }
     fV_imprimeSerial(1," OK");    
 }
 
 //========================================
 void fV_resetarWatchdog() {
-  if (vB_exec_WatchDog && vB_emExecucaoWDog) {
+  if (fB_carregaConfigGeral(43, false) && aB_Variaveis[11]) {
     static unsigned long ultimoResetWatchdog = 0;  // Mantém o valor entre as chamadas da função
     if (millis() - ultimoResetWatchdog >= 5000) {
         timerWrite(vHW_timer, 0);  // Reinicia o contador do temporizador do watchdog
@@ -755,30 +897,33 @@ void fV_iniciaAcoes(bool force) {
     fV_imprimeSerial(1,"Iniciando configuracao das Acoes...");
 
     bool addass = false;
+    aU32_Variaveis[17] = 6;
+    aU32_Variaveis[18] = 4;
+    aU32_Variaveis[9] = 2; //Total de "linhas" dos arrays de acoes (String)    
 
-    fV_carregaFILESYS_AS2D("/aS8_AcoesMenu.txt",aS8_AcoesMenu,1,aU32_Variaveis[36]);
-    fV_carregaFILESYS_AS2D("/aS8_AcoesRedeMenu.txt",aS8_AcoesRedeMenu,1,aU32_Variaveis[36]);
-    fV_carregaFILESYS_AS2D("/aS8_AcoesStringMenu.txt",aS8_AcoesStringMenu,1,aU32_Variaveis[36]);
+    fV_carregaFILESYS_AS2D("/aS8_AcoesMenu.txt",aS8_AcoesMenu,1,fU16_carregaConfigGeral(39, 15));
+    fV_carregaFILESYS_AS2D("/aS8_AcoesRedeMenu.txt",aS8_AcoesRedeMenu,1,fU16_carregaConfigGeral(39, 15));
+    fV_carregaFILESYS_AS2D("/aS8_AcoesStringMenu.txt",aS8_AcoesStringMenu,1,fU16_carregaConfigGeral(39, 15));
 
     // Acoes 1  
-    fV_carregaFlash_AUint("/aU16_Acao1.txt", aU16_Acao1, vI8_aU16_Acao, aU32_Variaveis[36]);
-    fV_carregaFlash_AUint("/aU8_AcaoRede1.txt", aU8_AcaoRede1, vI8_aU8_AcaoRede, aU32_Variaveis[36]);
-    fV_carregaFILESYS_AS2D("/aS8_Acao1.txt",aS8_Acao1,vI8_aS8_Acao,aU32_Variaveis[36]);
+    fV_carregaFlash_AUint("/aU16_Acao1.txt", aU16_Acao1, aU32_Variaveis[17], fU16_carregaConfigGeral(39, 15));
+    fV_carregaFlash_AUint("/aU8_AcaoRede1.txt", aU8_AcaoRede1, aU32_Variaveis[18], fU16_carregaConfigGeral(39, 15));
+    fV_carregaFILESYS_AS2D("/aS8_Acao1.txt",aS8_Acao1,aU32_Variaveis[9],fU16_carregaConfigGeral(39, 15));
   
     // Acoes 2
-    fV_carregaFlash_AUint("/aU16_Acao2.txt", aU16_Acao2, vI8_aU16_Acao, aU32_Variaveis[36]);
-    fV_carregaFlash_AUint("/aU8_AcaoRede2.txt", aU8_AcaoRede2, vI8_aU8_AcaoRede, aU32_Variaveis[36]);
-    fV_carregaFILESYS_AS2D("/aS8_Acao2.txt",aS8_Acao2,vI8_aS8_Acao,aU32_Variaveis[36]);
+    fV_carregaFlash_AUint("/aU16_Acao2.txt", aU16_Acao2, aU32_Variaveis[17], fU16_carregaConfigGeral(39, 15));
+    fV_carregaFlash_AUint("/aU8_AcaoRede2.txt", aU8_AcaoRede2, aU32_Variaveis[18], fU16_carregaConfigGeral(39, 15));
+    fV_carregaFILESYS_AS2D("/aS8_Acao2.txt",aS8_Acao2,aU32_Variaveis[9],fU16_carregaConfigGeral(39, 15));
 
     // Acoes 3
-    fV_carregaFlash_AUint("/aU16_Acao3.txt", aU16_Acao3, vI8_aU16_Acao, aU32_Variaveis[36]);
-    fV_carregaFlash_AUint("/aU8_AcaoRede3.txt", aU8_AcaoRede3, vI8_aU8_AcaoRede, aU32_Variaveis[36]);
-    fV_carregaFILESYS_AS2D("/aS8_Acao3.txt",aS8_Acao3,vI8_aS8_Acao,aU32_Variaveis[36]);
+    fV_carregaFlash_AUint("/aU16_Acao3.txt", aU16_Acao3, aU32_Variaveis[17], fU16_carregaConfigGeral(39, 15));
+    fV_carregaFlash_AUint("/aU8_AcaoRede3.txt", aU8_AcaoRede3, aU32_Variaveis[18], fU16_carregaConfigGeral(39, 15));
+    fV_carregaFILESYS_AS2D("/aS8_Acao3.txt",aS8_Acao3,aU32_Variaveis[9],fU16_carregaConfigGeral(39, 15));
 
     // Acoes 4
-    fV_carregaFlash_AUint("/aU16_Acao4.txt", aU16_Acao4, vI8_aU16_Acao, aU32_Variaveis[36]);
-    fV_carregaFlash_AUint("/aU8_AcaoRede4.txt", aU8_AcaoRede4, vI8_aU8_AcaoRede, aU32_Variaveis[36]);
-    fV_carregaFILESYS_AS2D("/aS8_Acao4.txt",aS8_Acao4,vI8_aS8_Acao,aU32_Variaveis[36]);
+    fV_carregaFlash_AUint("/aU16_Acao4.txt", aU16_Acao4, aU32_Variaveis[17], fU16_carregaConfigGeral(39, 15));
+    fV_carregaFlash_AUint("/aU8_AcaoRede4.txt", aU8_AcaoRede4, aU32_Variaveis[18], fU16_carregaConfigGeral(39, 15));
+    fV_carregaFILESYS_AS2D("/aS8_Acao4.txt",aS8_Acao4,aU32_Variaveis[9],fU16_carregaConfigGeral(39, 15));
 
     fV_imprimeSerial(1,"Configuracao das acoes finalizada");
     fV_grupoAcoes(false);
@@ -786,38 +931,47 @@ void fV_iniciaAcoes(bool force) {
 
 //========================================
 void fV_configuraModulos(bool force) {
-  fV_imprimeSerial(1,"Iniciando configuracao dos modulos...", false);
+  fV_imprimeSerial(1,"Iniciando configuracao dos modulos...",true);
   if (!force) {
-    vB_exec_Modulos = fB_carregaConfigGeral(0,35, false);
-    vU16_modulos_HandShake = fU16_carregaConfigGeral(0,36, 65535);
-    vU16_modulos_MTBS_Acoes = fU16_carregaConfigGeral(0,37, 65535);
-    vU8_totModulos = fU8_carregaConfigGeral(0,47,7);
-    vI_cicloHandshake = fI32_carregaConfigGeral(0,38, 65535);
-    vI8_aS16_InterModFila_EnviaModulo = fU16_carregaConfigGeral(0,51, 40);
+    aU32_Variaveis[15] = 2; //Total de "linhas" do array de inter modulos (uint_16)
+    aU32_Variaveis[16] = 1; //Total de "linhas" do array de inter modulos (Boolean)
+    aU32_Variaveis[7] = 2;  //Total de "linhas" do array de inter modulos (String)
+    aU32_Variaveis[20] = 4;  //Total de "linhas" dos arrays de controle de envio de menssagens
+    aU32_Variaveis[19] = 4; //Total de "linhas" dos arrays de historico de envio de menssagens
+    aU32_Variaveis[8] = 4; //Total de "linhas" do array de inter modulos controle handshake e status handshake
 
-    fV_carregaFlash_AUint("/aU16_InterMod.txt", aU16_InterMod, vI8_aU16_InterMod, vU8_totModulos);
-    fV_carregaFlash_AUint("/aB_InterMod.txt", aB_InterMod, vI8_aB_InterMod, vU8_totModulos);
-    fV_carregaFILESYS_AS2D("/aS_InterMod.txt",aS_InterMod,vI8_aS_InterMod,vU8_totModulos);
-    fV_carregaFILESYS_AS2D("/aU16_InterModMenu.txt",aU16_InterModMenu,1,vU8_totModulos);
-    fV_carregaFILESYS_AS2D("/aSB_InterModMenu.txt",aSB_InterModMenu,1,vU8_totModulos);
-    fV_carregaFILESYS_AS2D("/aS_InterModMenu.txt",aS_InterModMenu,1,vU8_totModulos);
+    fV_carregaFlash_AUint("/aU16_InterMod.txt", aU16_InterMod, aU32_Variaveis[15], fU16_carregaConfigGeral(47, 65535));
+    fV_carregaFlash_AUint("/aB_InterMod.txt", aB_InterMod, aU32_Variaveis[16], fU16_carregaConfigGeral(47, 65535));
+    fV_carregaFILESYS_AS2D("/aS_InterMod.txt",aS_InterMod,aU32_Variaveis[7],fU16_carregaConfigGeral(47, 65535));
+    fV_carregaFILESYS_AS2D("/aU16_InterModMenu.txt",aU16_InterModMenu,1,fU16_carregaConfigGeral(47, 65535));
+    fV_carregaFILESYS_AS2D("/aSB_InterModMenu.txt",aSB_InterModMenu,1,fU16_carregaConfigGeral(47, 65535));
+    fV_carregaFILESYS_AS2D("/aS_InterModMenu.txt",aS_InterModMenu,1,fU16_carregaConfigGeral(47, 65535));
 
+    fV_carregaFILESYS_AS2D("/aS16_InterModMenu_CTRL_HandShake.txt",aS16_InterModMenu_CTRL_HandShake,1,aU32_Variaveis[8]);
+    fV_carregaFILESYS_AS2D("/aS8_ControlMsgModHist.txt",aS8_ControlMsgModHist,1,aU32_Variaveis[19]);
 
-
-    fV_carregaFILESYS_AS2D("/aS16_InterModMenu_CTRL_HandShake.txt",aS16_InterModMenu_CTRL_HandShake,1,vI8_aU16_InterModHA);
-    fV_carregaFILESYS_AS2D("/aS8_ControlMsgModHist.txt",aS8_ControlMsgModHist,1,vI8_aU8_ControlMsgHist);
-
-    fV_carregaFlash_AUint("/nulo.txt", aI16_InterMod_CTRL_HandShake, vI8_aU16_InterModHA, vU8_totModulos);
-    for (uint8_t y=0; y<vU8_totModulos; y++) {
-      aI16_InterMod_CTRL_HandShake[0][y] = vI_cicloHandshake;
+    fV_carregaFlash_AUint("/nulo.txt", aI16_InterMod_CTRL_HandShake, aU32_Variaveis[8], fU16_carregaConfigGeral(47, 65535));
+    for (uint8_t y=0; y<fU16_carregaConfigGeral(47, 65535); y++) {
+      aI16_InterMod_CTRL_HandShake[0][y] = fU16_carregaConfigGeral(38, 65535);
       aI16_InterMod_CTRL_HandShake[3][y] = 0;
     }
   } else if (force) {
 
   }
-  fV_carregaFlash_AUint("/nulo.txt", aS16_InterModFila_EnviaModulo, vI8_aU8_ControlMsgHist, vI8_aS16_InterModFila_EnviaModulo,"aS16_InterModFila_EnviaModulo");
-  fV_carregaFlash_AUint("/nulo.txt", aS16_InterModControleRepeticao_EnviaModulo, vI8_aU8_ControlMsg, aU32_Variaveis[36],"aS16_InterModControleRepeticao_EnviaModulo");  
-  fV_imprimeSerial(1," OK");  
+  fV_carregaFlash_AUint("/nulo.txt", aS16_InterModFila_EnviaModulo, aU32_Variaveis[19], fU16_carregaConfigGeral(51, 30),"aS16_InterModFila_EnviaModulo");
+  fV_carregaFlash_AUint("/nulo.txt", aS16_InterModControleRepeticao_EnviaModulo, aU32_Variaveis[20], fU16_carregaConfigGeral(39, 15),"aS16_InterModControleRepeticao_EnviaModulo");  
+  fV_imprimeSerial(1,"Configuracao dos modulos finalizada",true);
+
+  //Se já houver um cliente HTTP, desaloca a memória para evitar vazamentos
+  if (CLIENTE_WEB_ASYNC != nullptr) {
+    CLIENTE_WEB_ASYNC->abort();  //Aborta qualquer requisição em andamento
+    delete CLIENTE_WEB_ASYNC;    //Libera a memória
+    CLIENTE_WEB_ASYNC = nullptr; //Zera o ponteiro
+  }
+  if (!CLIENTE_WEB_ASYNC) {
+    CLIENTE_WEB_ASYNC = new asyncHTTPrequest;
+    CLIENTE_WEB_ASYNC->setTimeout(5000);  //Timeout de 5 segundos
+  }
 }
 
 //========================================
@@ -825,43 +979,40 @@ void fV_salvarFlash() {
   fV_imprimeSerial(1,"Salvando informacoes em Preferences e Filesys...");
 
   // Preferencias
-  fV_Preference("E",false);
+  fV_Preference("SALVAR");
 
   // Pinos
-  fV_salvaFlash_AUint("/aU16_Pinos.txt", aU16_Pinos, vI8_aU16_Pinos, aU32_Variaveis[36]);
-  fV_salvaFILESYS_AS2D("/aS8_Pinos.txt", aS8_Pinos, vI8_aS8_Pinos, aU32_Variaveis[36]);
-  //fV_salvaFILESYS_AS2D("/aS8_AcoesMenu.txt",aS8_AcoesMenu,1,aU32_Variaveis[36]);
-  //fV_salvaFILESYS_AS2D("/aS8_AcoesRedeMenu.txt",aS8_AcoesRedeMenu,1,aU32_Variaveis[36]);
-  //fV_salvaFILESYS_AS2D("/aS8_AcoesStringMenu.txt",aS8_AcoesStringMenu,1,aU32_Variaveis[36]);
+  fV_salvaFlash_AUint("/aU16_Pinos.txt", aU16_Pinos, vI8_aU16_Pinos, fU16_carregaConfigGeral(39, 15));
+  fV_salvaFILESYS_AS2D("/aS8_Pinos.txt", aS8_Pinos, vI8_aS8_Pinos, fU16_carregaConfigGeral(39, 15));
 
   // Acoes 1  
-  fV_salvaFlash_AUint("/aU16_Acao1.txt", aU16_Acao1, vI8_aU16_Acao, aU32_Variaveis[36]);
-  fV_salvaFlash_AUint("/aU8_AcaoRede1.txt", aU8_AcaoRede1, vI8_aU8_AcaoRede, aU32_Variaveis[36]);
-  fV_salvaFILESYS_AS2D("/aS8_Acao1.txt",aS8_Acao1,vI8_aS8_Acao,aU32_Variaveis[36]);
+  fV_salvaFlash_AUint("/aU16_Acao1.txt", aU16_Acao1, aU32_Variaveis[17], fU16_carregaConfigGeral(39, 15));
+  fV_salvaFlash_AUint("/aU8_AcaoRede1.txt", aU8_AcaoRede1, aU32_Variaveis[18], fU16_carregaConfigGeral(39, 15));
+  fV_salvaFILESYS_AS2D("/aS8_Acao1.txt",aS8_Acao1,aU32_Variaveis[9],fU16_carregaConfigGeral(39, 15));
   // Acoes 2
-  fV_salvaFlash_AUint("/aU16_Acao2.txt", aU16_Acao2, vI8_aU16_Acao, aU32_Variaveis[36]);
-  fV_salvaFlash_AUint("/aU8_AcaoRede2.txt", aU8_AcaoRede2, vI8_aU8_AcaoRede, aU32_Variaveis[36]);
-  fV_salvaFILESYS_AS2D("/aS8_Acao2.txt",aS8_Acao2,vI8_aS8_Acao,aU32_Variaveis[36]);
+  fV_salvaFlash_AUint("/aU16_Acao2.txt", aU16_Acao2, aU32_Variaveis[17], fU16_carregaConfigGeral(39, 15));
+  fV_salvaFlash_AUint("/aU8_AcaoRede2.txt", aU8_AcaoRede2, aU32_Variaveis[18], fU16_carregaConfigGeral(39, 15));
+  fV_salvaFILESYS_AS2D("/aS8_Acao2.txt",aS8_Acao2,aU32_Variaveis[9],fU16_carregaConfigGeral(39, 15));
   // Acoes 3
-  fV_salvaFlash_AUint("/aU16_Acao3.txt", aU16_Acao3, vI8_aU16_Acao, aU32_Variaveis[36]);
-  fV_salvaFlash_AUint("/aU8_AcaoRede3.txt", aU8_AcaoRede3, vI8_aU8_AcaoRede, aU32_Variaveis[36]);
-  fV_salvaFILESYS_AS2D("/aS8_Acao3.txt",aS8_Acao3,vI8_aS8_Acao,aU32_Variaveis[36]);
+  fV_salvaFlash_AUint("/aU16_Acao3.txt", aU16_Acao3, aU32_Variaveis[17], fU16_carregaConfigGeral(39, 15));
+  fV_salvaFlash_AUint("/aU8_AcaoRede3.txt", aU8_AcaoRede3, aU32_Variaveis[18], fU16_carregaConfigGeral(39, 15));
+  fV_salvaFILESYS_AS2D("/aS8_Acao3.txt",aS8_Acao3,aU32_Variaveis[9],fU16_carregaConfigGeral(39, 15));
   // Acoes 4
-  fV_salvaFlash_AUint("/aU16_Acao4.txt", aU16_Acao4, vI8_aU16_Acao, aU32_Variaveis[36]);
-  fV_salvaFlash_AUint("/aU8_AcaoRede4.txt", aU8_AcaoRede4, vI8_aU8_AcaoRede, aU32_Variaveis[36]);
-  fV_salvaFILESYS_AS2D("/aS8_Acao4.txt",aS8_Acao4,vI8_aS8_Acao,aU32_Variaveis[36]);
+  fV_salvaFlash_AUint("/aU16_Acao4.txt", aU16_Acao4, aU32_Variaveis[17], fU16_carregaConfigGeral(39, 15));
+  fV_salvaFlash_AUint("/aU8_AcaoRede4.txt", aU8_AcaoRede4, aU32_Variaveis[18], fU16_carregaConfigGeral(39, 15));
+  fV_salvaFILESYS_AS2D("/aS8_Acao4.txt",aS8_Acao4,aU32_Variaveis[9],fU16_carregaConfigGeral(39, 15));
 
   // Inter Modulos
-  //fV_salvaFlash_AUint("/aI16_InterMod_CTRL_HandShake.txt", aI16_InterMod_CTRL_HandShake, vI8_aS_InterMod, vU8_totModulos);
-  fV_salvaFlash_AUint("/aU16_InterMod.txt", aU16_InterMod, vI8_aU16_InterMod, vU8_totModulos);
-  fV_salvaFlash_AUint("/aB_InterMod.txt", aB_InterMod, vI8_aB_InterMod, vU8_totModulos);
-  fV_salvaFILESYS_AS2D("/aS_InterMod.txt",aS_InterMod,vI8_aS_InterMod,vU8_totModulos);
-  //fV_salvaFILESYS_AS2D("/aU16_InterModMenu.txt",aU16_InterModMenu,1,vU8_totModulos);
-  //fV_salvaFILESYS_AS2D("/aS_InterModMenu.txt",aS_InterModMenu,1,vU8_totModulos);
-  //fV_salvaFILESYS_AS2D("/aS16_InterModMenu_CTRL_HandShake.txt",aS16_InterModMenu_CTRL_HandShake,1,vU8_totModulos);
-  //fV_salvaFILESYS_AS2D("/aSB_InterModMenu.txt",aSB_InterModMenu,1,vU8_totModulos);
-  //fV_salvaFILESYS_AS2D("/aS8_ControlMsgModHist.txt",aS8_ControlMsgModHist,1,vU8_totModulos);
-  //fV_salvaFILESYS_AS1D("/aU8_diasDaSemana.txt",aU8_diasDaSemana,vU8_diasDaSemana);
+  //fV_salvaFlash_AUint("/aI16_InterMod_CTRL_HandShake.txt", aI16_InterMod_CTRL_HandShake, aU32_Variaveis[7], fU16_carregaConfigGeral(47, 65535));
+  fV_salvaFlash_AUint("/aU16_InterMod.txt", aU16_InterMod, aU32_Variaveis[15], fU16_carregaConfigGeral(47, 65535));
+  fV_salvaFlash_AUint("/aB_InterMod.txt", aB_InterMod, aU32_Variaveis[16], fU16_carregaConfigGeral(47, 65535));
+  fV_salvaFILESYS_AS2D("/aS_InterMod.txt",aS_InterMod,aU32_Variaveis[7],fU16_carregaConfigGeral(47, 65535));
+  //fV_salvaFILESYS_AS2D("/aU16_InterModMenu.txt",aU16_InterModMenu,1,fU16_carregaConfigGeral(47, 65535));
+  //fV_salvaFILESYS_AS2D("/aS_InterModMenu.txt",aS_InterModMenu,1,fU16_carregaConfigGeral(47, 65535));
+  //fV_salvaFILESYS_AS2D("/aS16_InterModMenu_CTRL_HandShake.txt",aS16_InterModMenu_CTRL_HandShake,1,fU16_carregaConfigGeral(47, 65535));
+  //fV_salvaFILESYS_AS2D("/aSB_InterModMenu.txt",aSB_InterModMenu,1,fU16_carregaConfigGeral(47, 65535));
+  //fV_salvaFILESYS_AS2D("/aS8_ControlMsgModHist.txt",aS8_ControlMsgModHist,1,fU16_carregaConfigGeral(47, 65535));
+  //fV_salvaFILESYS_AS1D("/aU8_diasDaSemana.txt",aU8_diasDaSemana,aU32_Variaveis[13]);
   //fV_salvaFILESYS_AS1D("/aU8_meses.txt",aU8_meses,MESES);
 
   fV_imprimeSerial(1,"As informacoes foram salvas");
@@ -951,44 +1102,35 @@ bool fV_apagaTodosArquivosSPIFFS() {
 }
 
 //========================================
-void fV_iniciaPreference(bool force) {
-  vS_corStatus1 = fS_carregaConfigGeral(0,13,"Tomato");
-  vS_corStatus0 = fS_carregaConfigGeral(0,14,"LightGreen");
-  aU32_Variaveis[3] = fU8_carregaConfigGeral(0,45,12);
-  aU32_Variaveis[4] = fU8_carregaConfigGeral(0,46,8);
-  vU8_colunasTabelas = fU8_carregaConfigGeral(0,40,7);
-  aU32_Variaveis[35] = fU8_carregaConfigGeral(0,50,5);
-  aU32_Variaveis[24] = fU8_carregaConfigGeral(0,52,2);
-
-//uint64_t aU64_Variaveis[0] = 0;
-
+void fV_iniciaControles(bool force) {
+  fV_carregaFILESYS_AS1D("/nulo.txt",aS_Variaveis,ARRAY_STRING);
+  aS_Variaveis[7] = "Session start:";
+  aS_Preference[54] = fS_idModulo();
 }
 
 //========================================
 void fV_iniciaPinos(bool force) {
     fV_imprimeSerial(1,"Iniciando configuracao dos pinos...");
-    if (!force) {
-      aU32_Variaveis[36] = fU8_carregaConfigGeral(0,39,5);
-    }
-    analogSetWidth(aU32_Variaveis[3]);
 
-    if (vU8_colunasTabelas > aU32_Variaveis[36]) {
-      vU8_colunasTabelas = aU32_Variaveis[36];
-    }
-    fV_carregaFlash_AUint("/aU16_Pinos.txt", aU16_Pinos, vI8_aU16_Pinos, aU32_Variaveis[36]);
+    analogSetWidth(fU8_carregaConfigGeral(45,12));
 
-    fV_carregaFlash_AUint("/nulo.txt", aU16_Pinos_Status, 1, aU32_Variaveis[36],"aU16_Pinos_Status");
+    if (fU8_carregaConfigGeral(40,7) > fU16_carregaConfigGeral(39, 15)) {
+      aS_Preference[40] = String(fU16_carregaConfigGeral(39, 15));
+    }
+    fV_carregaFlash_AUint("/aU16_Pinos.txt", aU16_Pinos, vI8_aU16_Pinos, fU16_carregaConfigGeral(39, 15));
+
+    fV_carregaFlash_AUint("/nulo.txt", aU16_Pinos_Status, 1, fU16_carregaConfigGeral(39, 15),"aU16_Pinos_Status");
 
     if (aU16_ControlAcoesGroups != nullptr ){
-      for (int i = 0; i < vI8_ControlAcoesGroups; i++) {
+      for (int i = 0; i < aU32_Variaveis[5]; i++) {
         delete[] aU16_ControlAcoesGroups[i]; // Libera cada linha
       }
       delete[] aU16_ControlAcoesGroups; // Libera o array de ponteiros
       aU16_ControlAcoesGroups = nullptr; // Define o ponteiro para nullptr
     }
-    vI8_ControlAcoesGroups = (aU32_Variaveis[36] * 4) + 1;
-    fV_carregaFlash_AUint("/nulo.txt", aU16_ControlAcoesGroups, vI8_ControlAcoesGroups, aU32_Variaveis[36],"aU16_ControlAcoesGroups");
-    for (uint8_t x=0; x<aU32_Variaveis[36]; x++){
+    aU32_Variaveis[5] = (fU16_carregaConfigGeral(39, 15) * 4) + 1;
+    fV_carregaFlash_AUint("/nulo.txt", aU16_ControlAcoesGroups, aU32_Variaveis[5], fU16_carregaConfigGeral(39, 15),"aU16_ControlAcoesGroups");
+    for (uint8_t x=0; x<fU16_carregaConfigGeral(39, 15); x++){
       if (aU16_Pinos[0][x] > 0 ) {
         aU16_ControlAcoesGroups[0][x] = aU16_Pinos[0][x];
         if (aU16_Pinos[1][x] == 1 || aU16_Pinos[1][x] == 192) {
@@ -998,7 +1140,7 @@ void fV_iniciaPinos(bool force) {
     }
 
     fV_carregaFILESYS_AS2D("/aS16_PinosMenu.txt",aS16_PinosMenu,1,vI8_aU16_Pinos);
-    fV_carregaFILESYS_AS2D("/aS8_Pinos.txt", aS8_Pinos, vI8_aS8_Pinos, aU32_Variaveis[36]);
+    fV_carregaFILESYS_AS2D("/aS8_Pinos.txt", aS8_Pinos, vI8_aS8_Pinos, fU16_carregaConfigGeral(39, 15));
 
     fV_imprimeSerial(1,"Configuracao dos pinos finalizada");
 }
@@ -1019,8 +1161,8 @@ void fV_configNTP() {
   fV_imprimeSerial(1,"Configurando NTP: ",false);
   sntp_set_time_sync_notification_cb( fV_callbackNTP );
   sntp_servermode_dhcp(1);
-  configTime(3600, 3600, vS_ntpServer1.c_str(), vS_ntpServer2.c_str());
-  configTzTime(vS_timeZone.c_str(), vS_ntpServer1.c_str(), vS_ntpServer2.c_str());
+  configTime(3600, 3600, aS_Preference[10].c_str(), aS_Preference[11].c_str());
+  configTzTime(aS_Preference[12].c_str(), aS_Preference[10].c_str(), aS_Preference[11].c_str());
   fV_imprimeSerial(1,"OK",true);
 }
 
@@ -1061,17 +1203,17 @@ void fV_modoAP(String wifi, String senha, uint16_t portaap) {
   // Inicia o servidor web assíncrono
   SERVIDOR_WEB_ASYNC->begin();
 
-  fV_imprimeSerial(1,"Servidor HTTP iniciado.", true);
+  fV_imprimeSerial(1,"Servidor HTTP do modo AP iniciado.", true);
   fV_imprimeSerial(1,"Conecte seu wifi na rede [" + wifi + "] e acesse http://", false);
   fV_imprimeSerial(1,WiFi.softAPIP().toString(), false);
   fV_imprimeSerial(1,":", false);
   fV_imprimeSerial(1,portaap, false);
-  fV_imprimeSerial(1,"/ pelo navegador para configurar o SSID e SENHA na placa " + aS_Variaveis[0], true);
+  fV_imprimeSerial(1,"/ pelo navegador para configurar o SSID e SENHA na placa " + aS_Preference[4], true);
 
   // Loop de espera enquanto o modo AP está ativo
   while (1) {
     if (aB_Variaveis[6]) {
-      fV_imprimeSerial(1,"Saindo do modo AP da placa " + aS_Variaveis[0] + " e reiniciando o dispositivo", true);
+      fV_imprimeSerial(1,"Saindo do modo AP da placa " + aS_Preference[4] + " e reiniciando o dispositivo", true);
       delay(10000);
       esp_restart();
     }
@@ -1080,76 +1222,67 @@ void fV_modoAP(String wifi, String senha, uint16_t portaap) {
   fV_imprimeSerial(1," OK", true);
 }
 
-//========================================
-uint8_t fU8_configuraWifi() {
-    fV_imprimeSerial(1,"Iniciando verificacao/configuracao do wifi...");
-    if (WiFi.status() != WL_CONNECTED) {
-        aS_Variaveis[1] = fS_carregaConfigGeral(0,0,"wifi"); //SSID da sua rede wifi (rede que essa placa ESP vai conectar)
-        aS_Variaveis[2] = fS_carregaConfigGeral(0,1,"12345678"); //Senha da sua rede wifi (rede que essa placa ESP vai conectar)
-        vU8_tentativaConexoes = fU8_carregaConfigGeral(0,2,4); //Tentativas de conexoes diversas antes de seguir com o boot(para nao ficar parado durante o boot esperando conetar em outros recursos)
-        vI_U16_portaWebAsync = fU16_carregaConfigGeral(0,3,4080); //Porta do servidor web desta placa ESP
-        aS_Variaveis[0] = fS_carregaConfigGeral(0,4,"esp32modularx"); //Hostname desta placa ESP na rede    
-        aS_Variaveis[3] = fS_carregaConfigGeral(0,7,aS_Variaveis[0]+"_"+aS_Variaveis[13]); //Nome do wifi (SSID) que sera gerado se esta placa ESP entrar em modo AP
-        aS_Variaveis[4] = fS_carregaConfigGeral(0,8, "senha12345678"); //Senha do wifi que sera gerado se esta placa ESP entrar em modo AP
-        vB_modoAP = fB_carregaConfigGeral(0,9, true); //Se true esta placa ESP entra em modo AP caso nao consiga conectar no wifi definido em aS_Variaveis[1]
-        vS_ntpServer1 = fS_carregaConfigGeral(0,10, "pool.ntp.br"); // Servidor NTP para sincronismo de horario
-        vS_ntpServer2 = fS_carregaConfigGeral(0,11, "pool.ntp.org"); // Servidor NTP para sincronismo de horario
-        vS_timeZone = fS_carregaConfigGeral(0,12, "<-03>3"); // TimeZone para sincronismo de horario
-        vS_userWeb = fS_carregaConfigGeral(0,5, "admin"); // Usuario acesso HTTP
-        vS_passWeb = fS_carregaConfigGeral(0,6, "admin"); // Senha acesso HTTP        
-
-        if (aS_Variaveis[0].length() > 1) {
-          WiFi.setHostname(aS_Variaveis[0].c_str());
-        }
-        WiFi.setAutoReconnect(true);
-        WiFi.setAutoConnect(true);
-        WiFi.begin(aS_Variaveis[1].c_str(), aS_Variaveis[2].c_str());
-               int cont = 1;
-        while (WiFi.status() != WL_CONNECTED && cont <= vU8_tentativaConexoes) {
-          delay(5000);
-          fV_imprimeSerial(1,"Conectando ao WiFi, status ", false);
-          fV_imprimeSerial(1,WiFi.status(), false);
-          fV_imprimeSerial(1," tentativa ", false);
-          fV_imprimeSerial(1,cont, false);
-          fV_imprimeSerial(1," de ", false);
-          fV_imprimeSerial(1,vU8_tentativaConexoes, true);
-          cont++;
-        }
-        fV_imprimeSerial(1,"Endereco IP do WIFI: ", false);
-        fV_imprimeSerial(1,WiFi.localIP().toString(), false);
-        fV_imprimeSerial(1,":", false);
-        fV_imprimeSerial(1,vI_U16_portaWebAsync, false);
-        fV_imprimeSerial(1," Hostname: ", false);
-        fV_imprimeSerial(1,aS_Variaveis[0] + " ", false);
-        if (WiFi.status() == WL_CONNECTED) {
-          aB_Variaveis[5] = true;  
-          fV_imprimeSerial(1," OK", true);
-          if (aB_Variaveis[5]) {
-            f_cria_MDNS(aS_Variaveis[0], WiFi.localIP(), vI_U16_portaWebAsync);
-            fV_configNTP();            
-          }
-        } else {
-          fV_imprimeSerial(1," ERRO - Informacoes usadas no WIFI: ", false);
-          String passwdw = "";
-          for (uint8_t x = 0; x < aS_Variaveis[2].length(); x++) {
-            passwdw += "*";
-          }
-          fV_imprimeSerial(1,"Hostname:" + aS_Variaveis[0] + " SSID:" + aS_Variaveis[1] + " Senha:" + passwdw, true);
-          if (vB_modoAP && WiFi.status() != WL_CONNECTED && !aB_Variaveis[5]) {
-          fV_modoAP(aS_Variaveis[3], aS_Variaveis[4], vI_U16_portaWebAsync);
-          }
-        }
-    } else {
-        fV_imprimeSerial(1,"O Wifi já está conectado!", true);
-        if (WiFi.status() == WL_CONNECTED) {
-          f_cria_MDNS(aS_Variaveis[0], WiFi.localIP(), vI_U16_portaWebAsync);
-          fV_configNTP();
-        } else if (vB_modoAP && WiFi.status() != WL_CONNECTED && !aB_Variaveis[5]) {
-          fV_modoAP(aS_Variaveis[3], aS_Variaveis[4], vI_U16_portaWebAsync);
-        }
+/*========================================
+Verifica se o wifi está conectado. Se estiver configura mDNS e NTP
+*/
+void fU8_connectaWifi() {
+  WiFi.begin(aS_Preference[0].c_str(), aS_Preference[1].c_str());
+  int cont = 1;
+  while (WiFi.status() != WL_CONNECTED && cont <= fU8_carregaConfigGeral(2,4)) {
+    delay(5000);
+    fV_imprimeSerial(1,"Conectando ao WiFi, status ", false);
+    fV_imprimeSerial(1,WiFi.status(), false);
+    fV_imprimeSerial(1," tentativa ", false);
+    fV_imprimeSerial(1,cont, false);
+    fV_imprimeSerial(1," de ", false);
+    fV_imprimeSerial(1,fU8_carregaConfigGeral(2,4), true);
+    cont++;
+  }
+  if (WiFi.status() == WL_CONNECTED) {
+    aB_Variaveis[0] = true;
+    fV_imprimeSerial(1,"Endereco IP do WIFI: ", false);
+    fV_imprimeSerial(1,WiFi.localIP().toString(), false);
+    fV_imprimeSerial(1,":", false);
+    fV_imprimeSerial(1,fU16_carregaConfigGeral(3,4080), false);
+    fV_imprimeSerial(1," Hostname: ", false);
+    fV_imprimeSerial(1,aS_Preference[4],true);
+    f_cria_MDNS(aS_Preference[4], WiFi.localIP(), fU16_carregaConfigGeral(3,4080));
+    fV_configNTP();     
+  } else {
+    fV_imprimeSerial(1," ERRO - Informacoes usadas no WIFI: ", false);
+    String passwdw = "";
+    for (uint8_t x = 0; x < aS_Preference[1].length(); x++) {
+      passwdw += "*";
     }
-    fV_imprimeSerial(1,"Verificacao/Configuracao do wifi finalizado");
-    return WiFi.status();
+    fV_imprimeSerial(1,"Hostname:" + aS_Preference[4] + " SSID:" + aS_Preference[0] + " Senha:" + passwdw, true);
+  }
+}
+
+/*========================================
+Verifica se o wifi está conectado, se não estiver tenta conetar.
+*/
+uint8_t fU8_verificaWifi() {
+  if (WiFi.status() != WL_CONNECTED) {
+    aB_Variaveis[0] = false;
+    fU8_connectaWifi();
+  }
+  if (fB_carregaConfigGeral(9, true) && !aB_Variaveis[0] && !aB_Variaveis[5]) {
+    fV_modoAP(aS_Preference[7], ULTIMOS_GET_RECEBIDOS, fU16_carregaConfigGeral(3,4080));
+  }
+  return WiFi.status();
+}
+
+/*========================================
+Configura o wifi
+*/
+void fU8_configuraWifi() {
+  fV_imprimeSerial(1,"Iniciando configuracao do wifi...",false);
+  if (aS_Preference[4].length() > 1) {
+    WiFi.setHostname(aS_Preference[4].c_str());
+  }
+  WiFi.setAutoReconnect(true);
+  WiFi.setAutoConnect(true);
+  fV_imprimeSerial(1," OK");
 }
 
 //========================================
@@ -1253,26 +1386,25 @@ String fS_listDir(const char * dirname, uint8_t levels) {
   return resultado;
 }
 
-//========================================
+/*========================================
+Pegar data e hora do módulo.
+*/
 String fS_DataHora() {
-    // Obter a data e hora atual
-
-    time_t now = time(0);
-    struct tm *tmInfo = localtime(&now);
-    int dia = tmInfo->tm_mday;
-    int mes = tmInfo->tm_mon;
-    int ano = tmInfo->tm_year + 1900; // tm_year e o ano desde 1900
-    int diaDaSemana = tmInfo->tm_wday;
-    int hora = tmInfo->tm_hour;
-    int minuto = tmInfo->tm_min;
-    int segundo = tmInfo->tm_sec;
-
-    // Construir a string formatada
-    String dataHora = String(dia) + " de " + aU8_meses[mes] + " de " + String(ano) + ", " +
-                      aU8_diasDaSemana[diaDaSemana] + " " +
-                      String(hora) + ":" + (minuto < 10 ? "0" : "") + (minuto) + ":" + (segundo < 10 ? "0" : "") + String(segundo);
-
-    return dataHora;
+  time_t now = time(0);
+  struct tm *tmInfo = localtime(&now);
+  int dia = tmInfo->tm_mday;
+  int mes = tmInfo->tm_mon;
+  int ano = tmInfo->tm_year + 1900; //tm_year e o ano desde 1900.
+  int diaDaSemana = tmInfo->tm_wday;
+  int hora = tmInfo->tm_hour;
+  int minuto = tmInfo->tm_min;
+  int segundo = tmInfo->tm_sec;
+  
+  //Construir string de data e hora formatada.
+  String dataHora = String(dia) + " de " + aU8_meses[mes] + " de " + String(ano) + ", " +
+                    aU8_diasDaSemana[diaDaSemana] + " " +
+                    String(hora) + ":" + (minuto < 10 ? "0" : "") + (minuto) + ":" + (segundo < 10 ? "0" : "") + String(segundo);
+ return dataHora;
 }
 
 //========================================
@@ -1293,11 +1425,14 @@ String fS_Uptime() {
   return uptimeString;
 }
 
-//========================================
+/*========================================
+Conjunto de funções para retornar os valores do array aS_Preference onde
+tem várias configurações do módulo.
+*/
 // Função para ler uint32_t
 int32_t fI32_carregaConfigGeral(const uint8_t linha, uint8_t coluna, const int32_t padrao) {
     int32_t resultado = padrao;
-    String resp = aS_Preference[linha][coluna];
+    String resp = aS_Preference[coluna];
     if (resp.length() > 0) {
         resultado = resp.toInt();
     } 
@@ -1306,44 +1441,43 @@ int32_t fI32_carregaConfigGeral(const uint8_t linha, uint8_t coluna, const int32
 // Função para ler uint32_t
 uint32_t fU32_carregaConfigGeral(const uint8_t linha, uint8_t coluna, const uint32_t& padrao) {
     uint32_t resultado = padrao;
-    String resp = aS_Preference[linha][coluna];
+    String resp = aS_Preference[coluna];
     if (resp.length() > 0) {
         resultado = resp.toInt();
     } 
     return resultado;
 }
 // Função para ler uint16_t
-uint16_t fU16_carregaConfigGeral(const uint8_t linha, uint8_t coluna, const uint16_t& padrao) {
+uint16_t fU16_carregaConfigGeral(uint8_t coluna, const uint16_t& padrao) {
     uint16_t resultado = padrao;
-    String resp = aS_Preference[linha][coluna];
+    String resp = aS_Preference[coluna];
     if (resp.length() > 0) {
         resultado = resp.toInt();
     } 
     return resultado;
 }
 // Função para ler uint8_t
-uint8_t fU8_carregaConfigGeral(const uint8_t linha, uint8_t coluna, const uint8_t& padrao) {
-    uint8_t resultado = padrao;
-    String resp = aS_Preference[linha][coluna];
-    if (resp.length() > 0) {
-        resultado = resp.toInt();
-    } 
-    return resultado;
+uint8_t fU8_carregaConfigGeral(uint8_t coluna, const uint8_t& padrao) {
+  uint8_t resultado = padrao;
+  String resp = aS_Preference[coluna];
+  if (resp.length() > 0) {
+    resultado = resp.toInt();
+  } 
+  return resultado;
 }
 // Função para ler String com valor padrão
 String fS_carregaConfigGeral(const uint8_t linha, uint8_t coluna ,const String& padrao) {
     String resultado = padrao;
-    String resp = aS_Preference[linha][coluna];
+    String resp = aS_Preference[coluna];
     if (resp.length() > 0) {
       resultado = resp;
-
     } 
     return resultado;
 }
 // Função para ler bool
-bool fB_carregaConfigGeral(const uint8_t linha, uint8_t coluna, const bool& padrao) {
+bool fB_carregaConfigGeral(uint8_t coluna, const bool& padrao) {
     bool resultado = padrao;
-    String resp = aS_Preference[linha][coluna];
+    String resp = aS_Preference[coluna];
     if (resp.length() > 0) {
         if (resp == "true" || resp == "1") {
           resultado = true;
@@ -1354,42 +1488,49 @@ bool fB_carregaConfigGeral(const uint8_t linha, uint8_t coluna, const bool& padr
     return resultado;
 }
 
-//========================================
-String fS_idPlaca() {
+/*========================================
+Gera um ID para o módulo com base nas informações do chip ESP32
+*/
+String fS_idModulo() {
   uint16_t vI_chipID = 0;
   for (int i = 0; i < 17; i = i + 8) {
     vI_chipID |= ((ESP.getEfuseMac() >> (40 - i)) & 0xff) << i;
   }
-  aS_Variaveis[13] = String(vI_chipID);
+  return String(vI_chipID);
+}
 
-  // Construa a mensagem para impressão
-  String msg = "ESP32 Chip model = ";
+/*========================================
+Coleta informações do chip ESP32
+*/
+String fS_infoPlaca(uint8_t nivelLog, bool force) {
+  String msg = "ESP32 Chip model ";
   msg += ESP.getChipModel();
   msg += " Rev ";
   msg += ESP.getChipRevision();
   msg += "<br>This chip has cores ";
   msg += ESP.getChipCores();
   msg += "<br>Chip ID: ";
-  msg += vI_chipID;
-
-  fV_imprimeSerial(1,msg, true);
-  fV_imprimeSerial(1,"ESP32 Chip model = " + String(ESP.getChipModel()) + " Rev " + String(ESP.getChipRevision()), true);
-  fV_imprimeSerial(1,"This chip has " + String(ESP.getChipCores()) + " cores", true);
-  fV_imprimeSerial(1,"Chip ID: " + String(vI_chipID), true);
-
+  msg += fS_idModulo();
+  fV_imprimeSerial(nivelLog,"============ C H I P ============");
+  fV_imprimeSerial(nivelLog,"ESP32 Chip model " + String(ESP.getChipModel()) + " Rev " + String(ESP.getChipRevision()), true);
+  fV_imprimeSerial(nivelLog,"This chip has " + String(ESP.getChipCores()) + " cores", true);
+  fV_imprimeSerial(nivelLog,"Chip ID: " + fS_idModulo(), true);
+  fV_imprimeSerial(nivelLog,"=================================");  
   return msg;
 }
 
-//========================================
+/*========================================
+Monta o sistema de arquivos LittlesFS para carregar as configurações
+*/
 bool fB_montaLittleFS() {
-    // Inicializa o LittleFS no setup
-    if (!FILESYS.begin(true)) {  // true = format if mount failed
-        fV_imprimeSerial(1,"Erro ao inicializar o FILESYS.",true);
-        return false;
-    } else {
-        fV_imprimeSerial(1,"FILESYS inicializado com sucesso.",true);
-        return true;
-    }
+  Serial.print("Montando sistema de arquivos: ");
+  if (!FILESYS.begin(true)) {  //true = formata se a montagem falhou
+      Serial.println("Erro ao inicializar o FILESYS.");
+      return false;
+  } else {
+      Serial.println("FILESYS inicializado com sucesso.");
+      return true;
+  }
 }
 
 //========================================
@@ -1418,49 +1559,43 @@ void fV_salvaFILESYS_AS1D(const char* fileName, String* arr, uint8_t size) {
 }
 
 //========================================
-void fV_carregaFILESYS_AS1D(const char* fileName, String*& arr, uint8_t& size, String sol) {
-    fV_imprimeSerial(1,"Carregando arquivo ("+sol+"): ", false);
-    fV_imprimeSerial(1,fileName, false);
+void fV_carregaFILESYS_AS1D(const char* fileName, String*& arr, uint8_t size, String sol) {
+    fV_imprimeSerial(1, "Carregando arquivo: (" + sol + "): ", false);
+    fV_imprimeSerial(1, fileName, false);
 
-    // Tenta abrir o arquivo para leitura
+    // Aloca memória para o array e preenche com strings vazias
+    arr = new String[size];
+    for (size_t i = 0; i < size; i++) {
+        arr[i] = "";  // Inicializa com string vazia
+    }
+
+    // Abre o arquivo para leitura com FILESYS
     File file = FILESYS.open(fileName, FILE_READ);
     if (!file) {
-        fV_imprimeSerial(1,"Arquivo nao encontrado ou erro ao abrir.", true);
-        size = 0;
-        arr = nullptr;  // Assegura que o ponteiro esteja nulo se o arquivo não for encontrado
-        return;
+        if (fileName != "/nulo.txt") {
+            fV_imprimeSerial(1, "Arquivo nao encontrado ou erro ao abrir.", true);
+        }
+        return;  // Retorna com array já preenchido com strings vazias
     }
 
-    // Lê a primeira linha do arquivo para obter o conteúdo
-    String line = file.readStringUntil('\n');
-    
-    // Conta o número de itens (dias) com base nas vírgulas
-    uint8_t itemCount = 1; // Pelo menos um item está presente
-    for (int i = 0; i < line.length(); i++) {
-        if (line.charAt(i) == ',') {
-            itemCount++;
-        }
-    }
+    size_t index = 0;
+    while (file.available() && index < size) {
+        String line = file.readStringUntil('\n');  // Lê uma linha do arquivo
+        int startIndex = 0;
 
-    // Aloca memória para o array de acordo com o número de itens
-    arr = new String[itemCount];
-    size = itemCount;
-
-    // Preenche o array com os dias lidos do arquivo
-    uint8_t index = 0;
-    int startIndex = 0;
-    while (index < itemCount) {
-        int endIndex = line.indexOf(',', startIndex);
-        if (endIndex == -1) {
-            endIndex = line.length();
+        while (startIndex < line.length() && index < size) {
+            int endIndex = line.indexOf(',', startIndex);
+            if (endIndex == -1) {  // Último item da linha
+                endIndex = line.length();
+            }
+            arr[index] = fS_limpaEspacoFimLinha(line.substring(startIndex, endIndex));
+            startIndex = endIndex + 1;
+            index++;
         }
-        arr[index] = line.substring(startIndex, endIndex);
-        startIndex = endIndex + 1;
-        index++;
     }
 
     file.close();
-    fV_imprimeSerial(1," OK", true);
+    fV_imprimeSerial(1, " OK", true);
 }
 
 //========================================
@@ -1558,7 +1693,7 @@ String fS_limpaEspacoFimLinha(const String& str) {
 void fV_salvaFlash_AUint(const char* filename, uint16_t** arr, size_t rows, size_t cols) {
     fV_imprimeSerial(1,"Salvando arquivo: ", false);
     fV_imprimeSerial(1,filename, false);
-    if (!vB_filesysIniciado) {
+    if (!aB_Variaveis[3]) {
         fV_imprimeSerial(1,"LittleFS nao esta inicializado.");
         return;
     }
@@ -1595,7 +1730,7 @@ void fV_salvaFlash_AUint(const char* filename, uint16_t** arr, size_t rows, size
 void fV_carregaFlash_AUint(const char* filename, uint16_t**& array, size_t rows, size_t cols, String sol) {
     fV_imprimeSerial(1,"Carregando arquivo: ("+sol+"): ", false);
     fV_imprimeSerial(1,filename, false);
-    if (!vB_filesysIniciado) {
+    if (!aB_Variaveis[3]) {
         fV_imprimeSerial(1,"LittleFS nao esta inicializado.");
         return;
     }
@@ -1692,7 +1827,7 @@ void fV_carregaFlash_AUint(const char* filename, uint16_t**& array, size_t rows,
 void fV_salvaFlash_AUint(const char* filename, uint8_t** arr, size_t rows, size_t cols) {
     fV_imprimeSerial(1,"Salvando arquivo: ", false);
     fV_imprimeSerial(1,filename, false);
-    if (!vB_filesysIniciado) {
+    if (!aB_Variaveis[3]) {
         fV_imprimeSerial(1,"LittleFS nao esta inicializado.");
         return;
     }
@@ -1726,7 +1861,7 @@ void fV_salvaFlash_AUint(const char* filename, uint8_t** arr, size_t rows, size_
 void fV_carregaFlash_AUint(const char* filename, uint8_t**& array, size_t rows, size_t cols, String sol) {
     fV_imprimeSerial(1,"Carregando arquivo: ("+sol+"): ", false);
     fV_imprimeSerial(1,filename, false);
-    if (!vB_filesysIniciado) {
+    if (!aB_Variaveis[3]) {
         fV_imprimeSerial(1,"LittleFS nao esta inicializado.");
         return;
     }
@@ -1809,6 +1944,26 @@ void fV_carregaFlash_AUint(const char* filename, uint8_t**& array, size_t rows, 
 }
 
 //========================================
+void fV_imprimirArray1D_S(String* array, size_t size, bool linha) {
+    for (size_t i = 0; i < size; i++) {
+        if (linha) {
+            fV_imprimeSerial(1, array[i]);  // Imprime o elemento
+        } else {
+            fV_imprimeSerial(1, array[i], false);  // Imprime o elemento
+
+            // Somente imprime a vírgula se não for o último elemento
+            if (i < size - 1) {
+                fV_imprimeSerial(1, ",", false);
+            }
+        }
+    }
+    // Se for para imprimir por linha, imprime uma nova linha
+    if (linha) {
+        fV_imprimeSerial(1, "");
+    }
+}
+
+//========================================
 void fV_imprimirArray2D_S(String** array, size_t rows, size_t cols, bool linha) {
     for (size_t i = 0; i < rows; i++) {
         for (size_t j = 0; j < cols; j++) {
@@ -1859,37 +2014,47 @@ void fV_imprimirArray2D_U16(uint16_t** array, size_t rows, size_t cols, bool lin
 //        Funcoes para impressao          //
 //========================================//
 void fV_imprimeSerial(uint8_t nivelLog, const String& mensagem, bool pularLinha) {
-  if (nivelLog > aU32_Variaveis[24]) return;
-  if (pularLinha) {
+  if (nivelLog > fU8_carregaConfigGeral(52,2)) {
+
+  } else {
+    if (pularLinha) {
       Serial.println(mensagem);
       fV_sendSerialData(mensagem);
-  } else {
+    } else {
       Serial.print(mensagem);
       fV_sendSerialData(mensagem);
+    }
   }
 }
 void fV_imprimeSerial(uint8_t nivelLog, const char* mensagem, bool pularLinha) {
+  if (nivelLog > fU8_carregaConfigGeral(52,2)) {
+    
+  } else {
     fV_imprimeSerial(nivelLog, String(mensagem), pularLinha);
+  }
 }
 void fV_imprimeSerial(uint8_t nivelLog, int valor, bool pularLinha) {
+  if (nivelLog > fU8_carregaConfigGeral(52,2)) return;
     if (pularLinha) {
-        Serial.println(valor);
-        fV_sendSerialData(String(valor)+"<br>");
+      Serial.println(valor);
+      fV_sendSerialData(String(valor)+"<br>");
     } else {
-        Serial.print(valor);
-        fV_sendSerialData(String(valor));
+      Serial.print(valor);
+      fV_sendSerialData(String(valor));
     }
 }
 void fV_imprimeSerial(uint8_t nivelLog, size_t valor, bool pularLinha) {
+  if (nivelLog > fU8_carregaConfigGeral(52,2)) return;
     if (pularLinha) {
-        Serial.println(valor);
-        fV_sendSerialData(String(valor)+"<br>");
+      Serial.println(valor);
+      fV_sendSerialData(String(valor)+"<br>");
     } else {
-        Serial.print(valor);
-        fV_sendSerialData(String(valor));
+      Serial.print(valor);
+      fV_sendSerialData(String(valor));
     }
 }
 void fV_imprimeSerial(uint8_t nivelLog, uint8_t valor, bool pularLinha) {
+  if (nivelLog > fU8_carregaConfigGeral(52,2)) return;
     if (pularLinha) {
         Serial.println(valor);
         fV_sendSerialData(String(valor)+"<br>");
@@ -1899,6 +2064,7 @@ void fV_imprimeSerial(uint8_t nivelLog, uint8_t valor, bool pularLinha) {
     }
 }
 void fV_imprimeSerial(uint8_t nivelLog, uint16_t valor, bool pularLinha) {
+  if (nivelLog > fU8_carregaConfigGeral(52,2)) return;
     if (pularLinha) {
         Serial.println(valor);
         fV_sendSerialData(String(valor)+"<br>");
@@ -1908,6 +2074,7 @@ void fV_imprimeSerial(uint8_t nivelLog, uint16_t valor, bool pularLinha) {
     }
 }
 void fV_imprimeSerial(uint8_t nivelLog, bool valor, bool pularLinha) {
+  if (nivelLog > fU8_carregaConfigGeral(52,2)) return;
     if (pularLinha) {
         Serial.println(valor ? "true" : "false");
         fV_sendSerialData(String(valor ? "true" : "false")+"<br>");
@@ -1917,6 +2084,7 @@ void fV_imprimeSerial(uint8_t nivelLog, bool valor, bool pularLinha) {
     }
 }
 void fV_imprimeSerial(uint8_t nivelLog, float valor, bool pularLinha, int casasDecimais) {
+  if (nivelLog > fU8_carregaConfigGeral(52,2)) return;
     if (pularLinha) {
         Serial.println(valor, casasDecimais);
         fV_sendSerialData(String(valor, casasDecimais)+"<br>");
@@ -1926,6 +2094,7 @@ void fV_imprimeSerial(uint8_t nivelLog, float valor, bool pularLinha, int casasD
     }
 }
 void fV_imprimeSerial(uint8_t nivelLog, double valor, bool pularLinha, int casasDecimais) {
+  if (nivelLog > fU8_carregaConfigGeral(52,2)) return;
     if (pularLinha) {
         Serial.println(valor, casasDecimais);
         fV_sendSerialData(String(valor, casasDecimais)+"<br>");
@@ -1936,6 +2105,7 @@ void fV_imprimeSerial(uint8_t nivelLog, double valor, bool pularLinha, int casas
 }
 
 void fV_imprimeSerial(uint8_t nivelLog, String mensagem, uint16_t numero, bool pularLinha) {
+  if (nivelLog > fU8_carregaConfigGeral(52,2)) return;
     if (pularLinha) {
         Serial.print(mensagem);
         Serial.println(numero);
@@ -1947,6 +2117,7 @@ void fV_imprimeSerial(uint8_t nivelLog, String mensagem, uint16_t numero, bool p
     }
 }
 void fV_imprimeSerial(uint8_t nivelLog, const uint16_t** array, size_t rows, size_t cols, bool pularLinha) {
+  if (nivelLog > fU8_carregaConfigGeral(52,2)) return;
     for (size_t i = 0; i < rows; i++) {
         for (size_t j = 0; j < cols; j++) {
             Serial.print(array[i][j]);
@@ -1963,6 +2134,7 @@ void fV_imprimeSerial(uint8_t nivelLog, const uint16_t** array, size_t rows, siz
     }
 }
 void fV_imprimeSerial(uint8_t nivelLog, const String** array, size_t rows, size_t cols, bool pularLinha) {
+  if (nivelLog > fU8_carregaConfigGeral(52,2)) return;
     for (size_t i = 0; i < rows; i++) {
         for (size_t j = 0; j < cols; j++) {
             Serial.print(array[i][j]);

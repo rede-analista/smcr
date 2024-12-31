@@ -24,7 +24,7 @@ void fV_salvarAcoes(AsyncWebServerRequest *request) {
         return;
     }
     // Salvar aU16_Acao
-    for (uint8_t i = 0; i < vI8_aU16_Acao; i++) {
+    for (uint8_t i = 0; i < aU32_Variaveis[17]; i++) {
         String fieldName = "aU16_Acao" + String(i);
         if (request->hasParam(fieldName, true)) {
             AsyncWebParameter* param = request->getParam(fieldName, true);
@@ -38,7 +38,7 @@ void fV_salvarAcoes(AsyncWebServerRequest *request) {
     }
 
     // Salvar aU8_AcaoRede
-    for (uint8_t i = 0; i < vI8_aU8_AcaoRede; i++) {
+    for (uint8_t i = 0; i < aU32_Variaveis[18]; i++) {
         String fieldName = "aU8_AcaoRede" + String(i);
         bool checkboxFound = false;
         if (request->hasParam(fieldName, true)) {
@@ -92,7 +92,7 @@ void fV_salvarAcoes(AsyncWebServerRequest *request) {
     }
 
     // Salvar aS8_Acao
-    for (uint8_t i = 0; i < vI8_aS8_Acao; i++) {
+    for (uint8_t i = 0; i < aU32_Variaveis[9]; i++) {
         String fieldName = "aS8_Acao" + String(i);
         if (request->hasParam(fieldName, true)) {
             AsyncWebParameter* param = request->getParam(fieldName, true);
@@ -192,7 +192,7 @@ void fV_cadastraAcoes(AsyncWebServerRequest *request) {
     switch (acaoIDValue) {
         case 1:
             // Campos de configuração para ações 1
-            for (int i = 0; i < vI8_aU16_Acao; i++) {
+            for (int i = 0; i < aU32_Variaveis[17]; i++) {
                 String idnome = "aU16_Acao"+String(i);
                 if (aU16_Pinos[0][coluna] > 0 && i == 0) {
                     html += "<tr><td>" + aS8_AcoesMenu[0][i] + ":</td><td><input type='text' style='background-color: LightGrey' id='" +idnome+ "' name='"+idnome+"' value='" + String(aU16_Pinos[0][coluna]) + "' readonly></td></tr>";
@@ -202,10 +202,10 @@ void fV_cadastraAcoes(AsyncWebServerRequest *request) {
             }
 
             // Campos de configuração para ações de rede 1
-            for (int i = 0; i < vI8_aU8_AcaoRede; i++) {
+            for (int i = 0; i < aU32_Variaveis[18]; i++) {
                 String idnome = "aU8_AcaoRede"+String(i);
                 html += "<tr><td>" + aS8_AcoesRedeMenu[0][i] + ":</td>";
-                if (i >= 1 && i <= vI8_aU8_AcaoRede) {
+                if (i >= 1 && i <= aU32_Variaveis[18]) {
                     html += "<td><input type='checkbox' id='" +idnome+ "' name='"+idnome+"'" + (aU8_AcaoRede1[i][coluna] == 1 ? " checked" : "") + "></td></tr>";
                 } else {
                     html += "<td><input type='text' id='" +idnome+ "' name='"+idnome+"' value='" + String(aU8_AcaoRede1[i][coluna]) + "'></td></tr>";
@@ -213,7 +213,7 @@ void fV_cadastraAcoes(AsyncWebServerRequest *request) {
             }
 
             // Campos de configuração para ações de texto 1
-            for (int i = 0; i < vI8_aS8_Acao; i++) {
+            for (int i = 0; i < aU32_Variaveis[9]; i++) {
                 String idnome = "aS8_Acao"+String(i);
                 html += "<tr><td>" + aS8_AcoesStringMenu[0][i] + ":</td>";
                 html += "<td><input type='text' id='" +idnome+ "' name='"+idnome+"' value='" + String(aS8_Acao1[i][coluna]) + "'></td></tr>";
@@ -221,7 +221,7 @@ void fV_cadastraAcoes(AsyncWebServerRequest *request) {
             break;
         case 2:
             // Campos de configuração para ações 2
-            for (int i = 0; i < vI8_aU16_Acao; i++) {
+            for (int i = 0; i < aU32_Variaveis[17]; i++) {
                 String idnome = "aU16_Acao"+String(i);
                 if (aU16_Pinos[0][coluna] > 0 && i == 0) {
                     html += "<tr><td>" + aS8_AcoesMenu[0][i] + ":</td><td><input type='text' style='background-color: LightGrey' id='" +idnome+ "' name='"+idnome+"' value='" + String(aU16_Pinos[0][coluna]) + "' readonly></td></tr>";
@@ -231,10 +231,10 @@ void fV_cadastraAcoes(AsyncWebServerRequest *request) {
             }
 
             // Campos de configuração para ações de rede 2
-            for (int i = 0; i < vI8_aU8_AcaoRede; i++) {
+            for (int i = 0; i < aU32_Variaveis[18]; i++) {
                 String idnome = "aU8_AcaoRede"+String(i);
                 html += "<tr><td>" + aS8_AcoesRedeMenu[0][i] + ":</td>";
-                if (i >= 1 && i <= vI8_aU8_AcaoRede) {
+                if (i >= 1 && i <= aU32_Variaveis[18]) {
                     html += "<td><input type='checkbox' id='" +idnome+ "' name='"+idnome+"'" + (aU8_AcaoRede2[i][coluna] == 1 ? " checked" : "") + "></td></tr>";
                 } else {
                     html += "<td><input type='text' id='" +idnome+ "' name='"+idnome+"' value='" + String(aU8_AcaoRede2[i][coluna]) + "'></td></tr>";
@@ -242,7 +242,7 @@ void fV_cadastraAcoes(AsyncWebServerRequest *request) {
             }
 
             // Campos de configuração para ações de texto 2
-            for (int i = 0; i < vI8_aS8_Acao; i++) {
+            for (int i = 0; i < aU32_Variaveis[9]; i++) {
                 String idnome = "aS8_Acao"+String(i);
                 html += "<tr><td>" + aS8_AcoesStringMenu[0][i] + ":</td>";
                 html += "<td><input type='text' id='" +idnome+ "' name='"+idnome+"' value='" + String(aS8_Acao2[i][coluna]) + "'></td></tr>";
@@ -250,7 +250,7 @@ void fV_cadastraAcoes(AsyncWebServerRequest *request) {
             break;
         case 3:
             // Campos de configuração para ações 3
-            for (int i = 0; i < vI8_aU16_Acao; i++) {
+            for (int i = 0; i < aU32_Variaveis[17]; i++) {
                 String idnome = "aU16_Acao"+String(i);
                 if (aU16_Pinos[0][coluna] > 0 && i == 0) {
                     html += "<tr><td>" + aS8_AcoesMenu[0][i] + ":</td><td><input type='text' style='background-color: LightGrey' id='" +idnome+ "' name='"+idnome+"' value='" + String(aU16_Pinos[0][coluna]) + "' readonly></td></tr>";
@@ -260,10 +260,10 @@ void fV_cadastraAcoes(AsyncWebServerRequest *request) {
             }
 
             // Campos de configuração para ações de rede 3
-            for (int i = 0; i < vI8_aU8_AcaoRede; i++) {
+            for (int i = 0; i < aU32_Variaveis[18]; i++) {
                 String idnome = "aU8_AcaoRede"+String(i);
                 html += "<tr><td>" + aS8_AcoesRedeMenu[0][i] + ":</td>";
-                if (i >= 1 && i <= vI8_aU8_AcaoRede) {
+                if (i >= 1 && i <= aU32_Variaveis[18]) {
                     html += "<td><input type='checkbox' id='" +idnome+ "' name='"+idnome+"'" + (aU8_AcaoRede3[i][coluna] == 1 ? " checked" : "") + "></td></tr>";
                 } else {
                     html += "<td><input type='text' id='" +idnome+ "' name='"+idnome+"' value='" + String(aU8_AcaoRede3[i][coluna]) + "'></td></tr>";
@@ -271,7 +271,7 @@ void fV_cadastraAcoes(AsyncWebServerRequest *request) {
             }
 
             // Campos de configuração para ações de texto 3
-            for (int i = 0; i < vI8_aS8_Acao; i++) {
+            for (int i = 0; i < aU32_Variaveis[9]; i++) {
                 String idnome = "aS8_Acao"+String(i);
                 html += "<tr><td>" + aS8_AcoesStringMenu[0][i] + ":</td>";
                 html += "<td><input type='text' id='" +idnome+ "' name='"+idnome+"' value='" + String(aS8_Acao3[i][coluna]) + "'></td></tr>";
@@ -279,7 +279,7 @@ void fV_cadastraAcoes(AsyncWebServerRequest *request) {
             break;
         case 4:
             // Campos de configuração para ações 4
-            for (int i = 0; i < vI8_aU16_Acao; i++) {
+            for (int i = 0; i < aU32_Variaveis[17]; i++) {
                 String idnome = "aU16_Acao"+String(i);
                 if (aU16_Pinos[0][coluna] > 0 && i == 0) {
                     html += "<tr><td>" + aS8_AcoesMenu[0][i] + ":</td><td><input type='text' style='background-color: LightGrey' id='" +idnome+ "' name='"+idnome+"' value='" + String(aU16_Pinos[0][coluna]) + "' readonly></td></tr>";
@@ -289,10 +289,10 @@ void fV_cadastraAcoes(AsyncWebServerRequest *request) {
             }
 
             // Campos de configuração para ações de rede 4
-            for (int i = 0; i < vI8_aU8_AcaoRede; i++) {
+            for (int i = 0; i < aU32_Variaveis[18]; i++) {
                 String idnome = "aU8_AcaoRede"+String(i);
                 html += "<tr><td>" + aS8_AcoesRedeMenu[0][i] + ":</td>";
-                if (i >= 1 && i <= vI8_aU8_AcaoRede) {
+                if (i >= 1 && i <= aU32_Variaveis[18]) {
                     html += "<td><input type='checkbox' id='" +idnome+ "' name='"+idnome+"'" + (aU8_AcaoRede4[i][coluna] == 1 ? " checked" : "") + "></td></tr>";
                 } else {
                     html += "<td><input type='text' id='" +idnome+ "' name='"+idnome+"' value='" + String(aU8_AcaoRede4[i][coluna]) + "'></td></tr>";
@@ -300,7 +300,7 @@ void fV_cadastraAcoes(AsyncWebServerRequest *request) {
             }
 
             // Campos de configuração para ações de texto 4
-            for (int i = 0; i < vI8_aS8_Acao; i++) {
+            for (int i = 0; i < aU32_Variaveis[9]; i++) {
                 String idnome = "aS8_Acao"+String(i);
                 html += "<tr><td>" + aS8_AcoesStringMenu[0][i] + ":</td>";
                 html += "<td><input type='text' id='" +idnome+ "' name='"+idnome+"' value='" + String(aS8_Acao4[i][coluna]) + "'></td></tr>";
@@ -326,15 +326,15 @@ size_t f_handle_ConfiguraAcoes(unsigned char *data, size_t len, bool final) {
     String html;
     size_t written = 0;
 
-    if (final && vU8_estado == 0) {
+    if (final && aU32_Variaveis[12] == 0) {
         //written = 0;
         return 0;
     }
-    if (vU8_estado == 0) {
-        //linha = std::ceil(static_cast<float>(aU32_Variaveis[36]) / vU8_colunasTabelas);
-        vU16_linhaPagCad = aU32_Variaveis[36]/vU8_colunasTabelas;
-        vU8_colINICIO = 0;
-        vU8_colFIM = vU8_colunasTabelas;
+    if (aU32_Variaveis[12] == 0) {
+        //linha = std::ceil(static_cast<float>(fU16_carregaConfigGeral(39, 15)) / fU8_carregaConfigGeral(40,7));
+        aI32_Variaveis[0] = fU16_carregaConfigGeral(39, 15)/fU8_carregaConfigGeral(40,7);
+        aU32_Variaveis[10] = 0;
+        aU32_Variaveis[11] = fU8_carregaConfigGeral(40,7);
         html += fS_cabecaHTML("Cadastro de Ações","Cadastro de Ações","/","/blob/main/manual/acoes.md");
         html += "Escolha uma ação para configurar os parâmetros.<br>";        
         html += "<form action='/configurar_acoes' method='GET' style='margin:5px'>";
@@ -342,18 +342,18 @@ size_t f_handle_ConfiguraAcoes(unsigned char *data, size_t len, bool final) {
 
         written = html.length();
         if (written > len) {
-           fV_imprimeSerial(3,"Buffer insuficiente no vU8_estado 0");
+           fV_imprimeSerial(3,"Buffer insuficiente no aU32_Variaveis[12] 0");
             return 0;
         }
         memcpy(data, html.c_str(), written);
-        vU8_estado++;
+        aU32_Variaveis[12]++;
         return written;
     }
-    if (vU8_estado == 1 && vU16_linhaPagCad >= 0 && (vU16_linhaPagCad <= std::ceil(static_cast<float>(aU32_Variaveis[36]) / vU8_colunasTabelas))) {
+    if (aU32_Variaveis[12] == 1 && aI32_Variaveis[0] >= 0 && (aI32_Variaveis[0] <= std::ceil(static_cast<float>(fU16_carregaConfigGeral(39, 15)) / fU8_carregaConfigGeral(40,7)))) {
         html = "";
-        if (vU16_linhaPagCad >= 0) {
+        if (aI32_Variaveis[0] >= 0) {
             html += "<tr>";
-            for (x = vU8_colINICIO; x < vU8_colFIM; x++) {
+            for (x = aU32_Variaveis[10]; x < aU32_Variaveis[11]; x++) {
                 html += "<td><center>";
                 if (aS8_Pinos[0][x] == 0) {
                     html += "<label for='id_ac_pino'>Índice " + String(0) + "-" + String(x) +"<br>Pino: (sem cadastro)</label>";
@@ -386,48 +386,48 @@ size_t f_handle_ConfiguraAcoes(unsigned char *data, size_t len, bool final) {
             }
             html += "</tr>";
             html += "<tr>";
-            html += "<td colspan='" + String(vU8_colunasTabelas + 1) + "'>&nbsp</td>";
+            html += "<td colspan='" + String(fU8_carregaConfigGeral(40,7) + 1) + "'>&nbsp</td>";
             html += "</tr>";
 
-            vU16_linhaPagCad--;
-            if (vU16_linhaPagCad > 0) {
-                vU8_colINICIO = vU8_colFIM;
-                vU8_colFIM = vU8_colFIM + vU8_colunasTabelas;
-            } else if (vU16_linhaPagCad == 0 ) {
-                if (vU8_colFIM > aU32_Variaveis[36]) {
-                    vU8_colINICIO = vU8_colFIM;
-                    vU8_colFIM = vU8_colFIM+1;
+            aI32_Variaveis[0]--;
+            if (aI32_Variaveis[0] > 0) {
+                aU32_Variaveis[10] = aU32_Variaveis[11];
+                aU32_Variaveis[11] = aU32_Variaveis[11] + fU8_carregaConfigGeral(40,7);
+            } else if (aI32_Variaveis[0] == 0 ) {
+                if (aU32_Variaveis[11] > fU16_carregaConfigGeral(39, 15)) {
+                    aU32_Variaveis[10] = aU32_Variaveis[11];
+                    aU32_Variaveis[11] = aU32_Variaveis[11]+1;
                 } else {
-                    vU8_colINICIO = vU8_colFIM;
-                    vU8_colFIM = aU32_Variaveis[36];
+                    aU32_Variaveis[10] = aU32_Variaveis[11];
+                    aU32_Variaveis[11] = fU16_carregaConfigGeral(39, 15);
                 }
             } 
         }
 
         written = html.length();
         if (written > len) {
-           fV_imprimeSerial(3,"Buffer insuficiente no vU8_estado 1");
+           fV_imprimeSerial(3,"Buffer insuficiente no aU32_Variaveis[12] 1");
             return 0;
         }
         memcpy(data, html.c_str(), written);
-        if (vU16_linhaPagCad < 0) {
-            vU8_estado++;
+        if (aI32_Variaveis[0] < 0) {
+            aU32_Variaveis[12]++;
         }
         return written;
     }
 
-    if (vU8_estado == 2) {
+    if (aU32_Variaveis[12] == 2) {
         html = "</table>";
         html += "</form>";
         html += fS_rodapeHTML("/","/blob/main/manual/acoes.md");
 
         written = html.length();
         if (written > len) {
-           fV_imprimeSerial(3,"Buffer insuficiente no vU8_estado 2");
+           fV_imprimeSerial(3,"Buffer insuficiente no aU32_Variaveis[12] 2");
             return 0;
         }
         memcpy(data, html.c_str(), written);
-        vU8_estado = 0;
+        aU32_Variaveis[12] = 0;
         return written;
     }
 
