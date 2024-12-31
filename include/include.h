@@ -22,7 +22,7 @@ Definições para uso em bibliotecas e programa
 #endif
 
 #ifndef ARRAY_PREFERENCE_COL
-#define ARRAY_PREFERENCE_COL 255
+#define ARRAY_PREFERENCE_COL 60
 #endif
 
 #ifndef ARRAY_DIA_SEMANA
@@ -30,15 +30,15 @@ Definições para uso em bibliotecas e programa
 #endif
 
 #ifndef ARRAY_STRING
-#define ARRAY_STRING 50
+#define ARRAY_STRING 8
 #endif
 
 #ifndef ARRAY_UINT32
-#define ARRAY_UINT32 3
+#define ARRAY_UINT32 50
 #endif
 
 #ifndef ARRAY_BOOL
-#define ARRAY_BOOL 4
+#define ARRAY_BOOL 10
 #endif
 
 #ifndef ARRAY_UINT64
@@ -46,18 +46,18 @@ Definições para uso em bibliotecas e programa
 #endif
 
 #ifndef ARRAY_INT32
-#define ARRAY_INT32 50
+#define ARRAY_INT32 5
 #endif
 
 /*=======================================
 Inclusão de bibliotecas
 */
 #include <Arduino.h>
+#include "esp_heap_caps.h"
 #include <stdint.h>
-#include <Preferences.h>
-#include <FS.h>
+//#include <FS.h>
 #include "SPIFFS.h" // Use apenas SPIFFS ou LittleFS
-#include "LittleFS.h"
+//#include "LittleFS.h"
 #include <nvs_flash.h>
 #include <WiFi.h>
 #include <ESPAsyncWebServer.h>
@@ -68,6 +68,7 @@ Inclusão de bibliotecas
 #include <AsyncTCP.h>
 #include <ESPAsyncHTTPUpdateServer.h>
 #include <asyncHTTPrequest.h>
+#include <HTTPClient.h>
 #include <cmath>
 #include <map>
 #include <functional>
@@ -75,13 +76,13 @@ Inclusão de bibliotecas
 #include <variant>
 #include <string.h>
 #include <ESP32-targz.h>
-//#include "globals.h"
 #include "WEB_Gerencia_Arquivos.h"
 
 /*=======================================
 Declaracao de Funcoes
 */
 void fV_mapaFuncoes();
+void fV_infoMemoria(uint8_t nivelLog = 1);
 void fsList(void);
 bool initFS(bool format, bool force);
 uint16_t fU16_pinosUsados();
@@ -99,16 +100,16 @@ int fI_enviaModulo(uint16_t idmodulo, String acao, String pino, String valor);
 void fV_enviaAcoesModulos();
 void fV_restartTasks();
 void fV_mudaExec();
-void fV_Preference(String op = "L",bool force = false);
+void fV_Preference(String op = "LER");
 bool fB_verificaPrimeiraExec(bool force = false);
 bool fV_regModHist(uint16_t idmodulo, uint16_t acao, uint16_t pino, uint16_t valor);
 void fV_checkAcoesModulos();
 void fV_checkSerialInput();
 template<typename T>
 void registerVariable(const String& name, T& variable);
-VarType getVariableType(const String& varName);
+//VarType getVariableType(const String& varName);
 bool setVariable(const String& varName, const String& value);
-String fS_retornaTipoVariavel(const VarType& var);
+//String fS_retornaTipoVariavel(const VarType& var);
 bool fB_alteraVariavel(const String& varName, const String& value);
 void fV_handleWebSocketMessage(void *arg, uint8_t *data, size_t len);
 void fV_onEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len);
@@ -134,38 +135,42 @@ String fS_calculaBytes(const size_t bytes);
 String processor(const String& var);
 bool fB_configuraServidorWEB(const uint16_t& porta = 65535, bool force = false);
 bool fV_apagaTodosArquivosSPIFFS() ;
-void fV_iniciaPreference(bool force);
+void fV_iniciaControles(bool force = false);
 void fV_iniciaPinos(bool force);
 void f_cria_MDNS(String nome, IPAddress ip, uint16_t porta);
 void fV_configNTP();
 void fV_callbackNTP(struct timeval *t);
 void fV_modoAP(String wifi, String senha, uint16_t portaap);
-uint8_t fU8_configuraWifi();
+void fU8_connectaWifi();
+uint8_t fU8_verificaWifi();
+void fU8_configuraWifi();
 String fS_listaArquivosFilesys(bool ishtml);
 String fS_listDir(const char * dirname, uint8_t levels);
 String fS_DataHora();
 String fS_Uptime();
 int32_t fI32_carregaConfigGeral(const uint8_t linha, uint8_t coluna, const int32_t padrao = 65535);
 uint32_t fU32_carregaConfigGeral(const uint8_t linha, uint8_t coluna, const uint32_t& padrao = 65535);
-uint16_t fU16_carregaConfigGeral(const uint8_t linha, uint8_t coluna, const uint16_t& padrao = 65535);
-uint8_t fU8_carregaConfigGeral(const uint8_t linha, uint8_t coluna, const uint8_t& padrao = 255);
+uint16_t fU16_carregaConfigGeral(uint8_t coluna, const uint16_t& padrao = 65535);
+uint8_t fU8_carregaConfigGeral(uint8_t coluna, const uint8_t& padrao = 255);
 String fS_carregaConfigGeral(const uint8_t linha, uint8_t coluna, const String& padrao = "");
-bool fB_carregaConfigGeral(const uint8_t linha, uint8_t coluna, const bool& padrao = false);
-String fS_idPlaca();
+bool fB_carregaConfigGeral(uint8_t coluna, const bool& padrao = false);
+String fS_idModulo();
+String fS_infoPlaca(uint8_t nivelLog = 1, bool force = false);
 bool fB_montaLittleFS();
 void fV_salvaFILESYS_AS1D(const char* fileName, String* arr, uint8_t size);
-void fV_carregaFILESYS_AS1D(const char* fileName, String*& arr, uint8_t& size, String sol = "");
+void fV_carregaFILESYS_AS1D(const char* fileName, String*& arr, uint8_t size, String sol = "");
 void fV_salvaFILESYS_AS2D(const char* fileName, String** arr, size_t rows, size_t cols);
 void fV_carregaFILESYS_AS2D(const char* fileName, String**& arr, size_t rows, size_t cols, String sol = "");
 void fV_salvaFlash_AUint(const char* filename, uint16_t** arr, size_t rows, size_t cols);
-void fV_carregaFlash_AUint(const char* filename, uint16_t**& array, size_t rows, size_t cols, String sol = "");
 void fV_geraValoresArray2D_S(String** array, size_t rows, size_t cols);
+void fV_imprimirArray1D_S(String* array, size_t size, bool linha = false);
 void fV_imprimirArray2D_S(String** array, size_t rows, size_t cols, bool linha = false);
 void fV_geraValoresArray2D_U16(uint16_t** array, size_t rows, size_t cols);
 void fV_imprimirArray2D_U16(uint16_t** array, size_t rows, size_t cols, bool linha = false);
 String fS_limpaEspacoFimLinha(const String& str);
 void fV_salvaFlash_AUint(const char* filename, uint8_t** arr, size_t rows, size_t cols);
 void fV_carregaFlash_AUint(const char* filename, uint8_t**& array, size_t rows, size_t cols, String sol = "");
+void fV_carregaFlash_AUint(const char* filename, uint16_t**& array, size_t rows, size_t cols, String sol = "");
 void fV_imprimeSerial(uint8_t nivelLog, const String& mensagem, bool pularLinha = true);
 void fV_imprimeSerial(uint8_t nivelLog, const char* mensagem, bool pularLinha = true);
 void fV_imprimeSerial(uint8_t nivelLog, int valor, bool pularLinha = true);

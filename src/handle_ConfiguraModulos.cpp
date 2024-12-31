@@ -14,7 +14,7 @@ void fV_salvarModulos(AsyncWebServerRequest *request) {
     }
 
     // Tratamento dos campos de nome e IP
-    for (int i = 0; i < vI8_aS_InterMod; i++) {
+    for (int i = 0; i < aU32_Variaveis[7]; i++) {
         String fieldName = "aS_InterMod" + String(i); // Nome esperado dos campos aS_InterMod
         if (request->hasParam(fieldName, true)) {
             AsyncWebParameter* param = request->getParam(fieldName, true);
@@ -23,7 +23,7 @@ void fV_salvarModulos(AsyncWebServerRequest *request) {
     }
 
     // Tratamento dos campos de id e porta
-    for (int i = 0; i < vI8_aU16_InterMod; i++) {
+    for (int i = 0; i < aU32_Variaveis[15]; i++) {
         String fieldName = "aU16_InterModMenu" + String(i); // Nome esperado dos campos aU16_InterModMenu
         if (request->hasParam(fieldName, true)) {
             AsyncWebParameter* param = request->getParam(fieldName, true);
@@ -32,7 +32,7 @@ void fV_salvarModulos(AsyncWebServerRequest *request) {
     }
 
     // Tratamento dos campos checkbox
-    for (int i = 0; i < vI8_aB_InterMod; i++) {
+    for (int i = 0; i < aU32_Variaveis[16]; i++) {
         String checkboxName = "aSB_InterModMenu" + String(i); // Nome esperado do checkbox
         bool checkboxFound = false;
 
@@ -70,56 +70,46 @@ void fV_salvarInterModulos(AsyncWebServerRequest *request) {
 
     // Verifica se o checkbox foi marcado e define o valor corretamente
     if (request->hasParam("HABINTMOD", true)) {
-        vB_exec_Modulos = request->getParam("HABINTMOD", true)->value().toInt();
+        aS_Preference[35] = request->getParam("HABINTMOD", true)->value();
     } else {
-        vB_exec_Modulos = 0; // Valor padrão se o checkbox não estiver marcado
+        aS_Preference[35] = "0"; //Valor padrão se o checkbox não estiver marcado
     }
-    aS_Preference[0][35] = String(vB_exec_Modulos);
     // Verifica e trata o total de modulos
     if (request->hasParam("TOTMODUlOS", true)) {
-        int totmod = request->getParam("TOTMODUlOS", true)->value().toInt();
-        vU8_totModulos = totmod;
+        aS_Preference[47] = request->getParam("TOTMODUlOS", true)->value();
     } else {
         erro++;
         fV_imprimeSerial(1,"Erro: Total de modulos nao informado.");
     }
-    aS_Preference[0][47] = String(vU8_totModulos);
     // Verifica e trata o yamanho da fila de envios
     if (request->hasParam("TAMFILA", true)) {
-        int fila = request->getParam("TAMFILA", true)->value().toInt();
-        vI8_aS16_InterModFila_EnviaModulo = fila;
+        aS_Preference[51] = request->getParam("TAMFILA", true)->value();
     } else {
         erro++;
         fV_imprimeSerial(1,"Erro: Tamanho da fila nao informado.");
     }
-    aS_Preference[0][51] = String(vI8_aS16_InterModFila_EnviaModulo);    
     // Verifica e trata o tempo de handshake
     if (request->hasParam("TEMPOHANDSHK", true)) {
-        int porta = request->getParam("TEMPOHANDSHK", true)->value().toInt();
-        vU16_modulos_HandShake = porta;
+        aS_Preference[36] = request->getParam("TEMPOHANDSHK", true)->value();
     } else {
         erro++;
         fV_imprimeSerial(1,"Erro: Tempo de handshake nao informado.");
     }
-    aS_Preference[0][36] = String(vU16_modulos_HandShake);
     // Verifica e trata o ciclos de handshake
     if (request->hasParam("CICLOHANDSHK", true)) {
-        int porta = request->getParam("CICLOHANDSHK", true)->value().toInt();
-        vI_cicloHandshake = porta;
+        aS_Preference[38] = request->getParam("CICLOHANDSHK", true)->value();
     } else {
         erro++;
         fV_imprimeSerial(1,"Erro: Ciclos de handshake nao informado.");
     }
-    aS_Preference[0][38] = String(vI_cicloHandshake);
     // Verifica e trata o tempo de envio
     if (request->hasParam("TEMPOENVIO", true)) {
-        int porta = request->getParam("TEMPOENVIO", true)->value().toInt();
-        vU16_modulos_MTBS_Acoes = porta;
+        aS_Preference[37] = request->getParam("TEMPOENVIO", true)->value();
     } else {
         erro++;
         fV_imprimeSerial(1,"Erro: Tempo de envio nao informado.");
     }
-    aS_Preference[0][37] = String(vU16_modulos_MTBS_Acoes);
+
     // Responde com uma página HTML
     String html = "";
     if (erro == 0) {
@@ -149,7 +139,7 @@ void fV_cadastraModulo(AsyncWebServerRequest *request) {
     html += "<input type='hidden' id ='modulo' name='modulo' value='" + String(moduloID) + "'>";
     html += "<tr><th>Campo</th><th>Valor</th></tr>";
     // Adiciona os campos de configuração em formato de tabela
-    for (int i = 0; i < vI8_aS_InterMod; i++) {
+    for (int i = 0; i < aU32_Variaveis[7]; i++) {
         // Campos nome e ip
         String idnome = fS_limpaEspacoFimLinha("aS_InterMod"+String(i));
         html += "<tr>";
@@ -158,7 +148,7 @@ void fV_cadastraModulo(AsyncWebServerRequest *request) {
         html += "</tr>";
     }
 
-    for (int i = 0; i < vI8_aU16_InterMod; i++) {
+    for (int i = 0; i < aU32_Variaveis[15]; i++) {
         // Campos id e porta
         String idnome = fS_limpaEspacoFimLinha("aU16_InterModMenu"+String(i));
         html += "<tr>";
@@ -167,7 +157,7 @@ void fV_cadastraModulo(AsyncWebServerRequest *request) {
         html += "</tr>";
     }
 
-    for (int i = 0; i < vI8_aB_InterMod; i++) {
+    for (int i = 0; i < aU32_Variaveis[16]; i++) {
         // Campos handshake
         String idnome = fS_limpaEspacoFimLinha("aSB_InterModMenu"+String(i));
         html += "<tr>";
@@ -195,15 +185,15 @@ size_t f_handle_ConfiguraModulos(unsigned char *data, size_t len, bool final) {
     String html;
     size_t written = 0;
 
-    if (final && vU8_estado == 0) {
+    if (final && aU32_Variaveis[12] == 0) {
         //written = 0;
         return 0;
     }
-    if (vU8_estado == 0) {
-        vU16_linhaPagCad = std::ceil(static_cast<float>(vU8_totModulos) / vU8_colunasTabelas);
-        //vU16_linhaPagCad = vU8_totModulos/vU8_colunasTabelas;
-        vU8_colINICIO = 0;
-        vU8_colFIM = vU8_colunasTabelas;
+    if (aU32_Variaveis[12] == 0) {
+        aI32_Variaveis[0] = std::ceil(static_cast<float>(fU16_carregaConfigGeral(47, 65535)) / fU8_carregaConfigGeral(40,7));
+        //aI32_Variaveis[0] = fU16_carregaConfigGeral(47, 65535)/fU8_carregaConfigGeral(40,7);
+        aU32_Variaveis[10] = 0;
+        aU32_Variaveis[11] = fU8_carregaConfigGeral(40,7);
         html += fS_cabecaHTML("Cadastro de Módulos","Cadastro de Módulos","/configurag","/blob/main/manual/intermod.md");
         html += "<form action='/salvar_intermodulos' method='POST' style='margin:5px'>";
         html += "<table border='1' cellpadding='5' cellspacing='0'>";
@@ -211,37 +201,37 @@ size_t f_handle_ConfiguraModulos(unsigned char *data, size_t len, bool final) {
         // Linha para habilitar intermodulos
         html += "<tr>";
         html += "<td><label for='id_habintmod'>Habilitar Inter Módulos: </label></td>";
-        html += "<td><input type='checkbox' name='HABINTMOD' id='id_habintmod' value='1' " + String((vB_exec_Modulos ? "checked" : "")) + "></td>";
+        html += "<td><input type='checkbox' name='HABINTMOD' id='id_habintmod' value='1' " + String((fB_carregaConfigGeral(35, false) ? "checked" : "")) + "></td>";
         html += "</tr>";
 
         // Total de modulos
         html += "<tr>";
         html += "<td><label for='id_totmodulos'>Total de Módulos: </label></td>";
-        html += "<td><input type='text' style='background-color: Red' name='TOTMODUlOS' maxlength='12' size='12' id='id_totmodulos' value='" + String(vU8_totModulos) + "' required></td>";
+        html += "<td><input type='text' style='background-color: Red' name='TOTMODUlOS' maxlength='12' size='12' id='id_totmodulos' value='" + String(fU16_carregaConfigGeral(47, 65535)) + "' required></td>";
         html += "</tr>";
 
         // Tamanho Fila de envios
         html += "<tr>";
         html += "<td><label for='id_tamfila'>Tamanho da Fila de Envios: </label></td>";
-        html += "<td><input type='text' name='TAMFILA' maxlength='12' size='12' id='id_tamfila' value='" + String(vI8_aS16_InterModFila_EnviaModulo) + "' required></td>";
+        html += "<td><input type='text' name='TAMFILA' maxlength='12' size='12' id='id_tamfila' value='" + String(fU16_carregaConfigGeral(51, 30)) + "' required></td>";
         html += "</tr>";        
 
         // Tempo de handshake
         html += "<tr>";
         html += "<td><label for='id_tempohandshake'>Tempo de Handshake: </label></td>";
-        html += "<td><input type='text' name='TEMPOHANDSHK' maxlength='12' size='12' id='id_tempohandshake' value='" + String(vU16_modulos_HandShake) + "' required></td>";
+        html += "<td><input type='text' name='TEMPOHANDSHK' maxlength='12' size='12' id='id_tempohandshake' value='" + String(fU16_carregaConfigGeral(36, 65535)) + "' required></td>";
         html += "</tr>";
 
         // Ciclos de handshake
         html += "<tr>";
         html += "<td><label for='id_ciclohandshake'>Ciclos de handshake: </label></td>";
-        html += "<td><input type='text' name='CICLOHANDSHK' maxlength='12' size='12' id='id_ciclohandshake' value='" + String(vI_cicloHandshake) + "' required></td>";
+        html += "<td><input type='text' name='CICLOHANDSHK' maxlength='12' size='12' id='id_ciclohandshake' value='" + String(fU16_carregaConfigGeral(38, 65535)) + "' required></td>";
         html += "</tr>";
 
         // Tempo de envio
         html += "<tr>";
         html += "<td><label for='id_tempoenvio'>Tempo de Envio Alertas: </label></td>";
-        html += "<td><input type='text' name='TEMPOENVIO' maxlength='12' size='12' id='id_tempoenvio' value='" + String(vU16_modulos_MTBS_Acoes) + "' required></td>";
+        html += "<td><input type='text' name='TEMPOENVIO' maxlength='12' size='12' id='id_tempoenvio' value='" + String(fU16_carregaConfigGeral(37, 65535)) + "' required></td>";
         html += "</tr></table>";
         html += "<input type='submit' value='Aplicar (sem salvar)'>";
         html += "</form>";
@@ -251,18 +241,18 @@ size_t f_handle_ConfiguraModulos(unsigned char *data, size_t len, bool final) {
 
         written = html.length();
         if (written > len) {
-           fV_imprimeSerial(3,"Buffer insuficiente no vU8_estado 0");
+           fV_imprimeSerial(3,"Buffer insuficiente no aU32_Variaveis[12] 0");
             return 0;
         }
         memcpy(data, html.c_str(), written);
-        vU8_estado++;
+        aU32_Variaveis[12]++;
         return written;
     }
-    if (vU8_estado == 1 && vU16_linhaPagCad >= 0 && (vU16_linhaPagCad <= std::ceil(static_cast<float>(vU8_totModulos) / vU8_colunasTabelas))) {
+    if (aU32_Variaveis[12] == 1 && aI32_Variaveis[0] >= 0 && (aI32_Variaveis[0] <= std::ceil(static_cast<float>(fU16_carregaConfigGeral(47, 65535)) / fU8_carregaConfigGeral(40,7)))) {
         html = "";
-        if (vU16_linhaPagCad >= 0) {
+        if (aI32_Variaveis[0] >= 0) {
             html += "<tr>";
-            for (x = vU8_colINICIO; x < vU8_colFIM; x++) {
+            for (x = aU32_Variaveis[10]; x < aU32_Variaveis[11]; x++) {
                 if (aS_InterMod[0][x].length() == 0) {
                     html += "<td><button type='submit' name='modulo' value='" + String(x) + "'> Módulo:"+String(x)+"<br>" + aS_InterMod[0][x] + "<br>"+aS_InterMod[1][x]+"(livre)</button></td>";
                 } else {
@@ -271,48 +261,48 @@ size_t f_handle_ConfiguraModulos(unsigned char *data, size_t len, bool final) {
             }
             html += "</tr>";
             html += "<tr>";
-            html += "<td colspan='" + String(vU8_colunasTabelas + 1) + "'>&nbsp</td>";
+            html += "<td colspan='" + String(fU8_carregaConfigGeral(40,7) + 1) + "'>&nbsp</td>";
             html += "</tr>";
 
-            vU16_linhaPagCad--;
-            if (vU16_linhaPagCad > 0) {
-                vU8_colINICIO = vU8_colFIM;
-                vU8_colFIM = vU8_colFIM + vU8_colunasTabelas;
-            } else if (vU16_linhaPagCad == 0 ) {
-                if (vU8_colFIM > vU8_totModulos) {
-                    vU8_colINICIO = vU8_colFIM;
-                    vU8_colFIM = vU8_colFIM+1;
+            aI32_Variaveis[0]--;
+            if (aI32_Variaveis[0] > 0) {
+                aU32_Variaveis[10] = aU32_Variaveis[11];
+                aU32_Variaveis[11] = aU32_Variaveis[11] + fU8_carregaConfigGeral(40,7);
+            } else if (aI32_Variaveis[0] == 0 ) {
+                if (aU32_Variaveis[11] > fU16_carregaConfigGeral(47, 65535)) {
+                    aU32_Variaveis[10] = aU32_Variaveis[11];
+                    aU32_Variaveis[11] = aU32_Variaveis[11]+1;
                 } else {
-                    vU8_colINICIO = vU8_colFIM;
-                    vU8_colFIM = vU8_totModulos;
+                    aU32_Variaveis[10] = aU32_Variaveis[11];
+                    aU32_Variaveis[11] = fU16_carregaConfigGeral(47, 65535);
                 }
             } 
         }
 
         written = html.length();
         if (written > len) {
-           fV_imprimeSerial(3,"Buffer insuficiente no vU8_estado 1");
+           fV_imprimeSerial(3,"Buffer insuficiente no aU32_Variaveis[12] 1");
             return 0;
         }
         memcpy(data, html.c_str(), written);
-        if (vU16_linhaPagCad < 0) {
-            vU8_estado++;
+        if (aI32_Variaveis[0] < 0) {
+            aU32_Variaveis[12]++;
         }
         return written;
     } 
 
-    if (vU8_estado == 2) {
+    if (aU32_Variaveis[12] == 2) {
         html = "</table>";
         html += "</form>";
         html += fS_rodapeHTML("/configurag","/blob/main/manual/intermod.md");
 
         written = html.length();
         if (written > len) {
-           fV_imprimeSerial(3,"Buffer insuficiente no vU8_estado 2");
+           fV_imprimeSerial(3,"Buffer insuficiente no aU32_Variaveis[12] 2");
             return 0;
         }
         memcpy(data, html.c_str(), written);
-        vU8_estado = 0;
+        aU32_Variaveis[12] = 0;
         return written;
     }
 
